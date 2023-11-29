@@ -1,0 +1,7 @@
+{
+    "board": "arduino:renesas_uno:unor4wifi",
+    "sketch": "sketch_nov29a/sketch_nov29a.ino",
+    "port": "/dev/tty.usbmodemF412FA8B26882",
+    "output": "build",
+    "intelliSenseGen": "global"
+}
