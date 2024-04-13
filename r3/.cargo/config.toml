@@ -4,8 +4,8 @@ target = "avr-specs/avr-atmega328p.json"
 [target.'cfg(target_arch = "avr")']
 runner = "ravedude uno --open-console --baudrate 57600 -P /dev/tty.usbmodem2101" 
 # runner = "ravedude uno -cb 57600"
-# /dev/tty.usbmodemF412FA8B26882
-# /dev/tty.usbmodem2101
+# /dev/tty.usbmodemF412FA8B26882 (R4)
+# /dev/tty.usbmodem2101 (R3)
 
 [unstable]
 build-std = ["core"]
