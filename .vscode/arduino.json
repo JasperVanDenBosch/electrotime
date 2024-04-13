@@ -1,6 +1,6 @@
 {
     "board": "arduino:renesas_uno:unor4wifi",
-    "sketch": "latency-recorder/latency-recorder.ino",
+    "sketch": "r4/latency-recorder.ino",
     "port": "/dev/tty.usbmodemF412FA8B26882",
     "output": "build",
     "intelliSenseGen": "global"
