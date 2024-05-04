@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "latency-recorder/latency-recorder.ino",
+    "sketch": "recorder.ino",
     "port": "/dev/tty.usbmodem2101",
     "output": "build",
     "intelliSenseGen": "global"
