@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
     "recorder",
+    "simulator"
 ]
 
 # Configure the build for minimal size - AVRs have very little program memory
