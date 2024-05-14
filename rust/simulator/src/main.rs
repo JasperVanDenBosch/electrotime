@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use arduino_hal::prelude::*;
+//use arduino_hal::prelude::*;
 use panic_halt as _;
 
 #[arduino_hal::entry]
@@ -19,12 +19,10 @@ fn main() -> ! {
         pins.d8.into_output().downgrade(),
         pins.d9.into_output().downgrade(),
     ];
-    let triggers: [u8; 11] = [1, 2, 3, 4, 5, 6, 8, 16, 32, 64, 255];
+    let triggers: [u8; 4] = [1, 2, 2, 1]; //3, 4, 5, 6, 8, 16, 32, 64, 255];
 
 
     loop {
-        //let v = a0.analog_read(&mut adc);
-        //ufmt::uwriteln!(&mut serial, "{}", v).unwrap_infallible();
         
         for t in triggers {
             
