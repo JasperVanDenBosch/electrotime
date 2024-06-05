@@ -25,9 +25,10 @@ fn main() -> ! {
         pins.d9.downgrade(),
     ];
 
-
+    // what is limiting factor? ADC? Serial?
     loop {
         let v = a0.analog_read(&mut adc);
+        //let a = v.to_be_bytes();
 
         let mut bools: [bool; 8] = [false, false, false, false, false, false, false, false];
         for (i, pin) in dpins.iter_mut().enumerate() {
@@ -37,6 +38,7 @@ fn main() -> ! {
         }
         let num = bools2num(bools);
 
+        // or .write_byte(byte:u8)
         ufmt::uwriteln!(&mut serial, "{} {}", v, num).unwrap_infallible();
         arduino_hal::delay_ms(200);
     }
