@@ -1,7 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "sketch": "recorder.ino",
-    "port": "/dev/tty.usbmodem2101",
-    "output": "build",
-    "intelliSenseGen": "global"
-}
