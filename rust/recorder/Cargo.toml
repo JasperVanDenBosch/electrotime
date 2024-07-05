@@ -1,8 +1,8 @@
 [package]
 name = "recorder"
 version = "0.1.0"
-authors = ["Jasper van den Bosch <japsai@gmail.com>"]
 edition = "2021"
+authors = ["Jasper van den Bosch <japsai@gmail.com>"]
 license = "MIT"
 
 [[bin]]
