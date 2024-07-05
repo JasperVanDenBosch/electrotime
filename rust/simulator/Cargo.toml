@@ -21,6 +21,9 @@ git = "https://github.com/rahix/avr-hal"
 rev = "21342dcace7184f01fdc4e9703b01197bd4b4b4f"
 features = ["arduino-uno"]
 
+[dependencies.latreclib]
+path = "../latreclib"
+
 # Configure the build for minimal size - AVRs have very little program memory
 [profile.dev]
 panic = "abort"
