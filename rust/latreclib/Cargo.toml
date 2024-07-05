@@ -1,0 +1,8 @@
+[package]
+name = "latreclib"
+version = "0.1.0"
+edition = "2021"
+authors = ["Jasper van den Bosch <japsai@gmail.com>"]
+license = "MIT"
+
+[dependencies]
