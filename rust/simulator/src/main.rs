@@ -3,6 +3,7 @@
 
 //use arduino_hal::prelude::*;
 use panic_halt as _;
+use latreclib::num2bools;
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -46,24 +47,3 @@ fn main() -> ! {
         }
     }
 }
-
-fn num2bools(val: u8) -> [bool; 8] {
-    // big endian
-    match val {
-        0 => [false, false, false, false, false, false, false, false],
-        1 => [true, false, false, false, false, false, false, false],
-        2 => [false, true, false, false, false, false, false, false],
-        _ => [false, false, false, false, false, false, false, false],
-    }
-}
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_num2bools() {
-//         let out = num2bools(2);
-//         assert_eq!(out, [false, false, false, false, false, false, false, false]);
-//     }
-// }
