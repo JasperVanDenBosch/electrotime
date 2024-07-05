@@ -3,8 +3,7 @@
 
 use arduino_hal::prelude::*;
 use panic_halt as _;
-
-
+use latreclib::bools2num;
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -41,15 +40,5 @@ fn main() -> ! {
         // or .write_byte(byte:u8)
         ufmt::uwriteln!(&mut serial, "{} {}", v, num).unwrap_infallible();
         arduino_hal::delay_ms(200);
-    }
-}
-
-fn bools2num(val: [bool; 8]) -> u8 {
-    // big endian
-    match val {
-        [false, false, false, false, false, false, false, false] => 0,
-        [true, false, false, false, false, false, false, false] => 1,
-        [false, true, false, false, false, false, false, false] => 2,
-        _ => 0,
     }
 }
