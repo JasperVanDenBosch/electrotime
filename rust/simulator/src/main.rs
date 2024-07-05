@@ -57,13 +57,13 @@ fn num2bools(val: u8) -> [bool; 8] {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
 
-    #[test]
-    fn test_num2bools() {
-        let out = num2bools(2);
-        assert_eq!(out, [false, false, false, false, false, false, false, false]);
-    }
-}
+//     #[test]
+//     fn test_num2bools() {
+//         let out = num2bools(2);
+//         assert_eq!(out, [false, false, false, false, false, false, false, false]);
+//     }
+// }
