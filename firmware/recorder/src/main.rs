@@ -39,6 +39,6 @@ fn main() -> ! {
 
         // or .write_byte(byte:u8)
         ufmt::uwriteln!(&mut serial, "{} {}", light, trigger).unwrap_infallible();
-        arduino_hal::delay_ms(100);
+        arduino_hal::delay_ms(5);
     }
 }
