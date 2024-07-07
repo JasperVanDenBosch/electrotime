@@ -20,7 +20,7 @@ fn main() -> ! {
         pins.d8.into_output().downgrade(),
         pins.d9.into_output().downgrade(),
     ];
-    let triggers: [u8; 4] = [1, 2, 2, 1]; //3, 4, 5, 6, 8, 16, 32, 64, 255];
+    let triggers: [u8; 12] = [1, 2, 3, 4, 5, 6, 8, 16, 32, 64, 129, 255];
 
 
     loop {
@@ -36,7 +36,7 @@ fn main() -> ! {
             }
 
             // after 200ms, turn everything off
-            arduino_hal::delay_ms(200);
+            arduino_hal::delay_ms(50);
             led_d12.set_low();
             for pin in dpins.iter_mut() {
                 pin.set_low();
