@@ -10,4 +10,6 @@ raw = numpy.load(fpath)
 # if more than one epoch ID, discard
 # subtract trigger timestamp from sample timestamps
 
+# plot lineplot with timestamp as x axis
+
 print(f'Epoching..')
