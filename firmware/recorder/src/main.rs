@@ -13,8 +13,17 @@ fn main() -> ! {
     let mut adc = arduino_hal::Adc::new(dp.ADC, Default::default());
     let a0 = pins.a0.into_analog_input(&mut adc);
 
+    let mut epoch_counter = 0;
+
+    // 15625Hz, or 64us / timepoint.
+    // max val is 2ˆ16 = 65536 = 4.19s
+    // safer to stop earlier, e.g 62500 = 4s
+    const STOP_VAL: u16 = 62500;
+    let timer1 = dp.TC1;
+    timer1.tccr1b.write(|w| w.cs1().prescale_1024());
+
     let mut dpins = [
-        pins.d2.downgrade(),
+        pins.d2.downgrade(), //.into_pull_up_input()
         pins.d3.downgrade(),
         pins.d4.downgrade(),
         pins.d5.downgrade(),
@@ -24,21 +33,30 @@ fn main() -> ! {
         pins.d9.downgrade(),
     ];
 
-    // what is limiting factor? ADC? Serial?
     loop {
-        let v = a0.analog_read(&mut adc);
-        //let a = v.to_be_bytes();
+        // reset timer
+        ufmt::uwriteln!(&mut serial, "reset {}", epoch_counter).unwrap_infallible();
+        timer1.tcnt1.write(|w| { w.bits(0) });
 
-        let mut bools: [bool; 8] = [false, false, false, false, false, false, false, false];
-        for (i, pin) in dpins.iter_mut().enumerate() {
-            if pin.is_high() {
-                bools[i] = true;
-            }
+        let mut tval =0;
+        while tval < STOP_VAL { // can do loop better
+           tval = timer1.tcnt1.read().bits();
+
+           let light = a0.analog_read(&mut adc);
+
+           let mut bools: [bool; 8] = [false, false, false, false, false, false, false, false];
+           for (i, pin) in dpins.iter_mut().enumerate() {
+               if pin.is_high() {
+                   bools[i] = true;
+               }
+           }
+           let trigger = bools2num(bools);
+   
+           // or .write_byte(byte:u8)
+           ufmt::uwriteln!(&mut serial, "{} {} {}", light, trigger, tval).unwrap_infallible();
+           arduino_hal::delay_us(100)
         }
-        let num = bools2num(bools);
-
-        // or .write_byte(byte:u8)
-        ufmt::uwriteln!(&mut serial, "{} {}", v, num).unwrap_infallible();
-        arduino_hal::delay_ms(200);
+        epoch_counter += 1;
+         
     }
 }

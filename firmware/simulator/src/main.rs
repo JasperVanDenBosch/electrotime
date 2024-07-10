@@ -20,30 +20,37 @@ fn main() -> ! {
         pins.d8.into_output().downgrade(),
         pins.d9.into_output().downgrade(),
     ];
-    let triggers: [u8; 4] = [1, 2, 2, 1]; //3, 4, 5, 6, 8, 16, 32, 64, 255];
-
+    let triggers: [u8; 12] = [1, 2, 3, 4, 5, 6, 8, 16, 32, 64, 129, 255];
+    const LATENCY: u16 = 20;
+    const TRIG_DUR: u16 = 10;
+    const STIM_DUR: u16 = 50;
+    const SHORT_ITI: u16 = 800;
+    const LONG_ITI: u16 = 1200;
+    const STIM_DELAY: u16 = LATENCY - TRIG_DUR;
 
     loop {
-        
         for t in triggers {
-            
-            led_d12.set_high();
             let vals = num2bools(t);
             for (i, pin) in dpins.iter_mut().enumerate() {
                 if vals[i] {
                     pin.set_high();
                 }
             }
-
-            // after 200ms, turn everything off
-            arduino_hal::delay_ms(200);
-            led_d12.set_low();
+            arduino_hal::delay_ms(TRIG_DUR);
             for pin in dpins.iter_mut() {
                 pin.set_low();
             }
+            arduino_hal::delay_ms(STIM_DELAY);
+            led_d12.set_high();
+            arduino_hal::delay_ms(STIM_DUR);
+            led_d12.set_low();
 
-            // now wait before next trial
-            arduino_hal::delay_ms(2000);
+            if (t % 4) > 0 {
+                arduino_hal::delay_ms(SHORT_ITI);
+            }
+            else {
+                arduino_hal::delay_ms(LONG_ITI);
+            }
         }
     }
 }
