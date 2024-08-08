@@ -4,8 +4,9 @@
 """
 import numpy, pandas, seaborn
 import matplotlib.pyplot as plt
+import sys
 
-fpath = 'data/latrec_2024-07-10T173335.npy'
+fpath = sys.argv[1]
 raw = numpy.load(fpath)
 EPOCH_LEN = 40  ## length of an epoch in samples -> 100 to see it go off
 T_DUR_US = 64
