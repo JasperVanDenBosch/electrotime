@@ -8,6 +8,6 @@ ser = serial.Serial(ADDRESS, BAUDRATE, timeout=0.1)         # 1/timeout is the f
 i = 0
 while True:
     data = ser.readline().decode().strip()
-    if data and i % 50 == 0:
+    if data and i % 100 == 0:
         print(data)
     i += 1
