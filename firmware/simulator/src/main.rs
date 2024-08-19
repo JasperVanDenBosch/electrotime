@@ -11,14 +11,14 @@ fn main() -> ! {
     let pins = arduino_hal::pins!(dp);
     let mut led_d12 = pins.d12.into_output();
     let mut dpins = [
+        pins.d0.into_output().downgrade(),
+        pins.d1.into_output().downgrade(),
         pins.d2.into_output().downgrade(),
         pins.d3.into_output().downgrade(),
         pins.d4.into_output().downgrade(),
         pins.d5.into_output().downgrade(),
         pins.d6.into_output().downgrade(),
         pins.d7.into_output().downgrade(),
-        pins.d8.into_output().downgrade(),
-        pins.d9.into_output().downgrade(),
     ];
     let triggers: [u8; 12] = [1, 2, 3, 4, 5, 6, 8, 16, 32, 64, 129, 255];
     const LATENCY: u16 = 20;

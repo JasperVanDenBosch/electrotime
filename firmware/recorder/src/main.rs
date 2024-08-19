@@ -23,7 +23,7 @@ fn main() -> ! {
     timer1.tccr1b.write(|w| w.cs1().prescale_1024());
 
     let mut dpins = [
-        pins.d2.downgrade(), //.into_pull_up_input()
+        pins.d2.downgrade(),
         pins.d3.downgrade(),
         pins.d4.downgrade(),
         pins.d5.downgrade(),
