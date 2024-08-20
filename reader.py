@@ -12,7 +12,7 @@ lines = []
 ser = serial.Serial(ADDRESS, BAUDRATE, timeout=5)         # 1/timeout is the frequency at which the port is read
 ser.flush()
 
-for _ in range(100_000): ## number of data points. Each about .9ms. 1m34s? 
+for _ in range(400_000): ## number of data points. Each about .9ms. 1m34s? 
     line = ser.readline().decode().strip()
     if line:
         lines.append(line)
