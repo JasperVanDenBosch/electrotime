@@ -1,12 +1,6 @@
 """
 # epoch_nr, light, trigger, tval
 
-In [33]: epochs_df[epochs_df.latency_ms<5]
-Out[33]:
-     trigger  latency_sample  latency_ms
-87        89               0         0.0
-132      135               0         0.0
-
 """
 import numpy, pandas, seaborn
 import matplotlib.pyplot as plt
