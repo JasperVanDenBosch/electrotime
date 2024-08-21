@@ -19,6 +19,7 @@ T_DUR_US = 64
 THRESHOLD_PERCENTILE = 80
 THRESHOLD_FRACTION = 0.8
 OFFSET_US = 0 #20_000 applies for old simulator settings where i delayed the stim by 20ms
+TRIGGERS_IGNORE = [1,2] + list(range(24, 31+1)) + list(range(32, 47+1))
 
 t_diff = numpy.diff(raw[:, 3])
 approx_dur_secs = (t_diff[t_diff>0].sum() * T_DUR_US) / 1_000_000
@@ -69,6 +70,9 @@ epochs_dicts = []
 for e in df.epoch.unique():
     valid = True
     epoch_df = df[df.epoch==e]
+    if epoch_df.trigger.iloc[0] in TRIGGERS_IGNORE:
+        print(f'Discarding epoch as trigger ignored')
+        valid = False
     samples_over_threshold = epoch_df.light.values >= threshold
     if numpy.any(samples_over_threshold):
         target_s = numpy.where(epoch_df.light.values >= threshold)[0][0]
