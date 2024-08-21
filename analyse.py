@@ -1,6 +1,12 @@
 """
 # epoch_nr, light, trigger, tval
 
+In [33]: epochs_df[epochs_df.latency_ms<5]
+Out[33]:
+     trigger  latency_sample  latency_ms
+87        89               0         0.0
+132      135               0         0.0
+
 """
 import numpy, pandas, seaborn
 import matplotlib.pyplot as plt
@@ -12,7 +18,7 @@ EPOCH_LEN = 40  ## length of an epoch in samples -> 100 to see it go off
 T_DUR_US = 64
 THRESHOLD_PERCENTILE = 80
 THRESHOLD_FRACTION = 0.8
-OFFSET_US = 20_000
+OFFSET_US = 0 #20_000 applies for old simulator settings where i delayed the stim by 20ms
 
 t_diff = numpy.diff(raw[:, 3])
 approx_dur_secs = (t_diff[t_diff>0].sum() * T_DUR_US) / 1_000_000
@@ -51,6 +57,7 @@ df = pandas.DataFrame(dict(
 ))
 df['time (ms)'] = df.time/1000
 
+
 ## 1. determine threshold
 
 threshold = THRESHOLD_FRACTION * numpy.percentile(
@@ -60,21 +67,38 @@ threshold = THRESHOLD_FRACTION * numpy.percentile(
 )
 epochs_dicts = []
 for e in df.epoch.unique():
+    valid = True
     epoch_df = df[df.epoch==e]
-    target_s = numpy.where(epoch_df.light.values >= threshold)[0][0]
+    samples_over_threshold = epoch_df.light.values >= threshold
+    if numpy.any(samples_over_threshold):
+        target_s = numpy.where(epoch_df.light.values >= threshold)[0][0]
+        latency_ms=epoch_df.iloc[target_s]['time (ms)']
+        if target_s < 2:
+            print(f'Discarding epoch since threshold reached too soon')
+            valid = False
+    else:
+        print(f'Discarding epoch since threshold never reached')
+        target_s = None
+        valid = False
+        latency_ms = None
     epochs_dicts.append(
         dict(
+            epoch=epoch_df.epoch.iloc[0],
             trigger=epoch_df.trigger.iloc[0],
             latency_sample=target_s,
-            latency_ms=epoch_df.iloc[target_s]['time (ms)']
+            latency_ms=latency_ms,
+            valid=valid
         )
     )
+
 epochs_df = pandas.DataFrame(epochs_dicts)
-latency = epochs_df.latency_ms
+valid_epoch_numbers = epochs_df[epochs_df.valid == True].epoch.values
+df = df[df.isin(valid_epoch_numbers).epoch]
+latency = epochs_df[epochs_df.valid == True].latency_ms
 summary = f'latency (ms) mean: {latency.mean():.2f} std: {latency.std():.2f} threshold: {threshold:.1f}'
 
 plt.figure()
-seaborn.lineplot(df, x='time (ms)', y='light')
+seaborn.lineplot(df, x='time (ms)', y='light', hue='trigger')
 plt.title(summary)
 plt.savefig(f'plots/lines.png')
 plt.close('all')
