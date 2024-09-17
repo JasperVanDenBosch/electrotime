@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:latrec/ports.dart';
-
+import 'package:latrec/recordbutton.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+  const HomePage({super.key});
 
-  final String title;
-
+  static const title = 'Latency Recorder';
+  
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   String? selectedPortAddress;
+  bool recording = false;
 
   @override
   void initState() {
@@ -21,15 +22,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _changePort(BuildContext context) async {
 
-    selectedPortAddress = await Navigator.push<String?>(
-      context,
-      MaterialPageRoute(builder: (context) => PortsPage(selectedPortAddress)),
-    );
-
-    // When a BuildContext is used from a StatefulWidget, the mounted property
-    // must be checked after an asynchronous gap.
-    if (!context.mounted) return;
-    setState(() {});
+    //selectedPortAddress = 
+    selectDevice(context).then((newPortAddress) {
+      setState(() {
+        selectedPortAddress = newPortAddress;
+      });
+    });
 
   }
 
@@ -49,16 +47,30 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text(HomePage.title),
       ),
       body: Column(
         children: [
           Text(selectedPortLabel()),
           ElevatedButton(
-            child: Icon(Icons.device_unknown),
-            onPressed: () { _changePort(context); }
+            child: const Icon(Icons.device_unknown),
+            onPressed: () { 
+              selectDevice(context).then((newPortAddress) {
+                setState(() {
+                  selectedPortAddress = newPortAddress;
+                });
+              });
+            }
           ),
         ]
+      ),
+      floatingActionButton: RecordButton(
+        active: recording,
+        callback: () {
+          setState(() {
+            recording = !recording;
+          });
+        }
       )
     );
   }

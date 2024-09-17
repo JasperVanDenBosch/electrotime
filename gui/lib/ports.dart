@@ -2,6 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 
+Future<String?> selectDevice(BuildContext context) async {
+  return showDialog<String?>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('Select assignment'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () { Navigator.pop(context, 'Treasury'); },
+              child: const Text('Treasury department'),
+            ),
+            SimpleDialogOption(
+              onPressed: () { Navigator.pop(context, 'State'); },
+              child: const Text('State department'),
+            ),
+          ],
+        );
+      }
+  );
+}
+
 
 class PortsPage extends StatefulWidget {
   const PortsPage(this.selectedPortAddress);
@@ -67,10 +88,6 @@ class _PortsPageState extends State<PortsPage> {
                 }),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.refresh),
-          onPressed: initPorts,
         ),
     );
   }
