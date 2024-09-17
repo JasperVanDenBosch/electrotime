@@ -52,8 +52,9 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           Text(selectedPortLabel()),
-          ElevatedButton(
-            child: const Icon(Icons.device_unknown),
+          ElevatedButton.icon(
+            label: const Text('Select Device'),
+            icon: const Icon(Icons.electrical_services),
             onPressed: () { 
               selectDevice(context).then((newPortAddress) {
                 setState(() {
