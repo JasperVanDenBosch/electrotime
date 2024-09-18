@@ -3,94 +3,34 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 
 Future<String?> selectDevice(BuildContext context) async {
+  final availablePorts = SerialPort.availablePorts;
   return showDialog<String?>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('Select assignment'),
+          title: const Text('Select Device'),
           children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () { Navigator.pop(context, 'Treasury'); },
-              child: const Text('Treasury department'),
-            ),
-            SimpleDialogOption(
-              onPressed: () { Navigator.pop(context, 'State'); },
-              child: const Text('State department'),
-            ),
+            for (final address in availablePorts)
+              buildOption(address, context)
           ],
         );
       }
   );
 }
 
-
-class PortsPage extends StatefulWidget {
-  const PortsPage(this.selectedPortAddress);
-
-  final String? selectedPortAddress;
-
-
-  @override
-  State<PortsPage> createState() => _PortsPageState();
-}
-
-class _PortsPageState extends State<PortsPage> {
-  var availablePorts = [];
-  
-
-  @override
-  void initState() {
-    super.initState();
-    initPorts();
-  }
-
-  void initPorts() {
-    setState(() => availablePorts = SerialPort.availablePorts);
-    debugPrint('${availablePorts.length}');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('????'),
-      ),
-      body: Scrollbar(
-          child: ListView(
-            children: [
-              for (final address in availablePorts)
-                Builder(builder: (context) {
-                  final port = SerialPort(address);
-                  return ExpansionTile(
-                    title: Row(
-                      children: [
-                        Text(address),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context, address);
-                          },
-                          icon: const Icon(Icons.private_connectivity),
-                          tooltip: 'Select this device',
-                        )
-                      ]
-                    ),
-                    children: [
-                      CardListTile('Description', port.description),
-                      CardListTile('Transport', port.transport.toTransport()),
-                      CardListTile('Manufacturer', port.manufacturer),
-                      CardListTile('Product Name', port.productName),
-                      CardListTile('Serial Number', port.serialNumber),
-                      CardListTile('MAC Address', port.macAddress),
-                    ],
-                  );
-                }),
-            ],
-          ),
-        ),
-    );
-  }
+SimpleDialogOption buildOption(String address, BuildContext context) {
+  final port = SerialPort(address);
+  debugPrint('Address $address');
+  debugPrint('Description ${port.description}');
+  debugPrint('Transport ${port.transport.toTransport()}');
+  debugPrint('Manufacturer ${port.manufacturer}');
+  debugPrint('Product Name ${port.productName}');
+  debugPrint('Serial Number ${port.serialNumber}');
+  debugPrint('MAC Address ${port.macAddress}');
+  return SimpleDialogOption(
+    onPressed: () { Navigator.pop(context, address); },
+    child: Text(address),
+  );
 }
 
 
@@ -109,22 +49,5 @@ extension IntToString on int {
       default:
         return 'Unknown';
     }
-  }
-}
-
-class CardListTile extends StatelessWidget {
-  final String name;
-  final String? value;
-
-  CardListTile(this.name, this.value);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text(value ?? 'N/A'),
-        subtitle: Text(name),
-      ),
-    );
   }
 }

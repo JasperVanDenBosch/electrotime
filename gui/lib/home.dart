@@ -14,21 +14,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? selectedPortAddress;
   bool recording = false;
+  final TextEditingController deviceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> _changePort(BuildContext context) async {
+  @override
+  void dispose() {
+    deviceController.dispose(); // You need to do this.
 
-    //selectedPortAddress = 
-    selectDevice(context).then((newPortAddress) {
-      setState(() {
-        selectedPortAddress = newPortAddress;
-      });
-    });
-
+    super.dispose();
   }
 
   String selectedPortLabel() {
@@ -37,8 +34,21 @@ class _HomePageState extends State<HomePage> {
       return _selectedPortAddress;
     }
     else {
-      return '';
+      return 'Select Device';
     }
+  }
+
+  void Function()? getDeviceSelectionCallback() {
+    return recording ? null : () { 
+      selectDevice(context).then((newPortAddress) {
+        setState(() {
+          selectedPortAddress = newPortAddress;
+          if (newPortAddress != null) {
+            deviceController.text = selectedPortAddress!;
+          }
+        });
+      });
+    };
   }
 
   @override
@@ -49,29 +59,42 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(HomePage.title),
       ),
-      body: Column(
-        children: [
-          Text(selectedPortLabel()),
-          ElevatedButton.icon(
-            label: const Text('Select Device'),
-            icon: const Icon(Icons.electrical_services),
-            onPressed: () { 
-              selectDevice(context).then((newPortAddress) {
-                setState(() {
-                  selectedPortAddress = newPortAddress;
-                });
-              });
-            }
-          ),
-        ]
-      ),
-      floatingActionButton: RecordButton(
-        active: recording,
-        callback: () {
-          setState(() {
-            recording = !recording;
-          });
-        }
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          padding: const EdgeInsets.all(4),
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextField(
+                  onTap: getDeviceSelectionCallback(),
+                  controller: deviceController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Device',
+                    suffixIcon: IconButton(
+                      onPressed: null,
+                      icon: Icon(Icons.electrical_services)
+                    )
+                  ),
+                ),
+            Row(
+              children: [
+                RecordButton(
+                  active: recording,
+                  callback: () {
+                    setState(() {
+                      recording = !recording;
+                    });
+                  }
+                )
+                //Text(), Display time elapsed here
+              ]
+            )
+          ]
+        )
+        ),
       )
     );
   }

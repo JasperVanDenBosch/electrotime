@@ -8,7 +8,7 @@ class RecordButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton.extended(
+    return ElevatedButton.icon(
       onPressed: callback,
       icon: Icon(Icons.fiber_manual_record, color: active ? Colors.red: null),
       label: const Text('record'),
