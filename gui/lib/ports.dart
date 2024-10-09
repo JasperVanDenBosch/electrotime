@@ -3,8 +3,18 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 
 Future<String?> selectDevice(BuildContext context) async {
-  final availablePorts = SerialPort.availablePorts;
-  return showDialog<String?>(
+  final availablePorts = findConnectedDevices();
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  if (availablePorts.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('No Recorder found. Have you connected it?'),
+      )
+    );
+    return null;
+  }
+  else {
+    return showDialog<String?>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
@@ -15,7 +25,12 @@ Future<String?> selectDevice(BuildContext context) async {
           ],
         );
       }
-  );
+    );
+  }
+}
+
+List<String> findConnectedDevices() {
+  return SerialPort.availablePorts.where((a) => !a.contains('luetooth')).toList();
 }
 
 SimpleDialogOption buildOption(String address, BuildContext context) {

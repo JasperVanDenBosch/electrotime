@@ -70,7 +70,10 @@ class _HomePageState extends State<HomePage> {
       selectDevice(context).then((newPortAddress) {
         setState(() {
           selectedPortAddress = newPortAddress;
-          if (newPortAddress != null) {
+          if (newPortAddress == null) {
+            deviceController.text = '';
+          }
+          else {
             deviceController.text = selectedPortAddress!;
           }
         });
