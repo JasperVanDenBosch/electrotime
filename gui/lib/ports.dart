@@ -66,3 +66,14 @@ extension IntToString on int {
     }
   }
 }
+
+
+void read() {
+  final reader = SerialPortReader(port);
+  reader.stream.listen((data) {
+    print('received: $data');
+  });
+  // .close()
+  // should dispose
+  // could report after epoch
+}
