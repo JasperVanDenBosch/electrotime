@@ -1,10 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:latrec/about.dart';
-import 'package:latrec/ports.dart';
+import 'package:latrec/device.dart';
 import 'package:latrec/recordbutton.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   bool recording = false;
   int secondsElapsed = 0;
   Timer? timer;
-  final TextEditingController deviceController = TextEditingController();
+
 
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
@@ -52,39 +51,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    deviceController.dispose(); // You need to do this.
-
-    super.dispose();
-  }
-
-  String selectedPortLabel() {
-    final _selectedPortAddress = selectedPortAddress;
-    if (_selectedPortAddress != null) {
-      return _selectedPortAddress;
-    }
-    else {
-      return 'Select Device';
-    }
-  }
-
-  void Function()? getDeviceSelectionCallback() {
-    return recording ? null : () { 
-      selectDevice(context).then((newPortAddress) {
-        setState(() {
-          selectedPortAddress = newPortAddress;
-          if (newPortAddress == null) {
-            deviceController.text = '';
-          }
-          else {
-            deviceController.text = selectedPortAddress!;
-          }
-        });
-      });
-    };
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
@@ -99,19 +65,14 @@ class _HomePageState extends State<HomePage> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              TextField(
-                  onTap: getDeviceSelectionCallback(),
-                  controller: deviceController,
-                  readOnly: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Device',
-                    suffixIcon: IconButton(
-                      onPressed: null,
-                      icon: Icon(Icons.electrical_services)
-                    )
-                  ),
-                ),
+            DeviceSelector(
+              disabled: recording,
+              onDeviceChanged: (address) { 
+                setState(() {
+                  selectedPortAddress = address;
+                });
+               },
+            ),
             Row(
               children: [
                 RecordButton(
