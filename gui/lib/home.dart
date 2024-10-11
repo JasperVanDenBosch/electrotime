@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:latrec/about.dart';
 import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   String? selectedPortAddress;
   bool recording = false;
   int secondsElapsed = 0;
@@ -122,7 +125,8 @@ class _HomePageState extends State<HomePage> {
           ]
         )
         ),
-      )
+      ),
+      bottomSheet: const AboutSection(),
     );
   }
 }
