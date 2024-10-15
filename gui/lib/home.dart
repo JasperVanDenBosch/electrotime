@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latrec/about.dart';
 import 'package:latrec/device.dart';
+import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
 
 
@@ -21,7 +22,6 @@ class _HomePageState extends State<HomePage> {
   int secondsElapsed = 0;
   Timer? timer;
 
-
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
     final secs = (secondsElapsed % 60).floor();
@@ -29,23 +29,32 @@ class _HomePageState extends State<HomePage> {
     return '$mins:$secsPadded';
   }
 
-  void record() {
-    secondsElapsed = 0;
+  void onRecordingFinished(String fileName) {
     final previousTimer = timer;
     if (previousTimer != null) {
       previousTimer.cancel();
     }
-
     setState(() {
-      recording = !recording;
+      recording = false;
     });
-    if (recording) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Saved recording as $fileName'),
+      )
+    );
+  }
+
+  void startRecording() {
+    setState(() {
+      secondsElapsed = 0;
+      recording = true;
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         setState(() {
           secondsElapsed += 1;
         });
       });
-    }
+      record(selectedPortAddress!).then(onRecordingFinished);
+    });
   }
 
   @override
@@ -82,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 RecordButton(
                   disabled: selectedPortAddress == null,
                   active: recording,
-                  callback: record
+                  callback: startRecording
                 ),
                 const Spacer(),
                 Text(timeElapsedString()),
