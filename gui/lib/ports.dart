@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
@@ -45,6 +44,7 @@ SimpleDialogOption buildOption(String address, BuildContext context) {
   debugPrint('Product Name ${port.productName}');
   debugPrint('Serial Number ${port.serialNumber}');
   debugPrint('MAC Address ${port.macAddress}');
+  port.close();
   return SimpleDialogOption(
     onPressed: () { Navigator.pop(context, address); },
     child: Text(address),
@@ -80,24 +80,37 @@ https://github.com/jpnurmi/flutter_libserialport/issues/30#issuecomment-93807619
 
 */
 Future<String> record(String address) async {
+  debugPrint('####');
+  debugPrint('address [$address]');
   final port = SerialPort(address);
-  if (!port.openRead()) {
-    print(SerialPort.lastError);
-    exit(-1);
-  }
+  final output = port.openRead();
+  debugPrint('out: $output');
+  //port.close();
+  //final config = SerialPortConfig();
+  final config = port.config; 
+  config.baudRate = 115200;
+  port.config = config;
+  // if (!port.openRead()) {
+  //   debugPrint('could not open port');
+  //   print(SerialPort.lastError);
+  //   exit(-1);
+  // }
   final reader = SerialPortReader(port);
   final List<Uint8List> dataList = [];
   const MAX_SAMPLES = 1000;
   await reader.stream.listen(
     (Uint8List data) {
       if (dataList.length >= MAX_SAMPLES) {
+        debugPrint('closing since max samples reached');
         reader.close();
       }
+      debugPrint('sample');
       dataList.add(data);
     },
     cancelOnError: true
-  );
-  port.close();
+  ); // await currently returns immediately
+  // have to schedule the below to when the subscription ends, "onDone"
+  //port.close();
   final epochMs = DateTime.now().toUtc().millisecondsSinceEpoch;
   final fileName = 'record_$epochMs.dat';
   final IOSink sink = File(fileName).openWrite();
@@ -107,4 +120,5 @@ Future<String> record(String address) async {
   await sink.flush();
   await sink.close();
   return fileName;
+  return 'error';
 }
