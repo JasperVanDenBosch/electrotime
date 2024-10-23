@@ -80,37 +80,30 @@ https://github.com/jpnurmi/flutter_libserialport/issues/30#issuecomment-93807619
 
 */
 Future<String> record(String address) async {
-  debugPrint('####');
-  debugPrint('address [$address]');
   final port = SerialPort(address);
-  final output = port.openRead();
-  debugPrint('out: $output');
-  //port.close();
-  //final config = SerialPortConfig();
+  final _ = port.openRead();
   final config = port.config; 
+  //You should always set baud rate, data bits, parity and stop bits.
+  // debugPrint('baudRate ${config.baudRate}');//10?
+  // debugPrint('bits ${config.bits}');//10?
+  // debugPrint('parity ${config.parity}');//10?
+  // debugPrint('stopBits ${config.stopBits}');//10?
   config.baudRate = 115200;
   port.config = config;
-  // if (!port.openRead()) {
-  //   debugPrint('could not open port');
-  //   print(SerialPort.lastError);
-  //   exit(-1);
-  // }
   final reader = SerialPortReader(port);
   final List<Uint8List> dataList = [];
   const MAX_SAMPLES = 1000;
-  await reader.stream.listen(
-    (Uint8List data) {
+  await for (final Uint8List data in reader.stream) {
       if (dataList.length >= MAX_SAMPLES) {
+        //counter doesnt work since data.length varies
+        // should instead append to collapsed list?
         debugPrint('closing since max samples reached');
-        reader.close();
+        break;
       }
-      debugPrint('sample');
+      debugPrint('####${data}#####');
       dataList.add(data);
-    },
-    cancelOnError: true
-  ); // await currently returns immediately
-  // have to schedule the below to when the subscription ends, "onDone"
-  //port.close();
+  }
+  debugPrint('${dataList.length}');
   final epochMs = DateTime.now().toUtc().millisecondsSinceEpoch;
   final fileName = 'record_$epochMs.dat';
   final IOSink sink = File(fileName).openWrite();
@@ -120,5 +113,4 @@ Future<String> record(String address) async {
   await sink.flush();
   await sink.close();
   return fileName;
-  return 'error';
 }
