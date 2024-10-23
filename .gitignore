@@ -4,3 +4,4 @@ target/
 env/
 data/
 plots/
+gui/*.dat
