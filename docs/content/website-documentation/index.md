@@ -1,7 +1,7 @@
 +++
-title = "Website and Documentation"
+title = "Website"
 description = "Static website and documentation for users and contributors"
-SequenceNumber = 5
+SequenceNumber = 6
 +++
 
 # 🌐 Website and Documentation
@@ -10,7 +10,7 @@ SequenceNumber = 5
 
 The idea here is to share info for both users of the device, as well as people interested in the project or wanting to build copies themselves. 👥
 
-We have been using a simple static site generator for several other websites for the eegmanylabs project. It's called [Syrinx](https://github.com/JasperVanDenBosch/syrinx). 🦜 See our [Syrinx documentation](Syrinx%20Static%20Site%20Generator.md) for more details.
+We have been using a simple static site generator for several other websites for the eegmanylabs project. It's called [Syrinx](https://github.com/JasperVanDenBosch/syrinx). 🦜 See our [Syrinx documentation](/syrinx) for more details.
 
 You can simply write text in markdown, and the generator will turn it into HTML. ✨
 

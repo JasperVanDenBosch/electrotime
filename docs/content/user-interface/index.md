@@ -1,7 +1,7 @@
 +++
-title = "User Interface"
+title = "UI"
 description = "Cross-platform Flutter app for recording control"
-SequenceNumber = 4
+SequenceNumber = 5
 +++
 
 # 🖥️ User Interface

@@ -1,7 +1,7 @@
 +++
 title = "Firmware"
 description = "Device firmware written in Rust with AVR_HAL"
-SequenceNumber = 2
+SequenceNumber = 3
 +++
 
 # 💻 Firmware

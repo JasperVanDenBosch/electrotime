@@ -1,7 +1,7 @@
 +++
 title = "Syrinx"
 description = "Documentation for the Syrinx static site generator used for this documentation"
-SequenceNumber = 6
+SequenceNumber = 7
 +++
 
 # 🦜 Syrinx Static Site Generator

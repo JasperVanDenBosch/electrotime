@@ -1,7 +1,7 @@
 +++
 title = "Data Analysis"
 description = "Python-based data analysis tools for recorded data"
-SequenceNumber = 3
+SequenceNumber = 4
 +++
 
 # 📊 Data Analysis

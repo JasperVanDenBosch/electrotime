@@ -1,7 +1,7 @@
 +++
 title = "Hardware"
 description = "Hardware components and design of the latency recorder"
-SequenceNumber = 1
+SequenceNumber = 2
 +++
 
 # 🔧 Hardware
