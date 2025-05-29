@@ -1,7 +1,7 @@
 +++
 title = "Overview"
 description = "Timing Matters Hackathon information and project overview"
-SequenceNumber = 1
+SequenceNumber = 0
 +++
 
 # 🧠 Timing Matters Hackathon Guide
@@ -12,7 +12,7 @@ SequenceNumber = 1
 🗺️ [Google Maps](https://maps.google.com/)  
 📍 What3Words: [thin.noted.brush](https://what3words.com/thin.noted.brush)
 
-## 📋 Overview
+## 📋 Hackathon Overview
 
 💬 **Discord Invite link:** <https://discord.gg/47mBnvJM>
 
