@@ -5,3 +5,4 @@ env/
 data/
 plots/
 gui/*.dat
+docs/dist/
