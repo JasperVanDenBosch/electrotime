@@ -1,8 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:latrec/about.dart';
+import 'package:latrec/device.dart';
 import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,11 +16,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   String? selectedPortAddress;
   bool recording = false;
   int secondsElapsed = 0;
   Timer? timer;
-  final TextEditingController deviceController = TextEditingController();
 
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
@@ -27,58 +29,37 @@ class _HomePageState extends State<HomePage> {
     return '$mins:$secsPadded';
   }
 
-  void record() {
-    secondsElapsed = 0;
+  void onRecordingFinished(String fileName) {
     final previousTimer = timer;
     if (previousTimer != null) {
       previousTimer.cancel();
     }
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      setState(() {
-        secondsElapsed += 1;
-      });
-    });
     setState(() {
-      recording = !recording;
+      recording = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Saved recording as $fileName'),
+      )
+    );
+  }
+
+  void startRecording() {
+    setState(() {
+      secondsElapsed = 0;
+      recording = true;
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+        setState(() {
+          secondsElapsed += 1;
+        });
+      });
+      record(selectedPortAddress!).then(onRecordingFinished);
     });
   }
 
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    deviceController.dispose(); // You need to do this.
-
-    super.dispose();
-  }
-
-  String selectedPortLabel() {
-    final _selectedPortAddress = selectedPortAddress;
-    if (_selectedPortAddress != null) {
-      return _selectedPortAddress;
-    }
-    else {
-      return 'Select Device';
-    }
-  }
-
-  void Function()? getDeviceSelectionCallback() {
-    return recording ? null : () { 
-      selectDevice(context).then((newPortAddress) {
-        setState(() {
-          selectedPortAddress = newPortAddress;
-          if (newPortAddress == null) {
-            deviceController.text = '';
-          }
-          else {
-            deviceController.text = selectedPortAddress!;
-          }
-        });
-      });
-    };
   }
 
   @override
@@ -94,26 +75,23 @@ class _HomePageState extends State<HomePage> {
           constraints: const BoxConstraints(maxWidth: 400),
           padding: const EdgeInsets.all(4),
           child:Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              TextField(
-                  onTap: getDeviceSelectionCallback(),
-                  controller: deviceController,
-                  readOnly: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Device',
-                    suffixIcon: IconButton(
-                      onPressed: null,
-                      icon: Icon(Icons.electrical_services)
-                    )
-                  ),
-                ),
+            DeviceSelector(
+              disabled: recording,
+              onDeviceChanged: (address) { 
+                setState(() {
+                  selectedPortAddress = address;
+                });
+               },
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 RecordButton(
+                  disabled: selectedPortAddress == null,
                   active: recording,
-                  callback: record
+                  callback: startRecording
                 ),
                 const Spacer(),
                 Text(timeElapsedString()),
@@ -122,7 +100,8 @@ class _HomePageState extends State<HomePage> {
           ]
         )
         ),
-      )
+      ),
+      bottomSheet: const AboutSection(),
     );
   }
 }

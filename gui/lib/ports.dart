@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 
@@ -42,6 +44,7 @@ SimpleDialogOption buildOption(String address, BuildContext context) {
   debugPrint('Product Name ${port.productName}');
   debugPrint('Serial Number ${port.serialNumber}');
   debugPrint('MAC Address ${port.macAddress}');
+  port.close();
   return SimpleDialogOption(
     onPressed: () { Navigator.pop(context, address); },
     child: Text(address),
@@ -65,4 +68,49 @@ extension IntToString on int {
         return 'Unknown';
     }
   }
+}
+
+/*
+- callback for finished
+- callback for update
+- fancier: keep an instance around, for it to be two way, i.e. closing connection
+- should dispose
+
+https://github.com/jpnurmi/flutter_libserialport/issues/30#issuecomment-938076196
+
+*/
+Future<String> record(String address) async {
+  final port = SerialPort(address);
+  final _ = port.openRead();
+  final config = port.config; 
+  //You should always set baud rate, data bits, parity and stop bits.
+  // debugPrint('baudRate ${config.baudRate}');//10?
+  // debugPrint('bits ${config.bits}');//10?
+  // debugPrint('parity ${config.parity}');//10?
+  // debugPrint('stopBits ${config.stopBits}');//10?
+  config.baudRate = 115200;
+  port.config = config;
+  final reader = SerialPortReader(port);
+  final List<Uint8List> dataList = [];
+  const MAX_SAMPLES = 1000;
+  await for (final Uint8List data in reader.stream) {
+      if (dataList.length >= MAX_SAMPLES) {
+        //counter doesnt work since data.length varies
+        // should instead append to collapsed list?
+        debugPrint('closing since max samples reached');
+        break;
+      }
+      debugPrint('####${data}#####');
+      dataList.add(data);
+  }
+  debugPrint('${dataList.length}');
+  final epochMs = DateTime.now().toUtc().millisecondsSinceEpoch;
+  final fileName = 'record_$epochMs.dat';
+  final IOSink sink = File(fileName).openWrite();
+  for (var data in dataList) {
+    sink.add(data);
+  }
+  await sink.flush();
+  await sink.close();
+  return fileName;
 }
