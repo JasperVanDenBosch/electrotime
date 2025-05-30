@@ -10,8 +10,34 @@ import { getNavigation } from '@/lib/markdown';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'ElectroTime Documentation',
-  description: 'Open-source Arduino-based device for measuring stimulus presentation latency',
+  metadataBase: new URL('https://jaspervandenbosch.github.io/latency-recorder'),
+  title: 'ElectroTime Documentation - Open Source Latency Recorder',
+  description: 'Open-source Arduino-based device for microsecond-precision measurement of stimulus presentation latency in neuroscience and psychology experiments',
+  keywords: ['latency recorder', 'arduino', 'neuroscience', 'psychology', 'timing', 'open source', 'stimulus presentation'],
+  authors: [{ name: 'Jasper Van Den Bosch' }],
+  openGraph: {
+    title: 'ElectroTime - Latency Recorder Documentation',
+    description: 'Microsecond-precision timing measurements for research',
+    type: 'website',
+    url: 'https://jaspervandenbosch.github.io/latency-recorder/',
+    images: ['/electrotime.svg'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'ElectroTime - Latency Recorder',
+    description: 'Open-source timing measurement device for research',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({

@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 300",
-    "build": "next build",
+    "build": "next build && npm run postbuild",
+    "postbuild": "node scripts/generate-sitemap.js",
     "start": "npx serve@latest out -p 3000",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-docs": "./generate-docs.sh"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",

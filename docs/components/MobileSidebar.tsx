@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Menu } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { NavItem } from "@/lib/markdown";
 import { Sidebar } from "./Sidebar";
@@ -26,7 +26,8 @@ export function MobileSidebar({ navigation }: MobileSidebarProps) {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-0 max-w-[280px] h-screen left-0 top-0 translate-x-0 translate-y-0 rounded-none">
+      <DialogContent className="p-0 max-w-[280px] h-[100dvh] left-0 top-0 translate-x-0 translate-y-0 rounded-none data-[state=open]:duration-0 data-[state=closed]:duration-0 pt-10">
+        <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
         <div className="h-full" onClick={() => setOpen(false)}>
           <Sidebar navigation={navigation} />
         </div>
