@@ -34,19 +34,22 @@ The GUI is built using Flutter, providing a cross-platform desktop application f
 
 ## API Documentation
 
-### 🎯 Flutter/Dart API
+The GUI is documented using Dart's built-in documentation system. The API documentation includes:
 
-> **[📖 View Complete Flutter API Documentation →](/developers/gui-api)**  
-> Full API reference for all Flutter/Dart components, widgets, and utilities
+- **Widget documentation**: Complete reference for all custom widgets and components
+- **State management**: Documentation for providers and state classes
+- **Serial communication**: APIs for device detection and data handling
+- **Utility functions**: Helper methods and shared functionality
 
-### Documentation Features
+### View API Documentation
 
-The Flutter documentation includes:
-- **Complete API reference** for all public classes and functions
-- **Source code links** for every documented element
-- **Interactive search** to quickly find what you need
-- **Inheritance diagrams** showing widget relationships
-- **Usage examples** where available
+<div style="margin: 2rem 0; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.5rem;">
+  <h4 style="margin-top: 0;">📚 Flutter/Dart API Reference</h4>
+  <p>Explore the complete API documentation for all Flutter/Dart components, widgets, and utilities.</p>
+  <a href="/developers/gui-api" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 0.25rem;">
+    View API Documentation →
+  </a>
+</div>
 
 ### Generating Documentation
 

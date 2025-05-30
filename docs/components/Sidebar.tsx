@@ -42,7 +42,7 @@ export function Sidebar({ navigation }: SidebarProps) {
     });
     
     setExpandedSections(prev => {
-      const newSections = [...new Set([...prev, ...sectionsToExpand])];
+      const newSections = Array.from(new Set([...prev, ...sectionsToExpand]));
       return newSections;
     });
   }, [pathname, navigation]);

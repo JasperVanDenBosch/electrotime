@@ -153,13 +153,13 @@ export function getNavigation(): NavItem[] {
       href: '/',
     },
     {
-      title: 'API Documentation',
-      href: '/api-docs',
-    },
-    {
       title: 'Developers',
       href: '/developers',
       children: [
+        {
+          title: 'Overview',
+          href: '/developers'
+        },
         ...developerDocs
           .filter(doc => !doc.slug.includes('-api'))
           .map(doc => {
@@ -174,22 +174,24 @@ export function getNavigation(): NavItem[] {
             };
           }),
         {
-          title: 'Hardware API',
-          href: '/developers/hardware-api'
-        },
-        {
-          title: 'GUI API',
-          href: '/developers/gui-api'
+          title: 'API Documentation',
+          href: '/api-docs'
         }
       ]
     },
     {
       title: 'Hackathon',
       href: '/hackathon',
-      children: hackathonDocs.map(doc => ({
-        title: doc.title,
-        href: `/hackathon/${doc.slug.replace('hackathon/', '')}`
-      }))
+      children: [
+        {
+          title: 'Overview',
+          href: '/hackathon'
+        },
+        ...hackathonDocs.map(doc => ({
+          title: doc.title,
+          href: `/hackathon/${doc.slug.replace('hackathon/', '')}`
+        }))
+      ]
     }
   ];
   

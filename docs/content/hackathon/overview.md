@@ -1,9 +1,3 @@
-+++
-title = "Overview"
-description = "Timing Matters Hackathon information and project overview"
-SequenceNumber = 0
-+++
-
 # 🧠 Timing Matters Hackathon Guide
 
 📅 **Friday 30th May 2025**  
