@@ -7,9 +7,11 @@ interface ApiRedirectProps {
 }
 
 export function ApiRedirect({ path }: ApiRedirectProps) {
+  const newPath = path.replace('/api/', '/docs-api/');
+  
   useEffect(() => {
-    window.location.href = path;
-  }, [path]);
+    window.location.href = newPath;
+  }, [newPath]);
   
   return (
     <div className="flex items-center justify-center min-h-[50vh]">
@@ -17,7 +19,7 @@ export function ApiRedirect({ path }: ApiRedirectProps) {
         <h2 className="text-2xl font-bold mb-4">Redirecting to API Documentation...</h2>
         <p className="text-muted-foreground mb-4">
           If you are not redirected automatically, 
-          <a href={path} className="text-primary hover:underline ml-1">
+          <a href={newPath} className="text-primary hover:underline ml-1">
             click here
           </a>
         </p>

@@ -7,8 +7,8 @@ set -e
 echo "🚀 Starting documentation generation..."
 
 # Create output directories
-mkdir -p docs/public/api/firmware
-mkdir -p docs/public/api/gui
+mkdir -p docs/public/docs-api/firmware
+mkdir -p docs/public/docs-api/gui
 
 # Generate Rust documentation
 echo "📦 Generating Rust documentation..."
@@ -25,7 +25,7 @@ echo "  Skipping recorder and simulator (AVR target required)"
 
 # Copy generated docs to public directory
 echo "  Copying Rust docs..."
-cp -r target/doc/* ../docs/public/api/firmware/
+cp -r target/doc/* ../docs/public/docs-api/firmware/
 
 cd ..
 
@@ -36,7 +36,7 @@ cd gui
 # Check if dart is installed
 if command -v dart &> /dev/null; then
     echo "  Running dart doc..."
-    dart doc --output ../docs/public/api/gui
+    dart doc --output ../docs/public/docs-api/gui
 else
     echo "  ⚠️  Dart not found. Skipping Flutter documentation."
 fi
@@ -121,8 +121,8 @@ EOF
 echo "✅ Documentation generation complete!"
 echo ""
 echo "📂 Generated files:"
-echo "  - Firmware docs: docs/public/api/firmware/"
-echo "  - GUI docs: docs/public/api/gui/"
+echo "  - Firmware docs: docs/public/docs-api/firmware/"
+echo "  - GUI docs: docs/public/docs-api/gui/"
 echo "  - Index pages created in docs/content/"
 echo ""
 echo "🌐 To view the docs, run the Next.js development server:"

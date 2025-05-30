@@ -13,17 +13,17 @@ This section contains auto-generated API documentation for the firmware componen
 ### latreclib
 Core library providing helper functions and abstractions for the latency recorder.
 
-[View Documentation →](/api/firmware/latreclib/index.html)
+[View Documentation →](/docs-api/firmware/latreclib/index.html)
 
 ### recorder
 Main firmware application that runs on the Arduino hardware.
 
-[View Documentation →](/api/firmware/recorder/index.html)
+[View Documentation →](/docs-api/firmware/recorder/index.html)
 
 ### simulator
 Hardware simulator for testing without physical Arduino.
 
-[View Documentation →](/api/firmware/simulator/index.html)
+[View Documentation →](/docs-api/firmware/simulator/index.html)
 
 ## Building Documentation Locally
 

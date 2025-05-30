@@ -36,17 +36,17 @@ The GUI is built using Flutter, providing a cross-platform desktop application f
 
 ### 🎯 Flutter/Dart API
 
-> **[📖 View Complete Flutter API Documentation →](/api/gui/)**  
+> **[📖 View Complete Flutter API Documentation →](/docs-api/gui/)**  
 > Full API reference for all Flutter/Dart components, widgets, and utilities
 
 ### Key Classes and Components
 
 #### Core Classes
 
-- **[🏠 HomePage Class](/api/gui/home/HomePage-class.html)** - Main application screen with recording controls and device management
-- **[🔌 DeviceSelector Widget](/api/gui/device/DeviceSelector-class.html)** - Dropdown widget for selecting and managing serial devices  
-- **[⏺️ RecordButton Widget](/api/gui/recordbutton/RecordButton-class.html)** - Animated button for starting and stopping recordings
-- **[🛠️ Port Utilities](/api/gui/ports/ports-library.html)** - Functions for device detection, port management, and recording
+- **[🏠 HomePage Class](/docs-api/gui/home/HomePage-class.html)** - Main application screen with recording controls and device management
+- **[🔌 DeviceSelector Widget](/docs-api/gui/device/DeviceSelector-class.html)** - Dropdown widget for selecting and managing serial devices  
+- **[⏺️ RecordButton Widget](/docs-api/gui/recordbutton/RecordButton-class.html)** - Animated button for starting and stopping recordings
+- **[🛠️ Port Utilities](/docs-api/gui/ports/ports-library.html)** - Functions for device detection, port management, and recording
 
 ### Documentation Features
 

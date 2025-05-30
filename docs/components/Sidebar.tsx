@@ -27,6 +27,26 @@ export function Sidebar({ navigation }: SidebarProps) {
     }
   }, []);
 
+  // Auto-expand sections that contain the active page
+  useEffect(() => {
+    const sectionsToExpand: string[] = [];
+    navigation.forEach(item => {
+      if (item.children) {
+        const hasActiveChild = item.children.some(child => 
+          pathname === child.href || pathname.startsWith(child.href + '/')
+        );
+        if (hasActiveChild) {
+          sectionsToExpand.push(item.title);
+        }
+      }
+    });
+    
+    setExpandedSections(prev => {
+      const newSections = [...new Set([...prev, ...sectionsToExpand])];
+      return newSections;
+    });
+  }, [pathname, navigation]);
+
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -45,8 +65,11 @@ export function Sidebar({ navigation }: SidebarProps) {
   const renderNavItem = (item: NavItem, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedSections.includes(item.title);
-    const isActive = pathname === item.href;
-    const isParentActive = item.children?.some(child => pathname === child.href);
+    const isActive = pathname === item.href || 
+                    (item.href !== '/' && pathname.startsWith(item.href + '/'));
+    const isChildActive = item.children?.some(child => 
+      pathname === child.href || pathname.startsWith(child.href + '/')
+    );
 
     return (
       <div key={item.href}>
@@ -54,15 +77,18 @@ export function Sidebar({ navigation }: SidebarProps) {
           className={cn(
             "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200",
             level > 0 && "ml-4",
-            isActive && "bg-primary/10 text-primary border-l-2 border-primary",
-            !isActive && "hover:bg-muted hover:text-foreground",
-            isParentActive && "text-primary"
+            isActive && "bg-muted text-foreground",
+            !isActive && !isChildActive && "hover:bg-muted hover:text-foreground",
+            isChildActive && !hasChildren && "text-primary"
           )}
         >
           {hasChildren ? (
             <button
               onClick={() => toggleSection(item.title)}
-              className="flex items-center gap-2 w-full text-left"
+              className={cn(
+                "flex items-center gap-2 w-full text-left",
+                isChildActive && "text-primary font-semibold"
+              )}
             >
               <ChevronRight
                 className={cn(

@@ -23,7 +23,7 @@ export default function ApiDocsPage() {
           </p>
           <div className="space-y-3">
             <a 
-              href="/api/firmware/latreclib/" 
+              href="/docs-api/firmware/latreclib/" 
               target="_blank"
               className="block p-3 bg-muted rounded hover:bg-muted/80 transition-colors no-underline"
             >
@@ -48,7 +48,7 @@ export default function ApiDocsPage() {
           </p>
           <div className="space-y-3">
             <a 
-              href="/api/gui/" 
+              href="/docs-api/gui/" 
               target="_blank"
               className="block p-3 bg-muted rounded hover:bg-muted/80 transition-colors no-underline"
             >
@@ -102,7 +102,7 @@ cd gui && dart doc`}</code>
               <a href="https://dart.dev/guides/language/effective-dart/documentation" className="text-primary hover:underline ml-1" target="_blank">
                 Effective Dart
               </a> 
-              documentation guidelines.
+              &nbsp;documentation guidelines.
             </p>
           </div>
         </div>

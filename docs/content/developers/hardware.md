@@ -29,7 +29,7 @@ A hardware simulator that allows testing the firmware logic without physical Ard
 
 ### 📚 Rust Firmware API
 
-> **[📖 View latreclib API Documentation →](/api/firmware/latreclib/)**  
+> **[📖 View latreclib API Documentation →](/docs-api/firmware/latreclib/)**  
 > Core library with helper functions for bit manipulation and hardware abstraction
 
 The firmware documentation includes:

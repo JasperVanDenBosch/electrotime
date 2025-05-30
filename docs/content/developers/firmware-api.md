@@ -8,7 +8,7 @@ SequenceNumber = 3
 
 This section contains auto-generated API documentation for the Flutter GUI application.
 
-[View Full Documentation →](/api/gui/index.html)
+[View Full Documentation →](/docs-api/gui/index.html)
 
 ## Key Components
 
