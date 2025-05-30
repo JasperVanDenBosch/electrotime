@@ -99,7 +99,7 @@ export function getNavigation(): NavItem[] {
       title: 'Hackathon',
       href: '/hackathon',
       children: documents
-        .filter(doc => doc.slug !== 'overview')
+        .filter(doc => doc.slug !== 'overview' && !doc.slug.startsWith('developers-'))
         .sort((a, b) => {
           // Sort by sequence number if available, otherwise alphabetically
           if (a.sequenceNumber !== undefined && b.sequenceNumber !== undefined) {
@@ -113,6 +113,24 @@ export function getNavigation(): NavItem[] {
           title: doc.title,
           href: `/hackathon/${doc.slug}`
         }))
+    },
+    {
+      title: 'Developers',
+      href: '/developers',
+      children: [
+        {
+          title: 'Hardware',
+          href: '/hackathon/developers-hardware'
+        },
+        {
+          title: 'Firmware',
+          href: '/hackathon/developers-firmware'
+        },
+        {
+          title: 'Data Analytics',
+          href: '/hackathon/developers-data-analytics'
+        }
+      ]
     }
   ];
   

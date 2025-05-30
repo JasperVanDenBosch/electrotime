@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ChevronRight, Home, Rocket, FileText, Code, Cpu, BarChart3, Smartphone, Globe, Sparkles } from 'lucide-react';
+import { ChevronRight, Home, Rocket, FileText, Code, Cpu, BarChart3, Smartphone, Globe, Sparkles, CodeSquare } from 'lucide-react';
 import { useState } from 'react';
 import { NavItem } from '@/lib/markdown';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -15,7 +15,7 @@ interface SidebarProps {
 
 export function Sidebar({ navigation }: SidebarProps) {
   const pathname = usePathname();
-  const [expandedSections, setExpandedSections] = useState<string[]>(['Hackathon']);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['Hackathon', 'Developers']);
 
   const toggleSection = (title: string) => {
     setExpandedSections(prev =>
@@ -77,9 +77,11 @@ export function Sidebar({ navigation }: SidebarProps) {
     const iconMap: { [key: string]: JSX.Element } = {
       'Getting Started': <Home className="h-4 w-4" />,
       'Hackathon': <Rocket className="h-4 w-4" />,
+      'Developers': <CodeSquare className="h-4 w-4" />,
       'Hardware': <Cpu className="h-4 w-4" />,
       'Firmware': <Code className="h-4 w-4" />,
       'Data Analysis': <BarChart3 className="h-4 w-4" />,
+      'Data Analytics': <BarChart3 className="h-4 w-4" />,
       'User Interface': <Smartphone className="h-4 w-4" />,
       'Website Documentation': <Globe className="h-4 w-4" />,
       'Miscellaneous Ideas & Fun Projects': <Sparkles className="h-4 w-4" />,

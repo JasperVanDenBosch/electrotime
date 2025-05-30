@@ -1,5 +1,7 @@
 # Latency Recorder
 
+[![Documentation](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml)
+
 An open-source Arduino-based device that measures stimulus presentation latency in neuroscience experiments, particularly EEG setups. This project provides hardware designs, firmware, and software tools to help researchers worldwide accurately measure and compensate for timing delays in their experimental paradigms using affordable, accessible hardware.
 
 🌍 Mission
