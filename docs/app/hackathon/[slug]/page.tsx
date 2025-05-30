@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   return {
-    title: `${doc.title} - Latency Recorder`,
+    title: `${doc.title} - ElectroTime`,
     description: doc.description || `Documentation for ${doc.title}`,
   };
 }

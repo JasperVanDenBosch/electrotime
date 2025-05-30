@@ -3,12 +3,13 @@ import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { Sidebar } from '@/components/Sidebar';
 import { Navbar } from '@/components/Navbar';
+import { Logo } from '@/components/Logo';
 import { getNavigation } from '@/lib/markdown';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Latency Recorder Documentation',
+  title: 'ElectroTime Documentation',
   description: 'Open-source Arduino-based device for measuring stimulus presentation latency',
 };
 
@@ -23,6 +24,11 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className} suppressHydrationWarning>
         <div className="flex flex-col h-screen">
+          <div className="w-full bg-background border-b">
+            <div className="container mx-auto px-8 py-4 flex justify-center">
+              <Logo />
+            </div>
+          </div>
           <Navbar />
           <div className="flex flex-1 overflow-hidden">
             <Sidebar navigation={navigation} />

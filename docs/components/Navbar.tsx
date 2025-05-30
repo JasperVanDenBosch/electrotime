@@ -30,11 +30,11 @@ export function Navbar() {
       <div className="container flex h-14 items-center px-8">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-lg font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-              LR
+            <span className="text-lg font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
+              ET
             </span>
             <span className="hidden font-bold sm:inline-block">
-              Latency Recorder
+              ElectroTime
             </span>
           </Link>
         </div>
@@ -80,7 +80,7 @@ export function Navbar() {
             className="h-9 w-9"
           >
             <a
-              href="https://github.com/JasperVanDenBosch/latency-recorder"
+              href="https://github.com/JasperVanDenBosch/electrotime"
               target="_blank"
               rel="noopener noreferrer"
             >

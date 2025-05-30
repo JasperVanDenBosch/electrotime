@@ -45,14 +45,22 @@ jobs:
       - name: Copy README to content
         run: |
           cd docs
-          # Copy README.md to content/repo.md
-          cp ../README.md content/repo.md
+          # Create repo.md with frontmatter
+          cat > content/repo.md << 'EOF'
+          +++
+          title = "Repository"
+          description = "Main repository README documentation"
+          SequenceNumber = 7
+          +++
+          
+          EOF
+          # Append README content
+          cat ../README.md >> content/repo.md
 
-      - name: Build and export Next.js site
+      - name: Build Next.js site
         run: |
           cd docs
           npm run build
-          npm run export
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

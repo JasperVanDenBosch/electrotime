@@ -81,8 +81,10 @@ export function Sidebar({ navigation }: SidebarProps) {
       'Firmware': <Code className="h-4 w-4" />,
       'Data Analysis': <BarChart3 className="h-4 w-4" />,
       'User Interface': <Smartphone className="h-4 w-4" />,
-      'Website': <Globe className="h-4 w-4" />,
+      'Website Documentation': <Globe className="h-4 w-4" />,
       'Miscellaneous Ideas & Fun Projects': <Sparkles className="h-4 w-4" />,
+      'Repository': <FileText className="h-4 w-4" />,
+      'Syrinx Static Site Generator': <Code className="h-4 w-4" />,
     };
     return iconMap[title] || <FileText className="h-4 w-4" />;
   };
