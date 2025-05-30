@@ -27,7 +27,7 @@ export function Logo() {
     <img 
       src={isDark ? "/electrotime-dark.svg" : "/electrotime.svg"} 
       alt="ElectroTime" 
-      className="h-20 w-auto"
+      className="h-12 md:h-20 w-auto"
     />
   );
 }

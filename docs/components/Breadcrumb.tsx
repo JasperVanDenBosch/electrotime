@@ -24,17 +24,17 @@ export function Breadcrumb() {
   });
   
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-      <Link href="/" className="hover:text-foreground transition-colors">
+    <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-muted-foreground overflow-x-auto">
+      <Link href="/" className="hover:text-foreground transition-colors whitespace-nowrap">
         Home
       </Link>
       {breadcrumbItems.map((item, index) => (
-        <div key={item.href} className="flex items-center gap-2">
-          <ChevronRight className="h-4 w-4" />
+        <div key={item.href} className="flex items-center gap-1 md:gap-2">
+          <ChevronRight className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
           {index === breadcrumbItems.length - 1 ? (
-            <span className="text-foreground font-medium">{item.label}</span>
+            <span className="text-foreground font-medium whitespace-nowrap">{item.label}</span>
           ) : (
-            <Link href={item.href} className="hover:text-foreground transition-colors">
+            <Link href={item.href} className="hover:text-foreground transition-colors whitespace-nowrap">
               {item.label}
             </Link>
           )}

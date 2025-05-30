@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className} suppressHydrationWarning>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-[100dvh]">
           <div className="w-full bg-background border-b">
             <div className="container mx-auto px-8 py-4 flex justify-center relative">
               <MobileSidebar navigation={navigation} />
@@ -35,10 +35,16 @@ export default function RootLayout({
             <div className="hidden md:block">
               <Sidebar navigation={navigation} />
             </div>
-            <main className="flex-1 overflow-auto bg-background">
-              <div className="container h-[95%] max-w-5xl mx-auto px-4 md:px-8 py-8">
-                <Breadcrumb />
-                {children}
+            <main className="flex-1 flex flex-col bg-background">
+              <div className="sticky top-0 z-10 bg-background border-b">
+                <div className="container max-w-5xl mx-auto px-4 md:px-8 py-4">
+                  <Breadcrumb />
+                </div>
+              </div>
+              <div className="flex-1 overflow-auto">
+                <div className="container max-w-5xl mx-auto px-4 md:px-8 py-8">
+                  {children}
+                </div>
               </div>
             </main>
           </div>

@@ -170,7 +170,7 @@ export function Sidebar({ navigation }: SidebarProps) {
   };
 
   return (
-    <aside className="w-64 h-full bg-muted/10 border-r flex flex-col">
+    <aside className="w-full md:w-64 h-full bg-muted/10 md:border-r flex flex-col">
       <ScrollArea className="flex-1 py-6 px-4">
         <nav className="space-y-1">
           {navigation.map((item) => renderNavItem(item))}
