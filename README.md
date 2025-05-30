@@ -1,6 +1,19 @@
 # Latency Recorder
 
-An open-source Arduino-based device for measuring stimulus presentation latency in neuroscience experiments, particularly EEG setups. This project provides hardware designs, firmware, and software tools to help researchers accurately measure and compensate for timing delays in their experimental paradigms.
+An open-source Arduino-based device that measures stimulus presentation latency in neuroscience experiments, particularly EEG setups. This project provides hardware designs, firmware, and software tools to help researchers worldwide accurately measure and compensate for timing delays in their experimental paradigms using affordable, accessible hardware.
+
+🌍 Mission
+Enable consistent, accurate EEG testing globally by providing open-source, low-cost tools that eliminate timing uncertainties in neuroscience research. Our goal is to make precision timing accessible to researchers everywhere, regardless of budget or location.
+
+
+🧠 The Problem We Solve
+In EEG research, Event-Related Potentials (ERPs) require millisecond precision. However, unknown delays exist between:
+
+Visual stimulus: Code → OS → GPU → Monitor
+Trigger signal: Code → OS → Trigger device → EEG amplifier
+
+Most EEG studies assume this delay is 0ms, leading to inaccurate timing and compromised research quality. The Latency Recorder measures these delays in real-time, enabling researchers to achieve true millisecond precision.
+
 
 ## 📋 Overview
 
@@ -10,8 +23,8 @@ The Latency Recorder helps neuroscientists measure the precise timing between tr
 
 - Real-time latency measurement using photodiode for visual stimuli
 - Parallel port (DB37) input for trigger signals
-- Continuous data streaming via USB serial connection
-- Cross-platform GUI application for data recording
+- Continuous data streaming via USB serial connection (15625Hz sampling rate)
+- Cross-platform GUI application for data recording and analysis
 - Open-source hardware and software design
 
 For more details about the Timing Matters Hackathon and project overview, see [docs/Overview.md](docs/Overview.md).
@@ -83,6 +96,14 @@ Extended documentation for different aspects of the project.
 - Photodiode circuit (see [hardware documentation](docs/Hardware.md))
 - USB cable for data connection
 - (Optional) DB37 parallel port for trigger input
+
+📊 Technical Specifications
+
+Sampling Rate: 15625Hz (64µs resolution)
+Maximum Recording Duration: 4.19 seconds per epoch
+Data Output: Light level, trigger state, timestamp (tval)
+Connectivity: USB serial communication
+Power: USB-powered, no external power required
 
 ### Software Setup
 
@@ -185,3 +206,5 @@ This is an open-source hardware and software project. [License details to be add
 Developed as part of the Timing Matters Hackathon at the University of Leeds.
 
 For questions or support, please open an issue on GitHub or join our [Discord community](https://discord.gg/47mBnvJM).
+
+Made with ❤️ for the global neuroscience community

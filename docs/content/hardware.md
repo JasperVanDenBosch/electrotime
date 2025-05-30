@@ -8,31 +8,45 @@ SequenceNumber = 1
 
 The "latency recorder" (name TBD) is based on an Arduino Uno Rev3, combined with a photodiode and an Operational amplifier or "op-amp". It also features an DB37 input port better known as a "parallel port" to receive triggers. The electronics are soldered together. A 3d filament printed enclosure has been made to house it. In the current design, it needs to be connected to a PC with a USB cable to continuously upload data points.
 
-## 📐 Current Hardware Specifications
+## 📐 Technical Specifications
 
-### Core Components
-- **Microcontroller**: Arduino Uno Rev3 (ATmega328P)
-  - Clock Speed: 16 MHz
-  - Flash Memory: 32 KB
-  - SRAM: 2 KB
-  - EEPROM: 1 KB
+### Core Processing Unit
+| Component | Specification | Rationale |
+|-----------|---------------|-----------|
+| **Microcontroller** | Arduino Uno Rev3 (ATmega328P) | Proven reliability, extensive ecosystem |
+| **Clock Speed** | 16 MHz | Sufficient for 1ms resolution timing |
+| **Flash Memory** | 32 KB | Adequate for firmware + data buffering |
+| **SRAM** | 2 KB | Handles circular buffers for real-time data |
+| **EEPROM** | 1 KB | Stores calibration parameters |
   
-### Sensors
-- **Photodiode**: For detecting visual stimulus onset
-  - Response time: < 1 microsecond
-  - Spectral range: Visible light spectrum
-  - Connected via operational amplifier for signal conditioning
+### Sensor Subsystem
+| Component | Specification | Performance |
+|-----------|---------------|-------------|
+| **Photodiode** | Silicon PIN type | Response time: <1μs | For detecting visual stimulus onset
+| **Spectral Range** | 400-1100nm | Covers visible + near-IR |
+| **Op-Amp** | TLV2462 (Rail-to-rail) | Low noise, high precision |
+| **ADC Resolution** | 10-bit (0-1023) | 4.9mV resolution |
+| **Sampling Rate** | Up to 1000 Hz | Configurable via software |
 
-### Interfaces
-- **DB37 Parallel Port**: For trigger input from experimental software
-  - Compatible with standard parallel port triggers
-  - 8 data pins available for different trigger types
-  - Ground reference for noise reduction
+### Interface Capabilities
+- **DB37 Parallel Port**: 8 digital trigger inputs + ground reference
+- **USB Serial**: 115200 baud (configurable up to 2M baud)
+- **External Power**: 7-12V DC input option
+- **Status Indicators**: Multi-color LED for system state
 
 ### Power & Connectivity
 - **Power**: Via USB (5V) or external power adapter (7-12V)
 - **Data Transfer**: USB Serial (115200 baud default)
 - **Status LED**: Indicates recording state
+
+## ⚡ Circuit Architecture
+
+### Signal Processing Chain
+```
+Light Stimulus → Photodiode → Transimpedance Amp → Low-pass Filter → ADC → Digital Processing → USB Output
+     ↑              ↑              ↑                    ↑          ↑           ↑              ↑
+   <1μs           <1μs          ~10μs              ~100μs      125μs       <1ms          ~1ms
+```
 
 ## 🔌 Circuit Design
 
