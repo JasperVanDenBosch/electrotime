@@ -14,7 +14,7 @@
                 <a href="/" class="logo">🧠 Latency Recorder</a>
                 <ul class="nav-menu">
                     {% for child in root.branches %}
-                    <li><a href="/{{ child.name }}/" {% if child.name == index.name or index.parent and child.name == index.parent.name %}class="active"{% endif %}>{{ child.front.title if child.front and child.front.title else child.title }}</a></li>
+                    <li><a href="/{{ child.name }}/" {% if child.name == index.name or index.parent and child.name == index.parent.name %}class="active" aria-current="page"{% endif %}>{{ child.front.title if child.front and child.front.title else child.title }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

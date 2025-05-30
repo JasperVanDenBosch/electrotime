@@ -17,4 +17,4 @@ SequenceNumber = 0
 💬 **Discord Invite link:** <https://discord.gg/47mBnvJM>
 
 💻 **Github Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>  
-(you should have received an invite but you can also send me your github handle and I will add you)
+(you should have received an invite but you can also send me your GitHub handle and I will add you)

@@ -35,7 +35,7 @@ For more details about the Timing Matters Hackathon and project overview, see [d
 💬 **Discord Invite link:** <https://discord.gg/47mBnvJM>
 
 💻 **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>  
-(you should have received an invite but you can also send me your github handle and I will add you)
+(you should have received an invite but you can also send me your GitHub handle and I will add you)
 
 ## 🗂️ Repository Structure
 
