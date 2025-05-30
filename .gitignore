@@ -7,3 +7,5 @@ plots/
 gui/*.dat
 docs/dist/
 claude/
+docs/.next/
+docs/out/
