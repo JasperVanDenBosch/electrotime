@@ -33,7 +33,7 @@ export default function GuiApiPage() {
         </div>
       </div>
       
-      <div className="flex-1">
+      <div className="flex-1 h-[90%]">
         {viewMode === 'inline' ? (
           <ApiDocFrame
             basePath="/docs-api/gui/index.html"

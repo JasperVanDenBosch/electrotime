@@ -108,6 +108,7 @@ export function Sidebar({ navigation }: SidebarProps) {
             isActive && "bg-muted text-foreground",
             !isActive &&
               !isChildActive &&
+              !hasChildren &&
               "hover:bg-muted hover:text-foreground",
             isChildActive && !hasChildren && "text-primary"
           )}
@@ -115,10 +116,7 @@ export function Sidebar({ navigation }: SidebarProps) {
           {hasChildren ? (
             <button
               onClick={() => toggleSection(item.title)}
-              className={cn(
-                "flex items-center gap-2 w-full text-left",
-                isChildActive && "text-primary font-semibold"
-              )}
+              className="flex items-center gap-2 w-full text-left"
             >
               <ChevronRight
                 className={cn(

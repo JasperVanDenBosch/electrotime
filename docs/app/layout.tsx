@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { MobileSidebar } from '@/components/MobileSidebar';
 import { Logo } from '@/components/Logo';
 import { Breadcrumb } from '@/components/Breadcrumb';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import { getNavigation } from '@/lib/markdown';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -67,8 +68,9 @@ export default function RootLayout({
                   <Breadcrumb />
                 </div>
               </div>
-              <div className="flex-1 overflow-auto">
-                <div className="container max-w-5xl mx-auto px-4 md:px-8 py-8">
+              <div className="flex-1 overflow-auto !mb-4" id="main-content">
+                <ScrollToTop />
+                <div className="container max-w-[90dvw] max-sm:h-[85dvh] h-[80dvh] mx-auto px-4 md:px-8 pt-0 max-md:pb-8 max-md:pt-0 min-md:pb-4">
                   {children}
                 </div>
               </div>
