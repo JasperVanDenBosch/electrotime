@@ -91,6 +91,7 @@ export function Sidebar({ navigation }: SidebarProps) {
       pathname === item.href ||
       (!hasChildren &&
         item.href !== "/" &&
+        item.title !== "Overview" && // Don't apply this logic to Overview items
         pathname.startsWith(item.href + "/"));
 
     // Check if any child is active (for parent styling)
@@ -98,6 +99,15 @@ export function Sidebar({ navigation }: SidebarProps) {
       (child) =>
         pathname === child.href || pathname.startsWith(child.href + "/")
     );
+
+    // Special check for Overview items - only allow hover when no sibling is active
+    const isOverviewItem = item.title === "Overview" && level > 0;
+    let shouldAllowHover = true;
+    
+    if (isOverviewItem) {
+      // For Overview items, only allow hover if we're exactly on the parent path
+      shouldAllowHover = pathname === item.href;
+    }
 
     return (
       <div key={item.href}>
@@ -109,6 +119,7 @@ export function Sidebar({ navigation }: SidebarProps) {
             !isActive &&
               !isChildActive &&
               !hasChildren &&
+              shouldAllowHover &&
               "hover:bg-muted hover:text-foreground",
             isChildActive && !hasChildren && "text-primary"
           )}
