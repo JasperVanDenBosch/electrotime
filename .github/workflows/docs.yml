@@ -37,7 +37,7 @@ jobs:
 
       - name: Install Syrinx
         run: |
-          pip install syrinx
+          pip install -r docs/requirements.txt
 
       - name: Copy README to docs
         run: |

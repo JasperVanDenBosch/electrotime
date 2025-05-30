@@ -18,4 +18,4 @@ You'll find the code for the app under "gui" in the github repository. 📂
 
 - 📥 Clone the git repository
 - 🎯 Install dart and flutter
-- ✅ Check if it works by building and running the app, e.g: `flutter run macos`
+- ✅ Check if it works by building and running the app, e.g: `flutter run -d macos`

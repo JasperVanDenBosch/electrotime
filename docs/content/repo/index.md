@@ -34,18 +34,8 @@ For more details about the Timing Matters Hackathon and project overview, see [d
 
 💬 **Discord Invite link:** <https://discord.gg/47mBnvJM>
 
-💻 **Github Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>  
+💻 **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>  
 (you should have received an invite but you can also send me your github handle and I will add you)
-
-### 💡 Ideas Overview
-
-| Section | Idea 1 | Idea 2 | Idea 3 |
-|---------|--------|--------|--------|
-| [Hardware](/hardware) | Add microphone 🎤 | Store data on device 💾 | Improve design of the Enclosure 📦 |
-| Firmware | Improve performance ⚡ | Adapt to new hardware design 🔩 | |
-| Data Analysis | | | |
-| UI | | | |
-| Website | Create simple static website 🏗️ | Document Production 📝 | Documentation for end-users 👨‍🔬👩‍🔬 |
 
 ## 🗂️ Repository Structure
 
