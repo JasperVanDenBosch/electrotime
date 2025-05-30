@@ -14,14 +14,28 @@ mkdir -p docs/public/docs-api/gui
 echo "📦 Generating Rust documentation..."
 cd firmware
 
-# Generate docs for each package
-echo "  Building docs for latreclib..."
-cd latreclib
-cargo doc --no-deps --target-dir ../target
-cd ..
+# Build docs for all packages in the workspace
+echo "  Building docs for all firmware packages..."
 
-# Skip recorder and simulator due to AVR target issues
-echo "  Skipping recorder and simulator (AVR target required)"
+# Try to build for each package, handling AVR target issues
+for package in */Cargo.toml; do
+    dir=$(dirname "$package")
+    if [ -d "$dir" ]; then
+        echo "  Building docs for $dir..."
+        cd "$dir"
+        
+        # Try to build docs, but continue if it fails (e.g., AVR target issues)
+        if cargo doc --no-deps --target-dir ../target 2>/dev/null; then
+            echo "    ✓ Successfully built docs for $dir"
+        else
+            echo "    ⚠️  Failed to build docs for $dir (likely AVR target required)"
+            # Try building with --all-features flag which might help
+            cargo doc --no-deps --all-features --target-dir ../target 2>/dev/null || true
+        fi
+        
+        cd ..
+    fi
+done
 
 # Copy generated docs to public directory
 echo "  Copying Rust docs..."
@@ -33,12 +47,17 @@ cd ..
 echo "🎯 Generating Flutter documentation..."
 cd gui
 
-# Check if dart is installed
-if command -v dart &> /dev/null; then
+# Check if docs already exist locally
+if [ -d "doc/api" ]; then
+    echo "  Found existing Flutter docs in gui/doc/api"
+    echo "  Copying to public directory..."
+    cp -r doc/api/* ../docs/public/docs-api/gui/
+    echo "  ✓ Flutter docs copied successfully"
+elif command -v dart &> /dev/null; then
     echo "  Running dart doc..."
     dart doc --output ../docs/public/docs-api/gui
 else
-    echo "  ⚠️  Dart not found. Skipping Flutter documentation."
+    echo "  ⚠️  Dart not found and no local docs found. Skipping Flutter documentation."
 fi
 
 cd ..
@@ -125,5 +144,11 @@ echo "  - Firmware docs: docs/public/docs-api/firmware/"
 echo "  - GUI docs: docs/public/docs-api/gui/"
 echo "  - Index pages created in docs/content/"
 echo ""
-echo "🌐 To view the docs, run the Next.js development server:"
+echo "🌐 To view the docs in the website:"
 echo "  cd docs && npm run dev"
+echo ""
+echo "📖 To view Flutter docs locally (without the website):"
+echo "  cd gui && ./serve-docs.sh"
+echo ""
+echo "⚠️  Note: AVR packages (recorder, simulator) may require special setup."
+echo "  To build AVR docs, run: cd firmware && ./build-avr-docs.sh"

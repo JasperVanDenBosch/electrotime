@@ -32,7 +32,7 @@ export default function RootLayout({
           <div className="flex flex-1 overflow-hidden">
             <Sidebar navigation={navigation} />
             <main className="flex-1 overflow-auto bg-background">
-              <div className="container max-w-5xl mx-auto px-8 py-8">
+              <div className="container h-[95%] max-w-5xl mx-auto px-8 py-8">
                 <Breadcrumb />
                 {children}
               </div>
