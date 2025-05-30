@@ -80,7 +80,7 @@ export function Navbar() {
             className="h-9 w-9"
           >
             <a
-              href="https://github.com/JasperVanDenBosch/electrotime"
+              href="https://github.com/JasperVanDenBosch/latency-recorder"
               target="_blank"
               rel="noopener noreferrer"
             >
