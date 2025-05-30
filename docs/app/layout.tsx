@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { Sidebar } from '@/components/Sidebar';
 import { Navbar } from '@/components/Navbar';
+import { Logo } from '@/components/Logo';
 import { getNavigation } from '@/lib/markdown';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -25,11 +26,7 @@ export default function RootLayout({
         <div className="flex flex-col h-screen">
           <div className="w-full bg-background border-b">
             <div className="container mx-auto px-8 py-4 flex justify-center">
-              <img 
-                src="/electrotime/electrotime.svg" 
-                alt="ElectroTime" 
-                className="h-12 w-auto"
-              />
+              <Logo />
             </div>
           </div>
           <Navbar />
