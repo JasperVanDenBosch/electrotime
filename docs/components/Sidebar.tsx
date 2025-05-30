@@ -65,8 +65,14 @@ export function Sidebar({ navigation }: SidebarProps) {
   const renderNavItem = (item: NavItem, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedSections.includes(item.title);
+    
+    // Determine if this specific item is active
+    // For child items, only exact match counts
+    // For parent items without children, check if pathname starts with href
     const isActive = pathname === item.href || 
-                    (item.href !== '/' && pathname.startsWith(item.href + '/'));
+                    (!hasChildren && item.href !== '/' && pathname.startsWith(item.href + '/'));
+    
+    // Check if any child is active (for parent styling)
     const isChildActive = item.children?.some(child => 
       pathname === child.href || pathname.startsWith(child.href + '/')
     );
