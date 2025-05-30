@@ -91,8 +91,7 @@ export function Sidebar({ navigation }: SidebarProps) {
       pathname === item.href ||
       (!hasChildren &&
         item.href !== "/" &&
-        pathname.startsWith(item.href + "/") &&
-        !pathname === "overview");
+        pathname.startsWith(item.href + "/"));
 
     // Check if any child is active (for parent styling)
     const isChildActive = item.children?.some(
@@ -191,7 +190,7 @@ export function Sidebar({ navigation }: SidebarProps) {
             rel="noopener noreferrer"
             className="flex items-center gap-2"
           >
-            <Github className="h-4 w-4" />
+            <Github className="h-4 w-4 mr-2" />
             <span>GitHub Repository</span>
           </a>
         </Button>
