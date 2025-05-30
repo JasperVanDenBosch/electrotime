@@ -62,6 +62,25 @@ jobs:
           cd docs
           npm run build
           
+      - name: Prepare deployment files
+        run: |
+          cd docs
+          # Create out directory
+          mkdir -p out
+          
+          # Copy HTML files from .next/server/app/
+          cp -r .next/server/app/* out/
+          
+          # Create _next directory and copy static assets
+          mkdir -p out/_next
+          cp -r .next/static out/_next/static
+          
+          # Copy public files
+          cp -r public/* out/
+          
+          # Create .nojekyll file to prevent GitHub Pages from processing files
+          touch out/.nojekyll
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
