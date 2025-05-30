@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import { Sidebar } from '@/components/Sidebar';
-import { Navbar } from '@/components/Navbar';
 import { Logo } from '@/components/Logo';
+import { Breadcrumb } from '@/components/Breadcrumb';
 import { getNavigation } from '@/lib/markdown';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -29,11 +29,11 @@ export default function RootLayout({
               <Logo />
             </div>
           </div>
-          <Navbar />
           <div className="flex flex-1 overflow-hidden">
             <Sidebar navigation={navigation} />
             <main className="flex-1 overflow-auto bg-background">
               <div className="container max-w-5xl mx-auto px-8 py-8">
+                <Breadcrumb />
                 {children}
               </div>
             </main>

@@ -1,4 +1,7 @@
 import { Metadata } from 'next';
+import fs from 'fs';
+import path from 'path';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 export const metadata: Metadata = {
   title: 'Hackathon Resources - ElectroTime',
@@ -6,12 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default function HackathonIndexPage() {
-  return (
-    <div className="text-center py-12">
-      <h1 className="text-4xl font-bold mb-4">Hackathon Resources</h1>
-      <p className="text-lg text-muted-foreground">
-        Select a topic from the sidebar to get started.
-      </p>
-    </div>
-  );
+  const contentPath = path.join(process.cwd(), 'content', 'hackathon', 'overview.md');
+  let content = '';
+  
+  try {
+    content = fs.readFileSync(contentPath, 'utf8');
+  } catch (error) {
+    content = '# Hackathon Overview\n\nContent not found.';
+  }
+
+  return <MarkdownRenderer content={content} />;
 }

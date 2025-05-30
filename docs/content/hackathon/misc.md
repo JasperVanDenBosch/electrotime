@@ -347,9 +347,6 @@ Share your creative contributions:
 ### Community Platforms
 
 - 💬 [Discord Server](https://discord.gg/47mBnvJM) - Join the conversation
-- 🐙 [GitHub Discussions](https://github.com/JasperVanDenBosch/latency-recorder/discussions) - Share ideas
-- 🐦 Twitter Hashtag: #LatencyRecorder
-- 📺 YouTube Channel: (coming soon)
 
 ### Inspiration
 

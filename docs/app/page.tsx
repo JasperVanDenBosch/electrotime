@@ -11,14 +11,14 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default function HomePage() {
-  const content = getMarkdownBySlug('repo');
+  const content = getMarkdownBySlug('index');
 
   if (!content) {
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold mb-4">Content Not Found</h1>
         <p className="text-muted-foreground">
-          The repository documentation could not be loaded.
+          The getting started documentation could not be loaded.
         </p>
       </div>
     );

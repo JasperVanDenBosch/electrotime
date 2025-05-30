@@ -25,9 +25,9 @@ export function Logo() {
 
   return (
     <img 
-      src={isDark ? "/latency-recorder/electrotime-dark.svg" : "/latency-recorder/electrotime.svg"} 
+      src={isDark ? "/electrotime-dark.svg" : "/electrotime.svg"} 
       alt="ElectroTime" 
-      className="h-12 w-auto"
+      className="h-20 w-auto"
     />
   );
 }

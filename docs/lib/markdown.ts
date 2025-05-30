@@ -12,6 +12,7 @@ export interface MarkdownDocument {
   content: string;
   frontmatter: any;
   sequenceNumber?: number;
+  category?: string;
 }
 
 export interface NavItem {
@@ -20,16 +21,44 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-export function getAllMarkdownSlugs(): string[] {
-  const files = fs.readdirSync(contentDirectory);
-  return files
-    .filter(file => file.endsWith('.md'))
-    .map(file => file.replace('.md', ''));
+function getAllMarkdownFiles(dir: string = contentDirectory, category: string = ''): { path: string; slug: string; category: string }[] {
+  const files: { path: string; slug: string; category: string }[] = [];
+  
+  const items = fs.readdirSync(dir);
+  
+  for (const item of items) {
+    const fullPath = path.join(dir, item);
+    const stat = fs.statSync(fullPath);
+    
+    if (stat.isDirectory() && !item.startsWith('.')) {
+      // Recursively get files from subdirectories
+      files.push(...getAllMarkdownFiles(fullPath, item));
+    } else if (item.endsWith('.md')) {
+      const relativePath = path.relative(contentDirectory, fullPath);
+      const slug = relativePath.replace(/\.md$/, '').replace(/\\/g, '/');
+      files.push({ path: fullPath, slug, category });
+    }
+  }
+  
+  return files;
 }
 
 export function getMarkdownBySlug(slug: string): MarkdownDocument | null {
   try {
-    const fullPath = path.join(contentDirectory, `${slug}.md`);
+    // Check if file exists directly
+    let fullPath = path.join(contentDirectory, `${slug}.md`);
+    
+    // If not found, check in subdirectories
+    if (!fs.existsSync(fullPath)) {
+      const allFiles = getAllMarkdownFiles();
+      const file = allFiles.find(f => f.slug === slug);
+      if (file) {
+        fullPath = file.path;
+      } else {
+        return null;
+      }
+    }
+    
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     
     // Handle TOML frontmatter (delimited by +++)
@@ -52,7 +81,7 @@ export function getMarkdownBySlug(slug: string): MarkdownDocument | null {
     }
     
     // Extract title from frontmatter or first heading
-    let title = data.title || slug.split('-').map(word => 
+    let title = data.title || slug.split('/').pop()!.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
     
@@ -64,23 +93,28 @@ export function getMarkdownBySlug(slug: string): MarkdownDocument | null {
       }
     }
     
+    // Determine category from path
+    const category = slug.includes('/') ? slug.split('/')[0] : '';
+    
     return {
       slug,
       title,
       description: data.description,
       content,
       frontmatter: data,
-      sequenceNumber: data.SequenceNumber
+      sequenceNumber: data.SequenceNumber,
+      category
     };
   } catch (error) {
+    console.error(`Error reading markdown file: ${slug}`, error);
     return null;
   }
 }
 
 export function getAllMarkdownDocuments(): MarkdownDocument[] {
-  const slugs = getAllMarkdownSlugs();
-  const documents = slugs
-    .map(slug => getMarkdownBySlug(slug))
+  const files = getAllMarkdownFiles();
+  const documents = files
+    .map(file => getMarkdownBySlug(file.slug))
     .filter((doc): doc is MarkdownDocument => doc !== null);
   
   return documents;
@@ -89,6 +123,29 @@ export function getAllMarkdownDocuments(): MarkdownDocument[] {
 export function getNavigation(): NavItem[] {
   const documents = getAllMarkdownDocuments();
   
+  // Filter documents by category
+  const hackathonDocs = documents
+    .filter(doc => doc.category === 'hackathon' && doc.slug !== 'hackathon/overview')
+    .sort((a, b) => {
+      if (a.sequenceNumber !== undefined && b.sequenceNumber !== undefined) {
+        return a.sequenceNumber - b.sequenceNumber;
+      }
+      if (a.sequenceNumber !== undefined) return -1;
+      if (b.sequenceNumber !== undefined) return 1;
+      return a.title.localeCompare(b.title);
+    });
+    
+  const developerDocs = documents
+    .filter(doc => doc.category === 'developers')
+    .sort((a, b) => {
+      if (a.sequenceNumber !== undefined && b.sequenceNumber !== undefined) {
+        return a.sequenceNumber - b.sequenceNumber;
+      }
+      if (a.sequenceNumber !== undefined) return -1;
+      if (b.sequenceNumber !== undefined) return 1;
+      return a.title.localeCompare(b.title);
+    });
+  
   // Define the navigation structure
   const navigation: NavItem[] = [
     {
@@ -96,41 +153,43 @@ export function getNavigation(): NavItem[] {
       href: '/',
     },
     {
-      title: 'Hackathon',
-      href: '/hackathon',
-      children: documents
-        .filter(doc => doc.slug !== 'overview' && !doc.slug.startsWith('developers-'))
-        .sort((a, b) => {
-          // Sort by sequence number if available, otherwise alphabetically
-          if (a.sequenceNumber !== undefined && b.sequenceNumber !== undefined) {
-            return a.sequenceNumber - b.sequenceNumber;
-          }
-          if (a.sequenceNumber !== undefined) return -1;
-          if (b.sequenceNumber !== undefined) return 1;
-          return a.title.localeCompare(b.title);
-        })
-        .map(doc => ({
-          title: doc.title,
-          href: `/hackathon/${doc.slug}`
-        }))
+      title: 'API Documentation',
+      href: '/api-docs',
     },
     {
       title: 'Developers',
       href: '/developers',
       children: [
+        ...developerDocs
+          .filter(doc => !doc.slug.includes('-api'))
+          .map(doc => {
+            // Simplify titles for navigation
+            let title = doc.title;
+            if (title === 'GUI Development') title = 'GUI';
+            if (title === 'Hardware Development') title = 'Hardware';
+            
+            return {
+              title,
+              href: `/developers/${doc.slug.replace('developers/', '')}`
+            };
+          }),
         {
-          title: 'Hardware',
-          href: '/hackathon/developers-hardware'
+          title: 'Hardware API',
+          href: '/developers/hardware-api'
         },
         {
-          title: 'Firmware',
-          href: '/hackathon/developers-firmware'
-        },
-        {
-          title: 'Data Analytics',
-          href: '/hackathon/developers-data-analytics'
+          title: 'GUI API',
+          href: '/developers/gui-api'
         }
       ]
+    },
+    {
+      title: 'Hackathon',
+      href: '/hackathon',
+      children: hackathonDocs.map(doc => ({
+        title: doc.title,
+        href: `/hackathon/${doc.slug.replace('hackathon/', '')}`
+      }))
     }
   ];
   

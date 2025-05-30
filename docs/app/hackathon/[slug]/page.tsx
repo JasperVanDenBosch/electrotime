@@ -1,20 +1,20 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer';
-import { getMarkdownBySlug, getAllMarkdownSlugs } from '@/lib/markdown';
+import { getMarkdownBySlug, getAllMarkdownDocuments } from '@/lib/markdown';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
-  const slugs = getAllMarkdownSlugs();
-  return slugs
-    .filter(slug => slug !== 'overview')
-    .map((slug) => ({
-      slug,
+  const documents = getAllMarkdownDocuments();
+  return documents
+    .filter(doc => doc.category === 'hackathon' && doc.slug !== 'hackathon/overview')
+    .map((doc) => ({
+      slug: doc.slug.replace('hackathon/', ''),
     }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const doc = getMarkdownBySlug(slug);
+  const doc = getMarkdownBySlug(`hackathon/${slug}`);
   
   if (!doc) {
     return {
@@ -33,7 +33,7 @@ export const revalidate = 3600;
 
 export default async function HackathonPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const content = getMarkdownBySlug(slug);
+  const content = getMarkdownBySlug(`hackathon/${slug}`);
 
   if (!content) {
     notFound();

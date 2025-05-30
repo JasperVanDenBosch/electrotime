@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ChevronRight, Home, Rocket, FileText, Code, Cpu, BarChart3, Smartphone, Globe, Sparkles, CodeSquare } from 'lucide-react';
-import { useState } from 'react';
+import { ChevronRight, Home, Rocket, FileText, Code, Cpu, BarChart3, Smartphone, Globe, Sparkles, CodeSquare, Github, Moon, Sun, BookOpen } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { NavItem } from '@/lib/markdown';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 interface SidebarProps {
   navigation: NavItem[];
@@ -16,6 +17,22 @@ interface SidebarProps {
 export function Sidebar({ navigation }: SidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<string[]>(['Hackathon', 'Developers']);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
 
   const toggleSection = (title: string) => {
     setExpandedSections(prev =>
@@ -76,9 +93,13 @@ export function Sidebar({ navigation }: SidebarProps) {
   const getIcon = (title: string) => {
     const iconMap: { [key: string]: JSX.Element } = {
       'Getting Started': <Home className="h-4 w-4" />,
+      'API Documentation': <BookOpen className="h-4 w-4" />,
       'Hackathon': <Rocket className="h-4 w-4" />,
       'Developers': <CodeSquare className="h-4 w-4" />,
       'Hardware': <Cpu className="h-4 w-4" />,
+      'Hardware API': <Cpu className="h-4 w-4" />,
+      'GUI': <Smartphone className="h-4 w-4" />,
+      'GUI API': <Smartphone className="h-4 w-4" />,
       'Firmware': <Code className="h-4 w-4" />,
       'Data Analysis': <BarChart3 className="h-4 w-4" />,
       'Data Analytics': <BarChart3 className="h-4 w-4" />,
@@ -92,12 +113,46 @@ export function Sidebar({ navigation }: SidebarProps) {
   };
 
   return (
-    <aside className="w-64 h-full bg-muted/10 border-r">
-      <ScrollArea className="h-full py-6 px-4">
+    <aside className="w-64 h-full bg-muted/10 border-r flex flex-col">
+      <ScrollArea className="flex-1 py-6 px-4">
         <nav className="space-y-1">
           {navigation.map(item => renderNavItem(item))}
         </nav>
       </ScrollArea>
+      
+      <div className="mt-auto p-4 space-y-2">
+        <Separator className="mb-2" />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start"
+          asChild
+        >
+          <a
+            href="https://github.com/JasperVanDenBosch/latency-recorder"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+          >
+            <Github className="h-4 w-4" />
+            <span>GitHub Repository</span>
+          </a>
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleTheme}
+          className="w-full justify-start"
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-4 w-4 mr-2" />
+          ) : (
+            <Moon className="h-4 w-4 mr-2" />
+          )}
+          <span>{theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
+        </Button>
+      </div>
     </aside>
   );
 }

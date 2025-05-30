@@ -142,3 +142,21 @@
 .markdown-content em {
   @apply italic;
 }
+
+/* Custom styles for API documentation links */
+.markdown-content blockquote a {
+  @apply text-blue-400 hover:text-blue-300 font-semibold;
+}
+
+.markdown-content blockquote p {
+  @apply m-0 text-zinc-400;
+}
+
+.markdown-content blockquote > p:first-child {
+  @apply mb-2;
+}
+
+/* Style for API link lists */
+.markdown-content ul li a strong {
+  @apply text-blue-400 hover:text-blue-300;
+}

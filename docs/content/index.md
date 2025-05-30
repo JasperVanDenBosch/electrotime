@@ -1,9 +1,9 @@
 +++
-title = "Latency Recorder Documentation"
+title = "Getting Started"
 description = "Open-source Arduino-based device for measuring stimulus presentation latency"
 +++
 
-# 🧠 Latency Recorder
+# 🧠 Getting Started with Latency Recorder
 
 Welcome to the official documentation for the Latency Recorder project - an open-source Arduino-based device for measuring stimulus presentation latency in neuroscience experiments.
 

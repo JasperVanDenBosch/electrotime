@@ -26,14 +26,15 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           customStyle={{
             margin: 0,
             padding: '1rem',
-            backgroundColor: 'hsl(var(--muted))'
+            backgroundColor: '#1e1e1e',
+            color: '#d4d4d4'
           }}
           {...props}
         >
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (
-        <code className={className} {...props}>
+        <code className="bg-zinc-800 text-zinc-300 px-1 py-0.5 rounded text-sm font-mono" {...props}>
           {children}
         </code>
       );
@@ -63,7 +64,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       <li className="mb-1">{children}</li>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-muted-foreground/30 pl-4 italic my-4 text-muted-foreground">
+      <blockquote className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 my-4 not-italic">
         {children}
       </blockquote>
     ),
