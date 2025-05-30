@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Hackathon Resources - Latency Recorder',
+  title: 'Hackathon Resources - ElectroTime',
   description: 'Documentation and resources for the Timing Matters Hackathon',
 };
 

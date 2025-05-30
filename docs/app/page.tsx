@@ -3,7 +3,7 @@ import { getMarkdownBySlug } from '@/lib/markdown';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Getting Started - Latency Recorder',
+  title: 'Getting Started - ElectroTime',
   description: 'Timing Matters Hackathon information and project overview',
 };
 
