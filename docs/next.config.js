@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/electrotime',
+  basePath: '/latency-recorder',
   images: {
     unoptimized: true,
   },
