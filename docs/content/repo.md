@@ -1,7 +1,7 @@
 +++
-title = "Repo"
+title = "Repository"
 description = "Main repository documentation and quick start guide"
-SequenceNumber = 1
+SequenceNumber = 7
 +++
 
 # Latency Recorder
@@ -21,21 +21,6 @@ The Latency Recorder helps neuroscientists measure the precise timing between tr
 - Open-source hardware and software design
 
 For more details about the Timing Matters Hackathon and project overview, see [docs/Overview.md](docs/Overview.md).
-
-## 🧠 Timing Matters Hackathon Guide
-
-📅 **Friday 30th May 2025**  
-🕘 **09:00 – 17:30 BST**  
-📍 **HELIX, Level 7, EC Stoner Building, University of Leeds**  
-🗺️ [Google Maps](https://maps.google.com/)  
-📍 What3Words: [thin.noted.brush](https://what3words.com/thin.noted.brush)
-
-### 📋 Hackathon Overview
-
-💬 **Discord Invite link:** <https://discord.gg/47mBnvJM>
-
-💻 **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>  
-(you should have received an invite but you can also send me your GitHub handle and I will add you)
 
 ## 🗂️ Repository Structure
 
