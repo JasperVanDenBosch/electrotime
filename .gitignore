@@ -6,3 +6,4 @@ data/
 plots/
 gui/*.dat
 docs/dist/
+claude/

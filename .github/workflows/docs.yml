@@ -30,29 +30,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: docs/package-lock.json
 
-      - name: Install Syrinx
-        run: |
-          pip install -r docs/requirements.txt
-
-      - name: Copy README to docs
+      - name: Install dependencies
         run: |
           cd docs
-          ./copy-readme.sh
+          npm ci
 
-      - name: Build documentation site
+      - name: Copy README to content
         run: |
           cd docs
-          syrinx .
+          # Copy README.md to content/repo.md
+          cp ../README.md content/repo.md
+
+      - name: Build and export Next.js site
+        run: |
+          cd docs
+          npm run build
+          npm run export
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/dist
+          path: ./docs/out
 
   deploy:
     environment:
