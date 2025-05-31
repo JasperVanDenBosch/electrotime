@@ -271,14 +271,58 @@ echo ""
 echo "🔧 Setting permissions..."
 chmod -R 755 "$DOCS_DIR"
 
-# Fix Flutter/Dart documentation base paths
+# Fix Flutter/Dart documentation base paths and internal links
 echo ""
-echo "🔧 Fixing Flutter/Dart documentation base paths..."
+echo "🔧 Fixing Flutter/Dart documentation base paths and internal links..."
 if [ -d "$DOCS_DIR/gui" ]; then
     # Update base-href in all HTML files to use relative paths
     find "$DOCS_DIR/gui" -name "*.html" -type f -exec sed -i '' 's|data-base-href=""|data-base-href="."|g' {} \; 2>/dev/null || true
     find "$DOCS_DIR/gui" -name "*.html" -type f -exec sed -i '' 's|<base href="/">|<base href=".">|g' {} \; 2>/dev/null || true
-    echo "  ✅ Flutter docs base paths updated"
+    
+    # Fix internal library links to use absolute paths from the docs-api root
+    echo "  - Fixing internal library links..."
+    
+    # Process all HTML files to fix relative links
+    find "$DOCS_DIR/gui" -name "*.html" -type f | while read -r file; do
+        # Get the depth of the current file relative to gui directory
+        depth=$(echo "$file" | sed "s|$DOCS_DIR/gui/||" | tr -cd '/' | wc -c)
+        
+        # Fix library links based on the file location
+        if [ "$depth" -eq 0 ]; then
+            # Root level files (like index.html)
+            sed -i '' 's|href="about/"|href="/docs-api/gui/about/"|g' "$file"
+            sed -i '' 's|href="device/"|href="/docs-api/gui/device/"|g' "$file"
+            sed -i '' 's|href="home/"|href="/docs-api/gui/home/"|g' "$file"
+            sed -i '' 's|href="main/"|href="/docs-api/gui/main/"|g' "$file"
+            sed -i '' 's|href="ports/"|href="/docs-api/gui/ports/"|g' "$file"
+            sed -i '' 's|href="recordbutton/"|href="/docs-api/gui/recordbutton/"|g' "$file"
+        elif [ "$depth" -eq 1 ]; then
+            # One level deep (library directories)
+            sed -i '' 's|href="../about/"|href="/docs-api/gui/about/"|g' "$file"
+            sed -i '' 's|href="../device/"|href="/docs-api/gui/device/"|g' "$file"
+            sed -i '' 's|href="../home/"|href="/docs-api/gui/home/"|g' "$file"
+            sed -i '' 's|href="../main/"|href="/docs-api/gui/main/"|g' "$file"
+            sed -i '' 's|href="../ports/"|href="/docs-api/gui/ports/"|g' "$file"
+            sed -i '' 's|href="../recordbutton/"|href="/docs-api/gui/recordbutton/"|g' "$file"
+            sed -i '' 's|href="../index.html"|href="/docs-api/gui/index.html"|g' "$file"
+        elif [ "$depth" -eq 2 ]; then
+            # Two levels deep
+            sed -i '' 's|href="../../about/"|href="/docs-api/gui/about/"|g' "$file"
+            sed -i '' 's|href="../../device/"|href="/docs-api/gui/device/"|g' "$file"
+            sed -i '' 's|href="../../home/"|href="/docs-api/gui/home/"|g' "$file"
+            sed -i '' 's|href="../../main/"|href="/docs-api/gui/main/"|g' "$file"
+            sed -i '' 's|href="../../ports/"|href="/docs-api/gui/ports/"|g' "$file"
+            sed -i '' 's|href="../../recordbutton/"|href="/docs-api/gui/recordbutton/"|g' "$file"
+            sed -i '' 's|href="../../index.html"|href="/docs-api/gui/index.html"|g' "$file"
+        fi
+        
+        # Fix search.html links
+        sed -i '' 's|href="search.html"|href="/docs-api/gui/search.html"|g' "$file"
+        sed -i '' 's|href="../search.html"|href="/docs-api/gui/search.html"|g' "$file"
+        sed -i '' 's|href="../../search.html"|href="/docs-api/gui/search.html"|g' "$file"
+    done
+    
+    echo "  ✅ Flutter docs base paths and internal links updated"
 fi
 
 # Summary
