@@ -9,7 +9,9 @@ import {
   Package,
   BookOpen,
   CheckCircle,
-  Info
+  Info,
+  AlertCircle,
+  FileArchive
 } from 'lucide-react';
 
 export default function GuiApiPage() {
@@ -45,15 +47,15 @@ export default function GuiApiPage() {
         </div>
 
         {/* Info Box */}
-        <div className="bg-muted/50 border rounded-lg p-6 space-y-4">
+        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-6 space-y-4">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
             <div className="space-y-2">
-              <h3 className="font-semibold">About the Documentation</h3>
+              <h3 className="font-semibold">Important: Download Required</h3>
               <p className="text-sm text-muted-foreground">
-                The Flutter/Dart documentation is generated using dartdoc and includes interactive features 
-                like search and cross-references that work best when opened locally. For the optimal 
-                experience, we recommend downloading and viewing the documentation on your machine.
+                The Flutter/Dart documentation uses advanced features like search and cross-references 
+                that <strong>do not work when served from GitHub Pages</strong>. You must download 
+                the documentation and open it locally on your computer for it to function properly.
               </p>
             </div>
           </div>
@@ -64,20 +66,21 @@ export default function GuiApiPage() {
           <div className="text-center space-y-4">
             <h2 className="text-2xl font-semibold">Download Documentation</h2>
             <p className="text-muted-foreground">
-              Get the complete Flutter/Dart API documentation for offline viewing
+              Download the complete Flutter/Dart API documentation package
             </p>
             
             <Button 
               size="lg" 
               className="gap-2"
-              onClick={() => window.open('/docs-api/gui/index.html', '_blank')}
+              onClick={() => window.location.href = '/flutter-dart-docs.zip'}
+              disabled={false} // Will be enabled when zip is available
             >
-              <Globe className="h-5 w-5" />
-              Open Documentation in New Tab
+              <Download className="h-5 w-5" />
+              Download Documentation (ZIP)
             </Button>
             
             <p className="text-sm text-muted-foreground">
-              Or download for offline use (coming soon)
+              Size: ~5MB • Contains all API documentation and search index
             </p>
           </div>
         </div>
@@ -95,10 +98,13 @@ export default function GuiApiPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <h3 className="font-semibold">Open in a New Tab</h3>
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Download the Documentation
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Click the "Open Documentation in New Tab" button above to view the documentation 
-                  in a full browser window where all features work properly.
+                  Click the "Download Documentation (ZIP)" button above to download the complete 
+                  Flutter/Dart API documentation package to your computer.
                 </p>
               </div>
             </div>
@@ -111,9 +117,48 @@ export default function GuiApiPage() {
                 </div>
               </div>
               <div className="space-y-2">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <FileArchive className="h-4 w-4" />
+                  Extract the ZIP File
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Extract the downloaded ZIP file to a folder on your computer. This will create a 
+                  <code className="px-1 py-0.5 bg-muted rounded text-xs">flutter-dart-docs</code> folder 
+                  containing all the documentation files.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                  3
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <FolderOpen className="h-4 w-4" />
+                  Open index.html
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Navigate to the extracted folder and double-click on <code className="px-1 py-0.5 bg-muted rounded text-xs">index.html</code> 
+                  to open the documentation in your web browser. All features including search will now work properly.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                  4
+                </div>
+              </div>
+              <div className="space-y-2">
                 <h3 className="font-semibold">Navigate Libraries</h3>
                 <p className="text-sm text-muted-foreground">
-                  Use the sidebar to browse through the different libraries:
+                  Once opened locally, use the sidebar to browse through the different libraries:
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1 ml-4">
                   <li className="flex items-center gap-2">
@@ -144,21 +189,6 @@ export default function GuiApiPage() {
               </div>
             </div>
 
-            {/* Step 3 */}
-            <div className="flex gap-4">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold">
-                  3
-                </div>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold">Use Search</h3>
-                <p className="text-sm text-muted-foreground">
-                  The search box at the top allows you to quickly find classes, methods, and properties 
-                  across all libraries. Search works best when viewing the documentation in its own tab.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 

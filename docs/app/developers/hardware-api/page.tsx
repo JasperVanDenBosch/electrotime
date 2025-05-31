@@ -9,7 +9,8 @@ import {
   CheckCircle,
   Info,
   AlertCircle,
-  Package2
+  Package2,
+  Download
 } from 'lucide-react';
 
 export default function HardwareApiPage() {
@@ -30,15 +31,15 @@ export default function HardwareApiPage() {
         </div>
 
         {/* Info Box */}
-        <div className="bg-muted/50 border rounded-lg p-6 space-y-4">
+        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-6 space-y-4">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
             <div className="space-y-2">
-              <h3 className="font-semibold">About the Documentation</h3>
+              <h3 className="font-semibold">Important: Download Required for Full Functionality</h3>
               <p className="text-sm text-muted-foreground">
-                The Rust firmware documentation is generated using cargo doc and provides comprehensive 
-                API references for all three firmware crates. The documentation includes type signatures, 
-                trait implementations, and module hierarchies.
+                While the Rust documentation can be viewed online, some features like search and cross-crate 
+                references work better when downloaded and viewed locally. We recommend downloading for the 
+                best experience.
               </p>
             </div>
           </div>
@@ -46,20 +47,38 @@ export default function HardwareApiPage() {
 
         {/* Access Section */}
         <div className="border rounded-lg p-8 space-y-6 bg-card">
-          <div className="text-center space-y-4">
-            <h2 className="text-2xl font-semibold">View Documentation</h2>
-            <p className="text-muted-foreground">
-              Access the Rust firmware API documentation
-            </p>
+          <div className="text-center space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold">Access Documentation</h2>
+              <p className="text-muted-foreground mt-2">
+                Choose how you'd like to view the Rust firmware API documentation
+              </p>
+            </div>
             
-            <Button 
-              size="lg" 
-              className="gap-2"
-              onClick={() => window.open('/docs-api/firmware/index.html', '_blank')}
-            >
-              <Globe className="h-5 w-5" />
-              Open Documentation Hub
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="gap-2"
+                onClick={() => window.open('/docs-api/firmware/index.html', '_blank')}
+              >
+                <Globe className="h-5 w-5" />
+                View Online (Limited)
+              </Button>
+              
+              <Button 
+                size="lg" 
+                className="gap-2"
+                onClick={() => window.location.href = '/rust-firmware-docs.zip'}
+              >
+                <Download className="h-5 w-5" />
+                Download Documentation (ZIP)
+              </Button>
+            </div>
+            
+            <p className="text-sm text-muted-foreground">
+              ZIP size: ~2MB • Contains documentation for available crates
+            </p>
           </div>
         </div>
 

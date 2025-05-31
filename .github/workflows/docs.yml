@@ -110,6 +110,19 @@ jobs:
             echo "✅ API docs copied to output"
           fi
           
+          # Verify ZIP files were created
+          if [ -f "out/flutter-dart-docs.zip" ]; then
+            echo "✅ Flutter docs ZIP created: $(du -h out/flutter-dart-docs.zip | cut -f1)"
+          else
+            echo "⚠️ Flutter docs ZIP not found"
+          fi
+          
+          if [ -f "out/rust-firmware-docs.zip" ]; then
+            echo "✅ Rust docs ZIP created: $(du -h out/rust-firmware-docs.zip | cut -f1)"
+          else
+            echo "⚠️ Rust docs ZIP not found"
+          fi
+          
       - name: Create .nojekyll file
         run: |
           cd docs
