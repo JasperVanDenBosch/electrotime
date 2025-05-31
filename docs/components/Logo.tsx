@@ -23,9 +23,11 @@ export function Logo() {
     return () => observer.disconnect();
   }, []);
 
+  const basePath = process.env.NODE_ENV === 'production' ? '/latency-recorder' : '';
+
   return (
     <img 
-      src={isDark ? "/electrotime-dark.svg" : "/electrotime.svg"} 
+      src={isDark ? `${basePath}/electrotime-dark.svg` : `${basePath}/electrotime.svg`} 
       alt="ElectroTime" 
       className="h-12 md:h-20 w-auto"
     />

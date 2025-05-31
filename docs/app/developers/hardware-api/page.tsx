@@ -60,7 +60,10 @@ export default function HardwareApiPage() {
                 size="lg" 
                 variant="outline"
                 className="gap-2"
-                onClick={() => window.open('/docs-api/firmware/index.html', '_blank')}
+                onClick={() => {
+                  const basePath = process.env.NODE_ENV === 'production' ? '/latency-recorder' : '';
+                  window.open(`${basePath}/docs-api/firmware/index.html`, '_blank');
+                }}
               >
                 <Globe className="h-5 w-5" />
                 View Online (Limited)
@@ -69,7 +72,10 @@ export default function HardwareApiPage() {
               <Button 
                 size="lg" 
                 className="gap-2"
-                onClick={() => window.location.href = '/rust-firmware-docs.zip'}
+                onClick={() => {
+                  const basePath = process.env.NODE_ENV === 'production' ? '/latency-recorder' : '';
+                  window.location.href = `${basePath}/rust-firmware-docs.zip`;
+                }}
               >
                 <Download className="h-5 w-5" />
                 Download Documentation (ZIP)

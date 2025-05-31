@@ -72,7 +72,10 @@ export default function GuiApiPage() {
             <Button 
               size="lg" 
               className="gap-2"
-              onClick={() => window.location.href = '/flutter-dart-docs.zip'}
+              onClick={() => {
+                const basePath = process.env.NODE_ENV === 'production' ? '/latency-recorder' : '';
+                window.location.href = `${basePath}/flutter-dart-docs.zip`;
+              }}
               disabled={false} // Will be enabled when zip is available
             >
               <Download className="h-5 w-5" />
