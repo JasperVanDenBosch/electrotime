@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Jasper Van Den Bosch' }],
   openGraph: {
     title: 'ElectroTime - Latency Recorder Documentation',
-    description: 'Microsecond-precision timing measurements for research',
+    description: 'Precision timing measurements calibration for research',
     type: 'website',
     url: 'https://electrotime.org',
     images: ['/electrotime.svg'],
