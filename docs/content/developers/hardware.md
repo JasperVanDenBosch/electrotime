@@ -37,7 +37,7 @@ The firmware is documented using Rust's built-in documentation system. The API d
 
 <div style="margin: 2rem 0; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 0.5rem;">
   <h4 style="margin-top: 0;">📚 Rust Firmware API Reference</h4>
-  <p>Explore the complete API documentation for the latreclib core library.</p>
+  <p>Explore the complete API documentation for all firmware crates: latreclib, recorder, and simulator.</p>
   <a href="/developers/hardware-api" style="display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 0.25rem;">
     View API Documentation →
   </a>

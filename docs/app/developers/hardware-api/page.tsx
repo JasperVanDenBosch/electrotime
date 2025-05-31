@@ -1,51 +1,253 @@
 'use client';
 
-import { useState } from 'react';
-import { ApiDocFrame } from '@/components/ApiDocFrame';
-import { ApiDocLauncher } from '@/components/ApiDocLauncher';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, FileText } from 'lucide-react';
+import { 
+  Globe, 
+  Terminal,
+  Cpu,
+  BookOpen,
+  CheckCircle,
+  Info,
+  AlertCircle,
+  Package2
+} from 'lucide-react';
 
 export default function HardwareApiPage() {
-  const [viewMode, setViewMode] = useState<'inline' | 'external'>('inline');
-
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b">
-        <h1 className="text-2xl font-bold">Rust Firmware API Reference</h1>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === 'inline' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('inline')}
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            View Inline
-          </Button>
-          <Button
-            variant={viewMode === 'external' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('external')}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Open External
-          </Button>
+    <div className="w-full max-w-4xl mx-auto py-8 px-4">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="p-4 bg-orange-100 dark:bg-orange-900 rounded-full">
+              <Cpu className="h-12 w-12 text-orange-600 dark:text-orange-400" />
+            </div>
+          </div>
+          <h1 className="text-4xl font-bold">Rust Firmware API Documentation</h1>
+          <p className="text-xl text-muted-foreground">
+            Complete API reference for firmware crates: latreclib, recorder, and simulator
+          </p>
         </div>
-      </div>
-      
-      <div className="flex-1">
-        {viewMode === 'inline' ? (
-          <ApiDocFrame
-            basePath="/docs-api/firmware/index.html"
-            title="Rust Firmware API Documentation"
-          />
-        ) : (
-          <ApiDocLauncher
-            docsPath="/docs-api/firmware/index.html"
-            title="Rust Firmware API Documentation"
-            description="Complete documentation for all firmware crates: latreclib, recorder, and simulator."
-          />
-        )}
+
+        {/* Info Box */}
+        <div className="bg-muted/50 border rounded-lg p-6 space-y-4">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5" />
+            <div className="space-y-2">
+              <h3 className="font-semibold">About the Documentation</h3>
+              <p className="text-sm text-muted-foreground">
+                The Rust firmware documentation is generated using cargo doc and provides comprehensive 
+                API references for all three firmware crates. The documentation includes type signatures, 
+                trait implementations, and module hierarchies.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Access Section */}
+        <div className="border rounded-lg p-8 space-y-6 bg-card">
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl font-semibold">View Documentation</h2>
+            <p className="text-muted-foreground">
+              Access the Rust firmware API documentation
+            </p>
+            
+            <Button 
+              size="lg" 
+              className="gap-2"
+              onClick={() => window.open('/docs-api/firmware/index.html', '_blank')}
+            >
+              <Globe className="h-5 w-5" />
+              Open Documentation Hub
+            </Button>
+          </div>
+        </div>
+
+        {/* Crates Overview */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-semibold">Available Crates</h2>
+          
+          <div className="grid gap-4">
+            {/* latreclib */}
+            <div className="border rounded-lg p-6 space-y-3 bg-card">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Package2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    latreclib
+                    <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded">
+                      Available
+                    </span>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Core library providing helper functions and abstractions for the latency recorder hardware
+                  </p>
+                </div>
+              </div>
+              <div className="text-sm space-y-2">
+                <p className="font-medium">Key Features:</p>
+                <ul className="space-y-1 ml-4">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Timing utilities for microsecond precision</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>ADC (Analog-to-Digital Converter) abstractions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Serial communication helpers</span>
+                  </li>
+                </ul>
+              </div>
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => window.open('/docs-api/firmware/latreclib/index.html', '_blank')}
+              >
+                <BookOpen className="h-4 w-4" />
+                View Documentation
+              </Button>
+            </div>
+
+            {/* recorder */}
+            <div className="border rounded-lg p-6 space-y-3 bg-card opacity-75">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Package2 className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    recorder
+                    <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
+                      AVR Target Required
+                    </span>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Main firmware application that runs on the Arduino hardware
+                  </p>
+                </div>
+              </div>
+              <div className="text-sm space-y-2">
+                <p className="font-medium">Key Features:</p>
+                <ul className="space-y-1 ml-4">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Real-time latency measurement</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Serial communication with GUI</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Hardware interrupt handling</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-yellow-600 dark:text-yellow-400">
+                <AlertCircle className="h-4 w-4 mt-0.5" />
+                <span>Documentation requires AVR toolchain installation</span>
+              </div>
+            </div>
+
+            {/* simulator */}
+            <div className="border rounded-lg p-6 space-y-3 bg-card opacity-75">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Package2 className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    simulator
+                    <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 px-2 py-1 rounded">
+                      AVR Target Required
+                    </span>
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Hardware simulator for testing firmware logic without physical Arduino
+                  </p>
+                </div>
+              </div>
+              <div className="text-sm space-y-2">
+                <p className="font-medium">Key Features:</p>
+                <ul className="space-y-1 ml-4">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Simulated hardware environment</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Testing without physical device</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+                    <span>Development and debugging support</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="flex items-start gap-2 text-sm text-yellow-600 dark:text-yellow-400">
+                <AlertCircle className="h-4 w-4 mt-0.5" />
+                <span>Documentation requires AVR toolchain installation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Generate Documentation */}
+        <div className="border rounded-lg p-6 space-y-4 bg-muted/30">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Terminal className="h-5 w-5" />
+            Generate Complete Documentation
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            To generate documentation for all crates (including AVR targets):
+          </p>
+          <pre className="bg-card p-4 rounded-lg overflow-x-auto text-sm">
+            <code>{`# Install AVR toolchain (macOS)
+brew tap osx-cross/avr
+brew install avr-gcc avrdude
+
+# Install Rust AVR target
+rustup target add avr-unknown-gnu-atmega328
+
+# Generate all documentation
+cd firmware
+cargo doc --all --no-deps`}</code>
+          </pre>
+        </div>
+
+        {/* Features */}
+        <div className="border rounded-lg p-6 space-y-4">
+          <h3 className="font-semibold flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            Documentation Features
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-4 text-sm">
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Complete type signatures and trait bounds</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Module hierarchy navigation</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Source code links</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Search functionality</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Trait implementations</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5" />
+              <span>Cross-crate references</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
