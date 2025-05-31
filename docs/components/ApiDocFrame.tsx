@@ -27,13 +27,45 @@ export function ApiDocFrame({ basePath, title }: ApiDocFrameProps) {
             // Override link clicks to stay within the iframe
             document.addEventListener('click', function(e) {
               const link = e.target.closest('a');
-              if (link && link.href && !link.href.includes('#')) {
+              if (link && link.href) {
+                // Check if it's an internal link (relative or same origin)
+                const currentUrl = new URL(window.location.href);
+                let targetUrl;
+                try {
+                  targetUrl = new URL(link.href, currentUrl);
+                } catch {
+                  // Invalid URL, let default behavior handle it
+                  return;
+                }
+                
+                // If it's the same origin and not a hash link, handle it
+                if (targetUrl.origin === currentUrl.origin && !link.href.includes('#')) {
+                  e.preventDefault();
+                  // Update the iframe src from parent
+                  window.parent.postMessage({
+                    type: 'navigate',
+                    url: link.href
+                  }, '*');
+                }
+              }
+            });
+            
+            // Also handle form submissions (for search)
+            document.addEventListener('submit', function(e) {
+              const form = e.target;
+              if (form && form.tagName === 'FORM') {
                 e.preventDefault();
-                // Update the iframe src from parent
-                window.parent.postMessage({
-                  type: 'navigate',
-                  url: link.href
-                }, '*');
+                const formData = new FormData(form);
+                const searchQuery = formData.get('q') || formData.get('search');
+                if (searchQuery) {
+                  // Construct search URL
+                  const searchUrl = new URL('search.html', window.location.href);
+                  searchUrl.searchParams.set('q', searchQuery);
+                  window.parent.postMessage({
+                    type: 'navigate',
+                    url: searchUrl.href
+                  }, '*');
+                }
               }
             });
           `;

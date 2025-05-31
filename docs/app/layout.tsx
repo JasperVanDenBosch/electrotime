@@ -29,14 +29,13 @@ export const metadata: Metadata = {
     description: 'Open-source timing measurement device for research',
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    nocache: true,
     googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      index: false,
+      follow: false,
+      noimageindex: true,
     },
   },
 };
@@ -70,7 +69,7 @@ export default function RootLayout({
               </div>
               <div className="flex-1 overflow-auto !mb-4" id="main-content">
                 <ScrollToTop />
-                <div className="container max-w-[90dvw] max-sm:h-[85dvh] h-[80dvh] mx-auto px-4 md:px-8 pt-0 max-md:pb-8 max-md:pt-0 min-md:pb-4">
+                <div className="container max-w-[75dvw] max-sm:h-[85dvh] h-[80dvh] mx-auto px-4 md:px-8 pt-0 max-md:pb-8 max-md:pt-0 min-md:pb-4">
                   {children}
                 </div>
               </div>

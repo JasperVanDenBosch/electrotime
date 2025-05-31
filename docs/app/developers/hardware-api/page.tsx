@@ -36,14 +36,14 @@ export default function HardwareApiPage() {
       <div className="flex-1">
         {viewMode === 'inline' ? (
           <ApiDocFrame
-            basePath="/docs-api/firmware/latreclib/index.html"
+            basePath="/docs-api/firmware/index.html"
             title="Rust Firmware API Documentation"
           />
         ) : (
           <ApiDocLauncher
-            docsPath="/docs-api/firmware/latreclib/index.html"
+            docsPath="/docs-api/firmware/index.html"
             title="Rust Firmware API Documentation"
-            description="Core library documentation with helper functions for bit manipulation and hardware abstraction."
+            description="Complete documentation for all firmware crates: latreclib, recorder, and simulator."
           />
         )}
       </div>

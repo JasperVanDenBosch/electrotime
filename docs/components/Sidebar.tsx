@@ -33,7 +33,7 @@ interface SidebarProps {
 export function Sidebar({ navigation }: SidebarProps) {
   const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    "Hackathon",
+    "Hackathon 2025",
     "Developers",
   ]);
   const [theme, setTheme] = useState<"light" | "dark">("dark");

@@ -37,6 +37,16 @@ jobs:
           cache: 'npm'
           cache-dependency-path: docs/package-lock.json
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rust-docs
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
       - name: Install dependencies
         run: |
           cd docs
@@ -57,15 +67,93 @@ jobs:
           # Append README content
           cat ../README.md >> content/repo.md
 
+      - name: Generate Rust documentation
+        run: |
+          echo "::group::Building Rust docs for latreclib"
+          cd firmware/latreclib
+          cargo doc --no-deps --all-features
+          cd ../..
+          echo "::endgroup::"
+          
+          # Copy to docs directory
+          mkdir -p docs/public/docs-api/firmware
+          if [ -d "firmware/latreclib/target/doc" ]; then
+            cp -r firmware/latreclib/target/doc/* docs/public/docs-api/firmware/
+            echo "✅ Rust docs copied successfully"
+          else
+            echo "⚠️ Warning: Rust docs not found"
+          fi
+
+      - name: Generate Flutter documentation
+        run: |
+          echo "::group::Building Flutter docs"
+          cd gui
+          flutter pub get
+          dart doc --output ../docs/public/docs-api/gui || echo "⚠️ Dart doc failed, checking for existing docs..."
+          cd ..
+          echo "::endgroup::"
+          
+          # Check if docs were generated
+          if [ ! -d "docs/public/docs-api/gui/index.html" ] && [ -d "gui/doc/api" ]; then
+            echo "Using existing Flutter docs from gui/doc/api"
+            cp -r gui/doc/api/* docs/public/docs-api/gui/
+          fi
+
       - name: Build Next.js site
         run: |
           cd docs
           npm run build
           
+          # Copy API docs to out directory
+          if [ -d "public/docs-api" ]; then
+            cp -r public/docs-api out/
+            echo "✅ API docs copied to output"
+          fi
+          
       - name: Create .nojekyll file
         run: |
           cd docs
           touch out/.nojekyll
+          
+      - name: Test documentation routes
+        run: |
+          cd docs
+          # Start server
+          npx serve out -p 3000 --no-port-switching &
+          SERVER_PID=$!
+          
+          # Wait for server
+          sleep 5
+          
+          # Test main routes
+          echo "::group::Testing main routes"
+          for route in "/" "/developers" "/hackathon" "/api-docs"; do
+            if curl -f -s -o /dev/null "http://localhost:3000${route}"; then
+              echo "✅ ${route}"
+            else
+              echo "❌ ${route} failed"
+              exit 1
+            fi
+          done
+          echo "::endgroup::"
+          
+          # Test API documentation
+          echo "::group::Testing API documentation"
+          if curl -f -s -o /dev/null "http://localhost:3000/docs-api/firmware/latreclib/index.html"; then
+            echo "✅ Rust API docs"
+          else
+            echo "❌ Rust API docs not accessible"
+          fi
+          
+          if curl -f -s -o /dev/null "http://localhost:3000/docs-api/gui/index.html"; then
+            echo "✅ Flutter API docs"
+          else
+            echo "❌ Flutter API docs not accessible"
+          fi
+          echo "::endgroup::"
+          
+          # Kill server
+          kill $SERVER_PID || true
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
