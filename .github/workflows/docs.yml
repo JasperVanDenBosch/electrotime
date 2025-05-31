@@ -69,10 +69,32 @@ jobs:
 
       - name: Generate Rust documentation
         run: |
-          echo "::group::Building Rust docs for latreclib"
+          echo "::group::Building Rust docs"
+          
+          # Temporarily rename .cargo/config.toml files to avoid AVR target issues
+          echo "Temporarily disabling AVR configurations..."
+          for config in firmware/.cargo/config.toml firmware/*/.cargo/config.toml; do
+            if [ -f "$config" ]; then
+              mv "$config" "$config.bak"
+              echo "Disabled: $config"
+            fi
+          done
+          
+          # Build docs for latreclib
+          echo "Building docs for latreclib..."
           cd firmware/latreclib
           cargo doc --no-deps --all-features
           cd ../..
+          
+          # Restore .cargo/config.toml files
+          echo "Restoring AVR configurations..."
+          for config in firmware/.cargo/config.toml.bak firmware/*/.cargo/config.toml.bak; do
+            if [ -f "$config" ]; then
+              mv "$config" "${config%.bak}"
+              echo "Restored: ${config%.bak}"
+            fi
+          done
+          
           echo "::endgroup::"
           
           # Copy to docs directory
