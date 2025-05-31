@@ -3,13 +3,13 @@ title = "Getting Started"
 description = "Open-source Arduino-based device for measuring stimulus presentation latency"
 +++
 
-# 🧠 Getting Started with Latency Recorder
+# 🧠 Getting Started with ElectroTime
 
-Welcome to the official documentation for the Latency Recorder project - an open-source Arduino-based device for measuring stimulus presentation latency in neuroscience experiments.
+Welcome to the official documentation for **ElectroTime** - an open-source Arduino-based latency recorder for measuring stimulus presentation timing in neuroscience experiments.
 
-## 🎯 What is the Latency Recorder?
+## 🎯 What is ElectroTime?
 
-The Latency Recorder helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
+ElectroTime is a latency recorder that helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
 
 ## 📚 Documentation Sections
 

@@ -11,7 +11,7 @@ import { getNavigation } from '@/lib/markdown';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://jaspervandenbosch.github.io/latency-recorder'),
+  metadataBase: new URL('https://electrotime.org'),
   title: 'ElectroTime Documentation - Open Source Latency Recorder',
   description: 'Open-source Arduino-based device for microsecond-precision measurement of stimulus presentation latency in neuroscience and psychology experiments',
   keywords: ['latency recorder', 'arduino', 'neuroscience', 'psychology', 'timing', 'open source', 'stimulus presentation'],
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: 'ElectroTime - Latency Recorder Documentation',
     description: 'Microsecond-precision timing measurements for research',
     type: 'website',
-    url: 'https://jaspervandenbosch.github.io/latency-recorder/',
+    url: 'https://electrotime.org',
     images: ['/electrotime.svg'],
   },
   twitter: {

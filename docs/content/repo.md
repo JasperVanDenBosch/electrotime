@@ -4,13 +4,13 @@ description = "Main repository documentation and quick start guide"
 SequenceNumber = 7
 +++
 
-# Latency Recorder
+# ElectroTime - The Latency Recorder
 
 An open-source Arduino-based device for measuring stimulus presentation latency in neuroscience experiments, particularly EEG setups. This project provides hardware designs, firmware, and software tools to help researchers accurately measure and compensate for timing delays in their experimental paradigms.
 
 ## 📋 Overview
 
-The Latency Recorder helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
+**ElectroTime** is a latency recorder that helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
 
 **Key Features:**
 
@@ -20,7 +20,7 @@ The Latency Recorder helps neuroscientists measure the precise timing between tr
 - Cross-platform GUI application for data recording
 - Open-source hardware and software design
 
-For more details about the Timing Matters Hackathon and project overview, see [docs/Overview.md](docs/Overview.md).
+For more details about the Timing Matters Hackathon and project overview, see the [Overview section](/hackathon/overview).
 
 ## 🗂️ Repository Structure
 
@@ -32,7 +32,7 @@ Contains the embedded code that runs on the Arduino device.
 - **`/recorder/`** - Main firmware application for the Arduino Uno
 - **`/simulator/`** - Hardware simulator for testing without physical device
 
-The firmware is written in Rust using the AVR HAL library. See [docs/Firmware.md](docs/Firmware.md) for development details.
+The firmware is written in Rust using the AVR HAL library. See the [Firmware section](/hackathon/firmware) for development details.
 
 ### `/gui/`
 
@@ -44,7 +44,7 @@ Features:
 - Device selection dropdown
 - Data export functionality
 
-Built with Flutter/Dart for Windows, macOS, and Linux compatibility. See [docs/User Interface.md](docs/User%20Interface.md) for setup instructions.
+Built with Flutter/Dart for Windows, macOS, and Linux compatibility. See the [User Interface section](/hackathon/user-interface) for setup instructions.
 
 ### `/experiment/`
 
@@ -60,7 +60,7 @@ Data analysis tools and example outputs.
 - **`analyse.py`** - Main analysis script in root directory
 - **`/analysis/`** - Contains example analysis plots
 
-See [docs/Data Analysis.md](docs/Data%20Analysis.md) for usage details.
+See the [Data Analysis section](/hackathon/data-analysis) for usage details.
 
 ### `/fritzing/`
 
@@ -72,21 +72,23 @@ Hardware schematics and PCB designs.
 
 ### `/docs/`
 
-Extended documentation for different aspects of the project.
+Contains the Next.js-based documentation website source code. View the documentation at:
 
-- [Hardware.md](docs/Hardware.md) - Circuit design and assembly
-- [Firmware.md](docs/Firmware.md) - Embedded software development
-- [User Interface.md](docs/User%20Interface.md) - GUI application details
-- [Data Analysis.md](docs/Data%20Analysis.md) - Analysis workflow
-- [Website and Documentation.md](docs/Website%20and%20Documentation.md) - Documentation plans
-- [Overview.md](docs/Overview.md) - Hackathon information and getting started
+🌐 **[https://jaspervandenbosch.github.io/latency-recorder/](https://jaspervandenbosch.github.io/latency-recorder/)**
+
+Key documentation sections:
+- [Hardware](/hackathon/hardware) - Circuit design and assembly
+- [Firmware](/hackathon/firmware) - Embedded software development
+- [User Interface](/hackathon/user-interface) - GUI application details
+- [Data Analysis](/hackathon/data-analysis) - Analysis workflow
+- [Overview](/hackathon/overview) - Hackathon information and getting started
 
 ## 🚀 Quick Start
 
 ### Hardware Requirements
 
 - Arduino Uno Rev3
-- Photodiode circuit (see [hardware documentation](docs/Hardware.md))
+- Photodiode circuit (see [hardware documentation](/hackathon/hardware))
 - USB cable for data connection
 - (Optional) DB37 parallel port for trigger input
 
@@ -152,7 +154,7 @@ We welcome contributions! This is an open-source hardware project. Areas for imp
 - **GUI:** Enhanced visualization and real-time plotting
 - **Documentation:** User guides and assembly instructions
 
-See individual documentation files in `/docs/` for specific development areas.
+Visit our [documentation site](/) for detailed development guides.
 
 ### Building from Source
 
@@ -182,6 +184,7 @@ This is an open-source hardware and software project. [License details to be add
 
 ## 🔗 Links
 
+- **Documentation:** <https://jaspervandenbosch.github.io/latency-recorder/>
 - **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>
 - **Discord Community:** <https://discord.gg/47mBnvJM>
 - **Related Projects:** [EEGManyLabs](https://osf.io/yb3pq/)

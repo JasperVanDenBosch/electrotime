@@ -1,4 +1,4 @@
-# Latency Recorder
+# ElectroTime - The Latency Recorder
 
 [![Documentation](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml)
 
@@ -19,7 +19,7 @@ Most EEG studies assume this delay is 0ms, leading to inaccurate timing and comp
 
 ## 📋 Overview
 
-The Latency Recorder helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
+**ElectroTime** is a latency recorder that helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
 
 **Key Features:**
 
@@ -29,7 +29,7 @@ The Latency Recorder helps neuroscientists measure the precise timing between tr
 - Cross-platform GUI application for data recording and analysis
 - Open-source hardware and software design
 
-For more details about the Timing Matters Hackathon and project overview, see [docs/Overview.md](docs/Overview.md).
+For more details about the Timing Matters Hackathon and project overview, see our [comprehensive documentation site](https://jaspervandenbosch.github.io/latency-recorder/).
 
 ## 🗂️ Repository Structure
 
@@ -81,14 +81,27 @@ Hardware schematics and PCB designs.
 
 ### `/docs/`
 
-Extended documentation for different aspects of the project.
+Contains the Next.js-based documentation website source code. The compiled documentation is available at:
 
-- [Hardware.md](docs/Hardware.md) - Circuit design and assembly
-- [Firmware.md](docs/Firmware.md) - Embedded software development
-- [User Interface.md](docs/User%20Interface.md) - GUI application details
-- [Data Analysis.md](docs/Data%20Analysis.md) - Analysis workflow
-- [Website and Documentation.md](docs/Website%20and%20Documentation.md) - Documentation plans
-- [Overview.md](docs/Overview.md) - Hackathon information and getting started
+🌐 **[https://jaspervandenbosch.github.io/latency-recorder/](https://jaspervandenbosch.github.io/latency-recorder/)**
+
+Key documentation sections:
+- **Hardware** - Circuit design and assembly instructions
+- **Firmware** - Embedded software development guide
+- **GUI** - User interface application details
+- **Data Analysis** - Analysis workflow and examples
+- **API Documentation** - Complete API references for all components (downloadable)
+
+## 📚 Documentation
+
+**Full documentation is available at: [https://jaspervandenbosch.github.io/latency-recorder/](https://jaspervandenbosch.github.io/latency-recorder/)**
+
+The documentation includes:
+- Complete hardware assembly guide with schematics
+- Firmware development tutorials
+- GUI application user manual
+- Data analysis workflows
+- API documentation (downloadable for offline use)
 
 ## 🚀 Quick Start
 
@@ -169,7 +182,7 @@ We welcome contributions! This is an open-source hardware project. Areas for imp
 - **GUI:** Enhanced visualization and real-time plotting
 - **Documentation:** User guides and assembly instructions
 
-See individual documentation files in `/docs/` for specific development areas.
+Visit our [documentation site](https://jaspervandenbosch.github.io/latency-recorder/) for detailed development guides.
 
 ### Building from Source
 
@@ -199,6 +212,7 @@ This is an open-source hardware and software project. [License details to be add
 
 ## 🔗 Links
 
+- **Documentation:** <https://jaspervandenbosch.github.io/latency-recorder/>
 - **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>
 - **Discord Community:** <https://discord.gg/47mBnvJM>
 - **Related Projects:** [EEGManyLabs](https://osf.io/yb3pq/)
