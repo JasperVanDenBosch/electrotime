@@ -1,0 +1,16 @@
+site_name: "Latency Recorder"
+site_description: "Arduino-based precision latency measurement system for EEG experiments"
+site_url: "https://github.com/JasperVanDenBosch/latency-recorder"
+author: "Jasper van den Bosch"
+
+# Navigation menu
+nav:
+  - Home: index.md
+  - About: about.md
+  - Hardware: hardware.md
+  - Software: software.md
+  - User Guide: guide.md
+  - GitHub: https://github.com/JasperVanDenBosch/latency-recorder
+
+# Site theme
+theme: default 

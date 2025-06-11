@@ -11,7 +11,7 @@
     ]
   },
   "linker": "avr-gcc",
-  "llvm-target": "avr-unknown-unknown",
+  "llvm-target": "avr-atmega328p",
   "max-atomic-width": 8,
   "no-default-libraries": false,
   "pre-link-args": {
