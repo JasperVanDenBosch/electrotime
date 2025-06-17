@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 
 export function Logo() {
   const [isDark, setIsDark] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    
     // Check if theme is dark
     const checkTheme = () => {
       setIsDark(document.documentElement.classList.contains('dark'));
@@ -23,7 +26,16 @@ export function Logo() {
     return () => observer.disconnect();
   }, []);
 
-  const basePath = process.env.NODE_ENV === 'production' ? '/latency-recorder' : '';
+  // Determine base path based on actual location
+  const getBasePath = () => {
+    if (!mounted) return '';
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/latency-recorder')) {
+      return '/latency-recorder';
+    }
+    return '';
+  };
+
+  const basePath = getBasePath();
 
   return (
     <img 
