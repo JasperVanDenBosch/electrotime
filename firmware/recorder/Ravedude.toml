@@ -1,0 +1,9 @@
+# Ravedude.toml - Modern configuration for Arduino uploads
+[general]
+open-console = true
+serial-baudrate = 57600
+board = "uno"
+ 
+# Uncomment and set specific port if auto-detection fails:
+# serial-port = "/dev/ttyUSB0"    # Common Linux USB-serial
+# serial-port = "/dev/ttyACM0"    # Common Linux ACM device 
