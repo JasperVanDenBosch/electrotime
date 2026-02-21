@@ -1,7 +1,160 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
+
+
+class EpochResult {
+  final String sdFilename;
+  final String localFilename;
+  final int sampleCount;
+
+  const EpochResult({
+    required this.sdFilename,
+    required this.localFilename,
+    required this.sampleCount,
+  });
+}
+
+enum _RecordState {
+  idle,
+  waitingForSdFilename,
+  waitingForTransfer,
+  collectingData,
+}
+
+String _sessionTimestamp() {
+  final now = DateTime.now().toLocal();
+  return '${now.year}'
+      '-${now.month.toString().padLeft(2, '0')}'
+      '-${now.day.toString().padLeft(2, '0')}'
+      'T${now.hour.toString().padLeft(2, '0')}'
+      '${now.minute.toString().padLeft(2, '0')}'
+      '${now.second.toString().padLeft(2, '0')}';
+}
+
+Future<void> _saveEpoch(
+  List<String> lines,
+  String sdFilename,
+  String sessionTs,
+  StreamController<EpochResult> controller,
+) async {
+  final baseName = sdFilename.contains('.')
+      ? sdFilename.substring(0, sdFilename.lastIndexOf('.'))
+      : sdFilename;
+  final localFilename = 'latrec_${sessionTs}_$baseName.txt';
+  final sink = File(localFilename).openWrite();
+  for (final line in lines) {
+    sink.writeln(line);
+  }
+  await sink.flush();
+  await sink.close();
+  if (!controller.isClosed) {
+    controller.add(EpochResult(
+      sdFilename: sdFilename,
+      localFilename: localFilename,
+      sampleCount: lines.length,
+    ));
+  }
+}
+
+Stream<EpochResult> recordingStream(String address) {
+  final controller = StreamController<EpochResult>();
+  final sessionTs = _sessionTimestamp();
+
+  final port = SerialPort(address);
+  final _ = port.openRead();
+  final config = port.config;
+  config.baudRate = 115200;
+  port.config = config;
+  final reader = SerialPortReader(port);
+
+  var state = _RecordState.idle;
+  var sdFilename = '';
+  final dataLines = <String>[];
+  var lineBuffer = '';
+
+  late final StreamSubscription<Uint8List> sub;
+  sub = reader.stream.listen(
+    (Uint8List chunk) {
+      // The OS delivers bytes in arbitrarily-sized chunks, not line by line.
+      // Append to a persistent buffer so partial lines survive across calls.
+      lineBuffer += String.fromCharCodes(chunk);
+
+      // Find the last complete line in the buffer. Using lastIndexOf means we
+      // process everything up to and including the final '\n' in one pass,
+      // leaving only the trailing incomplete fragment behind.
+      final lastNl = lineBuffer.lastIndexOf('\n');
+      if (lastNl == -1) return; // no complete line yet — wait for more chunks
+
+      final complete = lineBuffer.substring(0, lastNl + 1);
+      lineBuffer = lineBuffer.substring(lastNl + 1); // keep the incomplete tail
+
+      for (final rawLine in complete.split('\n')) {
+        final line = rawLine.trimRight(); // remove trailing \r (Arduino sends CRLF)
+        if (line.isEmpty) continue;
+
+        // --- State machine ---
+        // The device protocol follows a fixed sequence each epoch:
+        //   "File opened successfully!"  → next line is the SD card filename
+        //   <filename.csv>              → then ~6 s of silence while recording
+        //   "Record completed. Transferring file..."  → CSV rows follow
+        //   <rows...>
+        //   "File opened successfully!"  → next epoch begins (previous one is done)
+
+        if (state == _RecordState.waitingForSdFilename) {
+          // The line immediately after "File opened successfully!" is the filename.
+          sdFilename = line;
+          state = _RecordState.waitingForTransfer;
+        } else if (state == _RecordState.collectingData) {
+          if (line == 'File opened successfully!') {
+            // This line marks the end of the current epoch's transfer.
+            // Snapshot the accumulated data and kick off an async file save.
+            // The save runs during the next ~6 s silent recording phase, so it
+            // completes long before more data arrives.
+            // We copy before clearing so the save closure holds its own data.
+            if (dataLines.isNotEmpty) {
+              final epochSdFilename = sdFilename;
+              final epochLines = List<String>.from(dataLines);
+              dataLines.clear();
+              unawaited(_saveEpoch(epochLines, epochSdFilename, sessionTs, controller));
+            }
+            state = _RecordState.waitingForSdFilename;
+          } else {
+            dataLines.add(line);
+          }
+        } else {
+          // idle or waitingForTransfer: watch for the two protocol trigger lines,
+          // ignore everything else (boot messages, blank lines, etc.)
+          if (line == 'File opened successfully!') {
+            state = _RecordState.waitingForSdFilename;
+          } else if (line == 'Record completed. Transferring file...') {
+            dataLines.clear();
+            state = _RecordState.collectingData;
+          }
+        }
+      }
+    },
+    onError: (Object e) {
+      controller.addError(e);
+      controller.close();
+      port.close();
+    },
+    onDone: () {
+      controller.close();
+      port.close();
+    },
+    cancelOnError: true,
+  );
+
+  controller.onCancel = () async {
+    await sub.cancel();
+    port.close();
+  };
+
+  return controller.stream;
+}
 
 
 Future<String?> selectDevice(BuildContext context) async {
@@ -68,49 +221,4 @@ extension IntToString on int {
         return 'Unknown';
     }
   }
-}
-
-/*
-- callback for finished
-- callback for update
-- fancier: keep an instance around, for it to be two way, i.e. closing connection
-- should dispose
-
-https://github.com/jpnurmi/flutter_libserialport/issues/30#issuecomment-938076196
-
-*/
-Future<String> record(String address) async {
-  final port = SerialPort(address);
-  final _ = port.openRead();
-  final config = port.config; 
-  //You should always set baud rate, data bits, parity and stop bits.
-  // debugPrint('baudRate ${config.baudRate}');//10?
-  // debugPrint('bits ${config.bits}');//10?
-  // debugPrint('parity ${config.parity}');//10?
-  // debugPrint('stopBits ${config.stopBits}');//10?
-  config.baudRate = 115200;
-  port.config = config;
-  final reader = SerialPortReader(port);
-  final List<Uint8List> dataList = [];
-  const MAX_SAMPLES = 1000;
-  await for (final Uint8List data in reader.stream) {
-      if (dataList.length >= MAX_SAMPLES) {
-        //counter doesnt work since data.length varies
-        // should instead append to collapsed list?
-        debugPrint('closing since max samples reached');
-        break;
-      }
-      debugPrint('####${data}#####');
-      dataList.add(data);
-  }
-  debugPrint('${dataList.length}');
-  final epochMs = DateTime.now().toUtc().millisecondsSinceEpoch;
-  final fileName = 'record_$epochMs.dat';
-  final IOSink sink = File(fileName).openWrite();
-  for (var data in dataList) {
-    sink.add(data);
-  }
-  await sink.flush();
-  await sink.close();
-  return fileName;
 }

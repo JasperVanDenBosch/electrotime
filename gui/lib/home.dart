@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   static const title = 'Latency Recorder';
-  
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -21,6 +21,8 @@ class _HomePageState extends State<HomePage> {
   bool recording = false;
   int secondsElapsed = 0;
   Timer? timer;
+  StreamSubscription<EpochResult>? _recordingSubscription;
+  final List<EpochResult> _epochResults = [];
 
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
@@ -29,32 +31,48 @@ class _HomePageState extends State<HomePage> {
     return '$mins:$secsPadded';
   }
 
-  void onRecordingFinished(String fileName) {
-    final previousTimer = timer;
-    if (previousTimer != null) {
-      previousTimer.cancel();
-    }
-    setState(() {
-      recording = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Saved recording as $fileName'),
-      )
-    );
-  }
-
   void startRecording() {
     setState(() {
       secondsElapsed = 0;
       recording = true;
+      _epochResults.clear();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         setState(() {
           secondsElapsed += 1;
         });
       });
-      record(selectedPortAddress!).then(onRecordingFinished);
     });
+    _recordingSubscription = recordingStream(selectedPortAddress!).listen(
+      (EpochResult result) {
+        debugPrint('Epoch saved: ${result.localFilename} (${result.sampleCount} samples)');
+        _epochResults.add(result);
+      },
+      onError: (Object e) {
+        debugPrint('Recording error: $e');
+        _finishRecording();
+      },
+      onDone: _finishRecording,
+    );
+  }
+
+  void stopRecording() {
+    _recordingSubscription?.cancel();
+    _recordingSubscription = null;
+    _finishRecording();
+  }
+
+  void _finishRecording() {
+    timer?.cancel();
+    final epochCount = _epochResults.length;
+    final totalSamples = _epochResults.fold(0, (sum, r) => sum + r.sampleCount);
+    setState(() {
+      recording = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Saved $epochCount epochs ($totalSamples samples)'),
+      )
+    );
   }
 
   @override
@@ -79,7 +97,7 @@ class _HomePageState extends State<HomePage> {
             children: [
             DeviceSelector(
               disabled: recording,
-              onDeviceChanged: (address) { 
+              onDeviceChanged: (address) {
                 setState(() {
                   selectedPortAddress = address;
                 });
@@ -91,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 RecordButton(
                   disabled: selectedPortAddress == null,
                   active: recording,
-                  callback: startRecording
+                  callback: recording ? stopRecording : startRecording,
                 ),
                 const Spacer(),
                 Text(timeElapsedString()),
