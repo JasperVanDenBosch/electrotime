@@ -3,17 +3,20 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'package:latrec/analysis.dart';
 
 
 class EpochResult {
   final String sdFilename;
   final String localFilename;
   final int sampleCount;
+  final EpochSummary summary;
 
   const EpochResult({
     required this.sdFilename,
     required this.localFilename,
     required this.sampleCount,
+    required this.summary
   });
 }
 
@@ -48,6 +51,7 @@ Future<void> _saveEpoch(
   for (final line in lines) {
     sink.writeln(line);
   }
+  final summary = summarizeEpoch(lines);
   await sink.flush();
   await sink.close();
   if (!controller.isClosed) {
@@ -55,6 +59,7 @@ Future<void> _saveEpoch(
       sdFilename: sdFilename,
       localFilename: localFilename,
       sampleCount: lines.length,
+      summary: summary
     ));
   }
 }
