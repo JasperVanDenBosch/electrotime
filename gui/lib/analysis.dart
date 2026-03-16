@@ -30,8 +30,8 @@ class EpochSummary {
 EpochSummary summarizeEpoch(List<String> lines) {
 
   List<String> cells = [];
-  // int light = 0;
-  // int sound = 0;
+  int light = 0;
+  int sound = 0;
   int status = 0;
   int ts = 0;
   int lastStatus = 0;
