@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latrec/about.dart';
+import 'package:latrec/dashboard.dart';
+import 'package:latrec/dashboard_data.dart';
 import 'package:latrec/device.dart';
 import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
@@ -22,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   int secondsElapsed = 0;
   Timer? timer;
   StreamSubscription<EpochResult>? _recordingSubscription;
-  final List<EpochResult> _epochResults = [];
+  DashboardData _dashboardData = DashboardData.empty();
 
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
@@ -35,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       secondsElapsed = 0;
       recording = true;
-      _epochResults.clear();
+      _dashboardData = DashboardData.empty();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         setState(() {
           secondsElapsed += 1;
@@ -45,7 +47,9 @@ class _HomePageState extends State<HomePage> {
     _recordingSubscription = recordingStream(selectedPortAddress!).listen(
       (EpochResult result) {
         debugPrint('Epoch saved: ${result.localFilename} (${result.sampleCount} samples)');
-        _epochResults.add(result);
+        setState(() {
+          _dashboardData = _dashboardData.addEpoch(result);
+        });
       },
       onError: (Object e) {
         debugPrint('Recording error: $e');
@@ -63,14 +67,12 @@ class _HomePageState extends State<HomePage> {
 
   void _finishRecording() {
     timer?.cancel();
-    final epochCount = _epochResults.length;
-    final totalSamples = _epochResults.fold(0, (sum, r) => sum + r.sampleCount);
     setState(() {
       recording = false;
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Saved $epochCount epochs ($totalSamples samples)'),
+        content: Text('Saved ${_dashboardData.epochCount} epochs (${_dashboardData.sampleCount} samples)'),
       )
     );
   }
@@ -114,7 +116,9 @@ class _HomePageState extends State<HomePage> {
                 const Spacer(),
                 Text(timeElapsedString()),
               ]
-            )
+            ),
+            const SizedBox(height: 10),
+            Dashboard(data: _dashboardData),
           ]
         )
         ),
