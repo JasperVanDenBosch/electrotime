@@ -1,4 +1,6 @@
 /*
+  ## Wishlist
+
 	- [ ] nr of triggers, break down by nr, sort by count. hashmap?
 		- [ ] have to keep track of changed value
 	- [ ] distribution of light? 1024/20
@@ -42,7 +44,7 @@ EpochSummary summarizeEpoch(List<String> lines) {
   for (int l = 0; l < lines.length; l++) {
     line = lines[l];
     cells = line.split(',');
-    if (cells.length == 4) {
+    if (cells.length >= 4) {
       light = int.parse(cells[0]);
       sound = int.parse(cells[1]);
       status = int.parse(cells[2]);

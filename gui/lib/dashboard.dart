@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latrec/counter.dart';
 import 'package:latrec/dashboard_data.dart';
 
 class Dashboard extends StatelessWidget {
@@ -7,12 +8,6 @@ class Dashboard extends StatelessWidget {
   const Dashboard({super.key, required this.data});
 
   static const _mono = TextStyle(fontFamily: 'Courier New', fontSize: 13);
-
-  String _abbreviateSamples(int count) {
-    if (count < 1000) return '$count';
-    final k = count / 1000;
-    return k == k.truncateToDouble() ? '${k.toInt()}k' : '${k.toStringAsFixed(1)}k';
-  }
 
   Widget _buildTriggerRow(BuildContext context, MapEntry<int, int> entry) {
     return Padding(
@@ -27,7 +22,7 @@ class Dashboard extends StatelessWidget {
             child: Text('${entry.key}', style: _mono),
           ),
           const SizedBox(width: 12),
-          Text('${entry.value}', style: _mono),
+          Counter(value: entry.value, label: ''),
         ],
       ),
     );
@@ -43,9 +38,12 @@ class Dashboard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'EPOCHS: ${data.epochCount}   SAMPLES: ${_abbreviateSamples(data.sampleCount)}',
-          style: _mono,
+        Row(
+          children: [
+            Counter(value: data.epochCount, label: 'EPOCHS'),
+            const SizedBox(width: 16),
+            Counter(value: data.sampleCount, label: 'SAMPLES'),
+          ],
         ),
         const Divider(),
         Expanded(
