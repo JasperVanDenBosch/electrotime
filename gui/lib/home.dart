@@ -11,7 +11,7 @@ import 'package:latrec/recordbutton.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  static const title = 'Latency Recorder';
+  static const title = 'ElectroTime';
 
   @override
   State<HomePage> createState() => _HomePageState();
