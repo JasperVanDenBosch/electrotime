@@ -189,11 +189,20 @@ Future<String?> selectDevice(BuildContext context) async {
   }
 }
 
+const demoPortAddress = '__demo__';
+
 List<String> findConnectedDevices() {
-  return SerialPort.availablePorts.where((a) => !a.contains('luetooth')).toList();
+  final real = SerialPort.availablePorts.where((a) => !a.contains('luetooth')).toList();
+  return [demoPortAddress, ...real];
 }
 
 SimpleDialogOption buildOption(String address, BuildContext context) {
+  if (address == demoPortAddress) {
+    return SimpleDialogOption(
+      onPressed: () { Navigator.pop(context, address); },
+      child: const Text('Demo Mode'),
+    );
+  }
   final port = SerialPort(address);
   debugPrint('Address $address');
   debugPrint('Description ${port.description}');

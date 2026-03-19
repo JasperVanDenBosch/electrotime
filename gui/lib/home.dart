@@ -4,6 +4,7 @@ import 'package:latrec/about.dart';
 import 'package:latrec/dashboard.dart';
 import 'package:latrec/dashboard_data.dart';
 import 'package:latrec/device.dart';
+import 'package:latrec/mock.dart';
 import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
 
@@ -44,7 +45,10 @@ class _HomePageState extends State<HomePage> {
         });
       });
     });
-    _recordingSubscription = recordingStream(selectedPortAddress!).listen(
+    final stream = selectedPortAddress == demoPortAddress
+        ? mockRecordingStream()
+        : recordingStream(selectedPortAddress!);
+    _recordingSubscription = stream.listen(
       (EpochResult result) {
         debugPrint('Epoch saved: ${result.localFilename} (${result.sampleCount} samples)');
         setState(() {
