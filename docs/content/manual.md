@@ -1,6 +1,6 @@
 # Guide to measuring latency in your lab
 
-After receiving the package with the ElecroTime device (or [building your own using our open-source information]()!), you can follow these steps to record latency data. How long this takes depends on your experiment.
+After receiving the package with the ElecroTime device (or [building your own using our open-source information](/hardware)), you can follow these steps to record latency data. How long this takes depends on your experiment.
 
 ## Step 1: Check that you have everything you need
 
@@ -31,7 +31,7 @@ After receiving the package with the ElecroTime device (or [building your own us
 ## Step 3: Download the app on your host laptop
 
 The ElectroTime device is controlled from your laptop with 
-a desktop application. Get the application [here]().
+a desktop application. Get the application [here](/user-interface/).
 
 ## Step 4: Record!
 
@@ -51,4 +51,3 @@ You can hit the record button again to stop recording at any time.
 ## Step 5: Send your data to use for analysis
 
 You should find the recorded data as small text files, named *electrotime_1234_123.txt* in your Downloads folder. Compress these together and email the zip file to us at *J.F.VanDenBosch@leeds.ac.uk* or use a cloud file sharing link if necessary.
-
