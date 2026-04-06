@@ -21,6 +21,8 @@ After receiving the package with the ElecroTime device (or [building your own us
 
 ## Step 2: Set up Device
 
+![Schematic of the setup](/assets/electrotime_setup.png)
+
 - Your lab stimulus pc is connected to your acquisition device with a wide (~6cm) connector called DB37, also known as a printer cable or "parallel cable". Plug this connector into the electrotime
 - If your experiment has sound stimuli, use the provided cable to connect your stimulus pc's audio port (that normally would have the headphones) to the audio input on the electrotime
 - Using the provided USB cable, connect the Electrotime with your host laptop's USB. If your laptop only has USB-C, use the provided adapter, otherwise to use the larger USB-A, remove the adapter.
