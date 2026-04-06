@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
 import 'package:latrec/analysis.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 class EpochResult {
@@ -46,8 +48,13 @@ Future<void> _saveEpoch(
   final baseName = sdFilename.contains('.')
       ? sdFilename.substring(0, sdFilename.lastIndexOf('.'))
       : sdFilename;
-  final localFilename = 'latrec_${sessionTs}_$baseName.txt';
-  final sink = File(localFilename).openWrite();
+  final Directory? downloadsDir = await getDownloadsDirectory();
+  if (downloadsDir == null) {
+    return;
+  }
+  final localFilename = 'electrotime_${sessionTs}_$baseName.txt';
+  final filepath = path.join(downloadsDir.path, localFilename);
+  final sink = File(filepath).openWrite();
   for (final line in lines) {
     sink.writeln(line);
   }

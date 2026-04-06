@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:latrec/analysis.dart';
 import 'package:latrec/ports.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 /// Returns a stream that emits realistic mock [EpochResult]s every 8 seconds,
 /// simulating a connected device without requiring actual hardware.
@@ -13,14 +16,33 @@ Stream<EpochResult> mockRecordingStream() {
 
   Timer? timer;
 
-  void emitEpoch() {
+  Future<void> emitEpoch() async {
     epochIndex++;
     final sdFilename = 'REC${epochIndex.toString().padLeft(4, '0')}.csv';
-    final localFilename = 'demo_$sdFilename';
+    final baseName = sdFilename.contains('.')
+        ? sdFilename.substring(0, sdFilename.lastIndexOf('.'))
+        : sdFilename;
+    final ts = Random().nextInt(9999);
+
 
     final lines = _generateEpochLines(random, baseTs);
+
+    final Directory? downloadsDir = await getDownloadsDirectory();
+    if (downloadsDir == null) {
+      return;
+    }
+    final localFilename = 'electrotime_DEMO$ts\_$sdFilename.txt';
+    final filepath = path.join(downloadsDir.path, localFilename);
+    final sink = File(filepath).openWrite();
+    for (final line in lines) {
+      sink.writeln(line);
+    }
+
+
     // Advance base timestamp by the generated epoch duration (~5.1s in µs)
     baseTs += 5100000;
+
+
 
     final summary = summarizeEpoch(lines);
     if (!controller.isClosed) {
