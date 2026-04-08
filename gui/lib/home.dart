@@ -91,8 +91,13 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(HomePage.title),
+        // Brand colors — blue: RGB(80,145,171), yellow: RGB(238,209,83)
+        backgroundColor: const Color.fromRGBO(80, 145, 171, 1),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Image.asset('assets/title.png', height: 32),
+        ),
+        centerTitle: true,
       ),
       body: Center(
         child: Container(
@@ -101,6 +106,7 @@ class _HomePageState extends State<HomePage> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+            const SizedBox(height: 10),
             DeviceSelector(
               disabled: recording,
               onDeviceChanged: (address) {
