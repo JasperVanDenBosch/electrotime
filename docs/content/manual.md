@@ -39,6 +39,8 @@ a desktop application. Get the application [here](/user-interface/).
 
 ## Step 4: Record!
 
+![Application Screenshot](/assets/gui.png)
+
 Run the app and you should see a drop-down to select the ElectroTime
 from a list of USB devices connected to your laptop.
 
