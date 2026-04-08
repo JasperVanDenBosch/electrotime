@@ -50,7 +50,9 @@ EpochSummary summarizeEpoch(List<String> lines) {
       status = int.parse(cells[2]);
       ts = int.parse(cells[3]);
       if (status != lastStatus) {
-        triggers.update(status, (val) => val + 1, ifAbsent: () => 1);
+        if (status != 0) {
+          triggers.update(status, (val) => val + 1, ifAbsent: () => 1);
+        }
         lastStatus = status;
       }
       if (l == 0) {

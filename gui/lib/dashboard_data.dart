@@ -3,11 +3,13 @@ import 'package:latrec/ports.dart';
 class DashboardData {
   final int epochCount;
   final int sampleCount;
+  final double duration;
   final Map<int, int> triggers;
 
   const DashboardData._({
     this.epochCount = 0,
     this.sampleCount = 0,
+    this.duration = 0,
     this.triggers = const {},
   });
 
@@ -21,6 +23,7 @@ class DashboardData {
     return DashboardData._(
       epochCount: epochCount + 1,
       sampleCount: sampleCount + result.sampleCount,
+      duration: duration + result.summary.duration,
       triggers: merged,
     );
   }

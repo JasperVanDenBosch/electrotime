@@ -29,7 +29,9 @@ class Dashboard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Counter(value: data.epochCount, label: 'EPOCHS', labelPosition: LabelPosition.below),
+            Counter(value: data.epochCount, label: 'CHUNKS', labelPosition: LabelPosition.below),
+            const SizedBox(width: 16),
+            Counter(value: data.duration.round(), label: 'SECONDS', labelPosition: LabelPosition.below),
             const SizedBox(width: 16),
             Counter(value: data.sampleCount, label: 'SAMPLES', labelPosition: LabelPosition.below),
           ],
