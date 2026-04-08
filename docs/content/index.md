@@ -13,7 +13,7 @@ ElectroTime is a latency recorder that helps neuroscientists measure the precise
 
 ## 📚 Documentation Sections
 
-- [User Guide](manual/)
+- [User Guide](user-guide/)
 - [📋 Overview](overview/) - Hackathon information and project introduction
 - [🔧 Hardware](hardware/) - Circuit design, components, and assembly
 - [💻 Firmware](firmware/) - Arduino firmware development in Rust
