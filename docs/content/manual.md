@@ -10,6 +10,9 @@ After receiving the package with the ElecroTime device (or [building your own us
 
 ### Shipped to you by ElectroTime team
 
+![Audio cable](/assets/audio.jpg)
+![USB cable & Adapter](/assets/usb.jpg)
+
 - [ ] ElectroTime device
 - [ ] Sound cable (3.5mm jack)
 - [ ] USB data cable with USB-C adapter
@@ -31,6 +34,8 @@ After receiving the package with the ElecroTime device (or [building your own us
 - If your experiment has sound stimuli, use the provided cable to connect your stimulus pc's audio port (that normally would have the headphones) to the audio input on the electrotime
 - Using the provided USB cable, connect the Electrotime with your host laptop's USB. If your laptop only has USB-C, use the provided adapter, otherwise to use the larger USB-A, remove the adapter.
 - With the provided Velcro straps, strap the ElectroTime to your stimulus screen, placing it as close as possible to the part of the screen where stimuli are displayed.
+
+![ElectroTime Photos of Inputs and Outputs](/assets/electrotime_io.png)
 
 ## Step 3: Download the app on your host laptop
 
