@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             DeviceSelector(
               disabled: recording,
               onDeviceChanged: (address) {
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                 });
                },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               children: [
                 RecordButton(
@@ -124,10 +124,18 @@ class _HomePageState extends State<HomePage> {
                   callback: recording ? stopRecording : startRecording,
                 ),
                 const Spacer(),
-                Text(timeElapsedString()),
+                Text(
+                  timeElapsedString(),
+                  style: TextStyle(
+                    fontFamily: 'Courier New',
+                    fontSize: 32,
+                    color: Colors.grey[800],
+                    height: 1,
+                  ),
+                ),
               ]
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Expanded(child: Dashboard(data: _dashboardData)),
           ]
         )
