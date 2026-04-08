@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latrec/about.dart';
+import 'package:latrec/dashboard.dart';
+import 'package:latrec/dashboard_data.dart';
 import 'package:latrec/device.dart';
+import 'package:latrec/mock.dart';
 import 'package:latrec/ports.dart';
 import 'package:latrec/recordbutton.dart';
 
@@ -9,8 +12,8 @@ import 'package:latrec/recordbutton.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  static const title = 'Latency Recorder';
-  
+  static const title = 'ElectroTime';
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -21,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   bool recording = false;
   int secondsElapsed = 0;
   Timer? timer;
+  StreamSubscription<EpochResult>? _recordingSubscription;
+  DashboardData _dashboardData = DashboardData.empty();
 
   String timeElapsedString() {
     final mins = (secondsElapsed / 60).floor();
@@ -29,32 +34,51 @@ class _HomePageState extends State<HomePage> {
     return '$mins:$secsPadded';
   }
 
-  void onRecordingFinished(String fileName) {
-    final previousTimer = timer;
-    if (previousTimer != null) {
-      previousTimer.cancel();
-    }
-    setState(() {
-      recording = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Saved recording as $fileName'),
-      )
-    );
-  }
-
   void startRecording() {
     setState(() {
       secondsElapsed = 0;
       recording = true;
+      _dashboardData = DashboardData.empty();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         setState(() {
           secondsElapsed += 1;
         });
       });
-      record(selectedPortAddress!).then(onRecordingFinished);
     });
+    final stream = selectedPortAddress == demoPortAddress
+        ? mockRecordingStream()
+        : recordingStream(selectedPortAddress!);
+    _recordingSubscription = stream.listen(
+      (EpochResult result) {
+        debugPrint('Epoch saved: ${result.localFilename} (${result.sampleCount} samples)');
+        setState(() {
+          _dashboardData = _dashboardData.addEpoch(result);
+        });
+      },
+      onError: (Object e) {
+        debugPrint('Recording error: $e');
+        _finishRecording();
+      },
+      onDone: _finishRecording,
+    );
+  }
+
+  void stopRecording() {
+    _recordingSubscription?.cancel();
+    _recordingSubscription = null;
+    _finishRecording();
+  }
+
+  void _finishRecording() {
+    timer?.cancel();
+    setState(() {
+      recording = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Saved ${_dashboardData.epochCount} epochs (${_dashboardData.sampleCount} samples)'),
+      )
+    );
   }
 
   @override
@@ -67,8 +91,13 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(HomePage.title),
+        // Brand colors — blue: RGB(80,145,171), yellow: RGB(238,209,83)
+        backgroundColor: const Color.fromRGBO(80, 145, 171, 1),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Image.asset('assets/title.png', height: 32),
+        ),
+        centerTitle: true,
       ),
       body: Center(
         child: Container(
@@ -77,26 +106,37 @@ class _HomePageState extends State<HomePage> {
           child:Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+            const SizedBox(height: 20),
             DeviceSelector(
               disabled: recording,
-              onDeviceChanged: (address) { 
+              onDeviceChanged: (address) {
                 setState(() {
                   selectedPortAddress = address;
                 });
                },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               children: [
                 RecordButton(
                   disabled: selectedPortAddress == null,
                   active: recording,
-                  callback: startRecording
+                  callback: recording ? stopRecording : startRecording,
                 ),
                 const Spacer(),
-                Text(timeElapsedString()),
+                Text(
+                  timeElapsedString(),
+                  style: TextStyle(
+                    fontFamily: 'Courier New',
+                    fontSize: 32,
+                    color: Colors.grey[800],
+                    height: 1,
+                  ),
+                ),
               ]
-            )
+            ),
+            const SizedBox(height: 20),
+            Expanded(child: Dashboard(data: _dashboardData)),
           ]
         )
         ),
