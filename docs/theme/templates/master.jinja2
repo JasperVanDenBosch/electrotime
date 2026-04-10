@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" > <!-- class="wa-theme-mellow wa-palette-vogue wa-brand-cyan wa-cloak" -->
+<html lang="en" class="wa-theme-awesome wa-dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,24 +17,22 @@
 <body>
 <wa-page>
 
-<header slot="header" class="wa-split">
-    <a href="#">{{ index.config.domain }}</a>
-    <div></div>
-</header>
+    <header slot="header" class="wa-split">
+        <a href="#">{{ index.config.domain }}</a>
+        <div></div>
+    </header>
 
-<main>
-{% block main %}
-{% endblock %}
-</main>
+    <main>
+    {% block main %}
+    {% endblock %}
+    </main>
 
-<footer slot="footer">
-    <div class="wa-cluster">
-        <span>&copy; 2026 ElectroTime team</span>
-        <span>Powered by <a href="https://syrinx.site">Syrinx</a></span>
-    </div>
-</footer>
-
-
+    <footer slot="footer">
+        <div class="wa-cluster">
+            <span>&copy; 2026 ElectroTime team</span>
+            <span>Powered by <a href="https://syrinx.site">Syrinx</a></span>
+        </div>
+    </footer>
 
 </wa-page>
 
