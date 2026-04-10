@@ -1,5 +1,5 @@
 +++
-Title = "ElectroTime App"
+Title = "App"
 Description = "Windows app to control your EelctroTime device"
 +++
 # ElectroTime control app

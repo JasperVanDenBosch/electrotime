@@ -10,6 +10,10 @@
         ></wa-format-date>
     {{ index.content_html|safe }}
 
+    {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
+        {% include 'section.jinja2' %}
+    {% endfor %}
+
 </article>
 
 <style>

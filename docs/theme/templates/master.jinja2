@@ -12,14 +12,20 @@
     <title>{{ index.title }}</title>
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.5.0/styles/webawesome.css" />
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.5.0/webawesome.loader.js"></script>
+    <link rel="stylesheet" href="/assets/css/index.css">
 
 </head>
 <body>
 <wa-page>
 
-    <header slot="header" class="wa-split">
-        <a href="#">{{ index.config.domain }}</a>
-        <div></div>
+    <header slot="header" class="wa-stack" style="align-items: center; padding: var(--wa-space-m) 0;">
+        <a href="/"><img src="/assets/electrotime-dark.svg" alt="ElectroTime" class="site-logo"></a>
+        <nav class="wa-cluster">
+            <a href="/">Home</a>
+            {% for branch in root.branches %}
+            <a href="/{{ branch.name }}/">{{ branch.title }}</a>
+            {% endfor %}
+        </nav>
     </header>
 
     <main>
