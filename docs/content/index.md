@@ -13,10 +13,6 @@ ElectroTime is a latency recorder that helps neuroscientists measure the precise
 
 
 
-
-- [User Guide](user-guide/)
-
-
 ## Community
 
 - 💬 [Discord Community](https://discord.gg/47mBnvJM)
