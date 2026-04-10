@@ -1,5 +1,5 @@
 +++
-title = "Getting Started"
+title = "ElectroTime"
 description = "Open-source Arduino-based device for measuring stimulus presentation latency"
 +++
 
@@ -14,27 +14,14 @@ ElectroTime is a latency recorder that helps neuroscientists measure the precise
 ## 📚 Documentation Sections
 
 - [User Guide](user-guide/)
-- [📋 Overview](overview/) - Hackathon information and project introduction
-- [🔧 Hardware](hardware/) - Circuit design, components, and assembly
-- [💻 Firmware](firmware/) - Arduino firmware development in Rust
-- [🖥️ User Interface](user-interface/) - Flutter GUI application
-- [📊 Data Analysis](data-analysis/) - Python analysis tools
-- [🌐 Website and Documentation](website-documentation/) - Documentation tools and site generation
+
 
 ## 🚀 Quick Links
 
-- 💻 [GitHub Repository](https://github.com/JasperVanDenBosch/latency-recorder/)
 - 💬 [Discord Community](https://discord.gg/47mBnvJM)
 - 🔗 [EEGManyLabs](https://osf.io/yb3pq/)
 
-## 🤝 Contributing
 
-This is an open-source hardware project. We welcome contributions in:
-
-- Hardware improvements (microphone, SD card storage)
-- Firmware optimization
-- GUI enhancements
-- Documentation
 
 ## 📅 Timing Matters Hackathon
 
