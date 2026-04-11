@@ -1,5 +1,9 @@
 CLAUDE.md
 
+## NPM environment purely for development tools (skills)
+package-lock.json
+package.json
+
 # Dependencies
 node_modules/
 .pnp
