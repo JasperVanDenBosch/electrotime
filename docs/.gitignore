@@ -1,3 +1,7 @@
+
+# llm
+.claude/
+.plan/
 CLAUDE.md
 
 ## NPM environment purely for development tools (skills)
