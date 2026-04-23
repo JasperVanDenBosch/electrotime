@@ -37,7 +37,7 @@ jobs:
 
       - name: Build site
         working-directory: docs
-        run: syrinx -c -e production .
+        run: syrinx build --clean .
 
       - name: List build output
         run: ls -l docs/dist/
