@@ -4,10 +4,6 @@
 
 <article id="{{ index.name }}" class="wa-stack">
 
-    <wa-format-date 
-        date="{{ index.front['Date'] }}"
-        month="long" day="numeric" year="numeric"
-        ></wa-format-date>
     {{ index.content_html|safe }}
 
     {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
