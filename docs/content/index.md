@@ -4,7 +4,7 @@ description = "Open-source Arduino-based device for measuring stimulus presentat
 +++
 
 #  ElectroTime
-## Measuring latency of 
+## Think your triggers are accurate? Think again
 
 an open-source Arduino-based latency recorder for measuring stimulus presentation timing in neuroscience experiments.
 
