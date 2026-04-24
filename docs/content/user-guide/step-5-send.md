@@ -1,5 +1,5 @@
 +++
-Title = "Step 5: Send your data to use for analysis"
+Title = "Step 5: Send your data to us for analysis"
 SequenceNumber = 50
 +++
 
