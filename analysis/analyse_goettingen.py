@@ -99,7 +99,7 @@ df = pandas.DataFrame(
 )
 df['time'] = df.time/1000
 
-
+## Plots of the light/sound intensity in the epoch timeframe
 for modality in (MODALITY.LIGHT, MODALITY.SOUND):
 
     ### loop over some random epochs for each modality
@@ -110,7 +110,7 @@ for modality in (MODALITY.LIGHT, MODALITY.SOUND):
         ## plot a single epoch to get an idea of what these look like
         df_epoch = df[df.epoch==e]
         trigger = df_epoch.trigger.values[0]
-        seaborn.lineplot(df_epoch, x='time', y=modality.name.lower(), hue='epoch')
+        seaborn.lineplot(df_epoch, x='time', y=modality.name.lower())
         plt.title(f'{modality.name.lower()} trigger: {trigger} epoch: {e:03}')
         plt.savefig(f'plots/goettingen/{modality.name.lower()}_{e:03}.png')
         plt.close('all')
@@ -118,12 +118,24 @@ for modality in (MODALITY.LIGHT, MODALITY.SOUND):
     ## plot epoch lines together
     df_mod = df[df.modality==modality]
     n_epochs = df.epoch.unique().size
-    seaborn.lineplot(df_mod, x='time', y=modality.name.lower(), hue='epoch')
+    seaborn.lineplot(
+        df_mod,
+        x='time',
+        y=modality.name.lower(),
+        units='epoch', estimator=None,
+        color='black',
+        alpha=0.1,
+        linewidth=0.6,
+        legend=False,
+    )
     plt.title(f'{modality.name.lower()} epochs: {n_epochs}')
-    plt.savefig(f'plots/goettingen/{modality.name.lower()}_all.png')
+    plt.savefig(f'plots/goettingen/{modality.name.lower()}_all.png', dpi=600)
     plt.close('all')
 
-raise ValueError
+"""
+
+
+"""
 
 times_list = []
 for e in df.epoch.unique():
