@@ -1,20 +1,12 @@
 """
-
-
-
-            case 'correct_predictable': return 5
-            case 'correct_unpredictable': return 6
-            case 'error': return 7
-
-
-~/data/electrotime/goettingen/run_*
-
+Parse data files of prototype MkII s/n 002 recorded in Goettingen
 """
 import numpy, pandas, seaborn
+from random import sample
 import matplotlib.pyplot as plt
 import matplotlib
-from logging import getLogger, basicConfig, INFO, StreamHandler
-from enum import StrEnum
+from logging import getLogger, INFO
+from enum import Enum
 import sys
 from tqdm import tqdm
 from os.path import expanduser, join
@@ -23,13 +15,14 @@ log = getLogger('electrotime')
 log.setLevel(INFO)
 matplotlib.use('agg') 
 
-class MODALITY(StrEnum):
-    LIGHT = 'light'
-    SOUND = 'sound'
+class MODALITY(Enum):
+    LIGHT = 1
+    SOUND = 2
 
 LIGHT_COL, SOUND_COL, TRIGGER_COL, TIME_COL = 0, 1, 2, 3
 EPOCH_TMIN = -100 ## start of epoch wrt to trigger in samples
 EPOCH_TMAX = 400    ## end of epoch wrt to trigger in samples
+## Defines which triggers are associated with which stimulus modality
 TRIGGER_MODALITY = {
     5: MODALITY.SOUND,
     6: MODALITY.SOUND,
@@ -89,9 +82,11 @@ log.info(f'epochs: {len(epochs)}')
 ## Store data in dataframe
 triggers = numpy.array(triggers)   
 epochs = numpy.array(epochs)
+modalities = numpy.array(modalities)
 df = pandas.DataFrame(
     dict(
         epoch=numpy.arange(triggers.size).repeat(epoch_len),
+        modality=modalities.repeat(epoch_len),
         trigger=triggers.repeat(epoch_len),
         time=epochs[:,:,TIME_COL].ravel(),
         light=epochs[:,:,LIGHT_COL].ravel(),
@@ -100,22 +95,21 @@ df = pandas.DataFrame(
 )
 df['time'] = df.time/1000
 
-### loop over some random epochs
+### loop over some random epochs for each modality
+for modality in (MODALITY.LIGHT, MODALITY.SOUND):
+    mod_epochs = df[df.modality==modality].epoch.unique().tolist()
+    sample_epochs = sample(mod_epochs, 5)
+    for e in sample_epochs:
+
+        ## plot a single epoch to get an idea of what these look like
+        df_epoch = df[df.epoch==e]
+        seaborn.lineplot(df_epoch, x='time', y=modality.name.lower(), hue='epoch')
+        plt.title(f'{modality.name.lower()} epoch: {e:03}')
+        plt.savefig(f'plots/goettingen/epoch_{modality.name.lower()}_{e:03}.png')
+        plt.close('all')
+
+
 raise ValueError
-df = df[df.epoch==2]
-
-
-#plt.figure()
-seaborn.lineplot(df, x='time', y='sound', hue='epoch')
-plt.title('sound')
-plt.savefig(f'plots/goettingen/lines_sound_trial.png')
-plt.close('all')
-
-# seaborn.lineplot(df, x='time', y='light', hue='epoch')
-# plt.title('light')
-# plt.savefig(f'plots/goettingen/lines_sound_trial.png')
-# plt.close('all')
-
 
 times_list = []
 for e in df.epoch.unique():
