@@ -32,6 +32,10 @@ TRIGGER_MODALITY = {
     17: MODALITY.LIGHT,
     18: MODALITY.LIGHT,
 }
+## Thresholds
+DELTA_SOUND = 80
+DELTA_LIGHT = 60
+
 selected_triggers = set(TRIGGER_MODALITY.keys())
 epoch_len = EPOCH_TMAX - EPOCH_TMIN
 
@@ -95,19 +99,29 @@ df = pandas.DataFrame(
 )
 df['time'] = df.time/1000
 
-### loop over some random epochs for each modality
+
 for modality in (MODALITY.LIGHT, MODALITY.SOUND):
+
+    ### loop over some random epochs for each modality
     mod_epochs = df[df.modality==modality].epoch.unique().tolist()
     sample_epochs = sample(mod_epochs, 5)
     for e in sample_epochs:
 
         ## plot a single epoch to get an idea of what these look like
         df_epoch = df[df.epoch==e]
+        trigger = df_epoch.trigger.values[0]
         seaborn.lineplot(df_epoch, x='time', y=modality.name.lower(), hue='epoch')
-        plt.title(f'{modality.name.lower()} epoch: {e:03}')
-        plt.savefig(f'plots/goettingen/epoch_{modality.name.lower()}_{e:03}.png')
+        plt.title(f'{modality.name.lower()} trigger: {trigger} epoch: {e:03}')
+        plt.savefig(f'plots/goettingen/{modality.name.lower()}_{e:03}.png')
         plt.close('all')
 
+    ## plot epoch lines together
+    df_mod = df[df.modality==modality]
+    n_epochs = df.epoch.unique().size
+    seaborn.lineplot(df_mod, x='time', y=modality.name.lower(), hue='epoch')
+    plt.title(f'{modality.name.lower()} epochs: {n_epochs}')
+    plt.savefig(f'plots/goettingen/{modality.name.lower()}_all.png')
+    plt.close('all')
 
 raise ValueError
 
