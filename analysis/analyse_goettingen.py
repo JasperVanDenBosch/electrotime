@@ -35,6 +35,8 @@ TRIGGER_MODALITY = {
 ## Thresholds
 DELTA_SOUND = 80
 DELTA_LIGHT = 60
+BASELINE_SOUND = 512
+BASELINE_LIGHT = 7
 
 selected_triggers = set(TRIGGER_MODALITY.keys())
 epoch_len = EPOCH_TMAX - EPOCH_TMIN
@@ -63,9 +65,10 @@ for fpath in tqdm(fpaths):
         data_lol.append([int(c) for c in cells])
     data = numpy.array(data_lol)
 
-    trigger_idx = numpy.where(numpy.diff(data[:, 2]) > 0)[0]+1
+    ## sample indices where trigger column is not 0 and has changed
+    trigger_idx = numpy.where(numpy.diff(data[:, TRIGGER_COL]) > 0)[0]+1
     for index in trigger_idx:
-        trigger_val = data[index, 2]
+        trigger_val = data[index, TRIGGER_COL]
         if trigger_val not in selected_triggers:
             ## skipping as we are not interested in this trigger
             continue
@@ -75,7 +78,8 @@ for fpath in tqdm(fpaths):
             ## ignoring this trigger as we cannot observe a full window
             continue
         epoch = data[start:end, :].copy()
-        epoch[:, 3] = epoch[:, 3] - data[index, 3]
+        ## make time relative to trigger onset:
+        epoch[:, TIME_COL] = epoch[:, TIME_COL] - data[index, TIME_COL]
         epochs.append(epoch)
         triggers.append(trigger_val)
         modalities.append(TRIGGER_MODALITY[trigger_val])
@@ -106,7 +110,6 @@ for modality in (MODALITY.LIGHT, MODALITY.SOUND):
     mod_epochs = df[df.modality==modality].epoch.unique().tolist()
     sample_epochs = sample(mod_epochs, 5)
     for e in sample_epochs:
-
         ## plot a single epoch to get an idea of what these look like
         df_epoch = df[df.epoch==e]
         trigger = df_epoch.trigger.values[0]
@@ -132,24 +135,51 @@ for modality in (MODALITY.LIGHT, MODALITY.SOUND):
     plt.savefig(f'plots/goettingen/{modality.name.lower()}_all.png', dpi=600)
     plt.close('all')
 
-"""
-
-
-"""
-
-times_list = []
+## determine stimulus onset
+delays = []
 for e in df.epoch.unique():
 
     df_epoch = df[df.epoch==e]
-    for x, row in df_epoch.iterrows():
-        if abs(row.sound-512) > 50:
-            times_list.append(row.time)
+    for _, row in df_epoch.iterrows():
+
+        if row.modality == MODALITY.SOUND:
+            hit = abs(row.sound-BASELINE_SOUND) > DELTA_SOUND
+        else:
+            hit = (row.light-BASELINE_LIGHT) > DELTA_LIGHT
+
+        if hit:
+            delays.append(
+                dict(
+                    epoch=row.epoch,
+                    trigger=row.trigger,
+                    modality=row.modality,
+                    delay=row.time
+                )
+            )
             break
 
-times = numpy.array(times_list)
-print(f'times {times.mean():.2f} {times.std():.2f}  min={times.min():.2f}  max={times.max():.2f}')
+## calculate trigger-wise mean and std of delay and store as table
+delays_df = pandas.DataFrame(delays)
+table = []
+for trigger in sorted(delays_df.trigger.unique()):
+    trigger_df = delays_df[delays_df.trigger == trigger]
+    table.append(
+        dict(
+            trigger=trigger,
+            modality=trigger_df.modality.iloc[0].name,
+            count=trigger_df.shape[0],
+            mean=trigger_df.delay.mean(),
+            std=trigger_df.delay.std()
+        )
+    )
+pandas.DataFrame(table).to_csv(
+    'trigger_delays.csv',
+    float_format='%.3f',
+    index=False
+)
 
-seaborn.histplot(times)
-plt.title('bla')
-plt.savefig(f'plots/goettingen/dist_sound.png')
-plt.close('all')
+
+# seaborn.histplot(times)
+# plt.title('bla')
+# plt.savefig(f'plots/goettingen/dist_sound.png')
+# plt.close('all')
