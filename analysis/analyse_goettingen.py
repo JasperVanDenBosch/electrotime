@@ -2,7 +2,7 @@
 Parse data files of prototype MkII s/n 002 recorded in Goettingen
 """
 import numpy, pandas, seaborn
-from random import sample
+from random import seed, sample
 import matplotlib.pyplot as plt
 import matplotlib
 from logging import getLogger, INFO
@@ -13,7 +13,8 @@ from os.path import expanduser, join
 from glob import glob
 log = getLogger('electrotime')
 log.setLevel(INFO)
-matplotlib.use('agg') 
+matplotlib.use('agg')
+seed(9)
 
 class MODALITY(Enum):
     LIGHT = 1
@@ -53,7 +54,7 @@ modalities = []
 bad_lines = []
 
 ## extract data arrays from files
-for fpath in tqdm(fpaths):
+for fpath in tqdm(fpaths, desc='reading files..'):
     data_lol = []
     with open(fpath) as fhandle:
         lines = fhandle.readlines()
@@ -109,7 +110,7 @@ for modality in (MODALITY.LIGHT, MODALITY.SOUND):
     ### loop over some random epochs for each modality
     mod_epochs = df[df.modality==modality].epoch.unique().tolist()
     sample_epochs = sample(mod_epochs, 5)
-    for e in sample_epochs:
+    for e in tqdm(sample_epochs, desc='plotting random epochs..'):
         ## plot a single epoch to get an idea of what these look like
         df_epoch = df[df.epoch==e]
         trigger = df_epoch.trigger.values[0]
@@ -178,8 +179,15 @@ pandas.DataFrame(table).to_csv(
     index=False
 )
 
+## Plots of the delay distribution by modality
+for modality in (MODALITY.LIGHT, MODALITY.SOUND):
 
-# seaborn.histplot(times)
-# plt.title('bla')
-# plt.savefig(f'plots/goettingen/dist_sound.png')
-# plt.close('all')
+    seaborn.histplot(
+        data=delays_df[delays_df.modality==modality],
+        x='delay',
+        kde=True,
+        color='black',
+    )
+    plt.title(modality.name)
+    plt.savefig(f'plots/goettingen/dist_{modality.name}.png', dpi=600)
+    plt.close('all')
