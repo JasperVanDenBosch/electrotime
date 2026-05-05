@@ -22,7 +22,7 @@ class MODALITY(Enum):
 
 LIGHT_COL, SOUND_COL, TRIGGER_COL, TIME_COL = 0, 1, 2, 3
 EPOCH_TMIN = -100 ## start of epoch wrt to trigger in samples
-EPOCH_TMAX = 400    ## end of epoch wrt to trigger in samples
+EPOCH_TMAX = 300    ## end of epoch wrt to trigger in samples
 ## Defines which triggers are associated with which stimulus modality
 TRIGGER_MODALITY = {
     5: MODALITY.SOUND,
