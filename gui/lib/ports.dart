@@ -79,6 +79,9 @@ Stream<EpochResult> recordingStream(String address) {
   final _ = port.openRead();
   final config = port.config;
   config.baudRate = 115200;
+  config.bits = 8;
+  config.parity = SerialPortParity.none;
+  config.stopBits = 1;
   port.config = config;
   final reader = SerialPortReader(port);
 
