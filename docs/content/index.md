@@ -1,21 +1,12 @@
 +++
 title = "ElectroTime"
-description = "Open-source Arduino-based device for measuring stimulus presentation latency"
+description = "A universal, low-cost, open-source device for measuring stimulus presentation latency in M/EEG"
 +++
 
 #  ElectroTime
 ## Think your triggers are accurate? Think again
 
-an open-source Arduino-based latency recorder for measuring stimulus presentation timing in neuroscience experiments.
-
-
-ElectroTime is a latency recorder that helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
-
-
-
-## Community
-
-- 💬 [Discord Community](https://discord.gg/47mBnvJM)
-- 🔗 [EEGManyLabs](https://osf.io/yb3pq/)
-
-
+ElectroTime is a **universal, low-cost, open-source** device for measuring stimulus
+presentation latency in **M/EEG** experiments. It records the precise timing between the
+trigger signals your software sends and the moment a stimulus (visual or auditory) actually
+reaches the participant. It's easy to use, widely compatible, and costs **less than $80**.
