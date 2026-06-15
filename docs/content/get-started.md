@@ -1,8 +1,10 @@
 +++
-Title = "Get started"
-SequenceNumber = 40
+Title = "Get a device"
+SequenceNumber = 30
 +++
 
-1. [Follow the user guide](/user-guide/) to record latency in your lab.
-2. [Download the desktop app](/app/) to control the device.
-3. [Build your own](/hardware/) — open-source hardware details coming soon.
+ElectroTime works with your existing experiment — no changes to your setup, and a
+measurement only takes minutes.
+
+1. [Contact us](mailto:J.F.VanDenBosch@leeds.ac.uk) and we'll ship you a device.
+2. [Follow the guide](/user-guide/) to record your data and send it back to us.

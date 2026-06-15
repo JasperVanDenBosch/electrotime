@@ -3,10 +3,9 @@ Title = "What we found"
 SequenceNumber = 20
 +++
 
-We measured stimulus latency across **four [#EEGManyLabs](https://osf.io/yb3pq/) sites**, for
-both visual and auditory stimuli. The result: latency is **unexpectedly severe and varies
-across labs** — enough to affect experimental outcomes, and enough that, left uncorrected, it
-would undermine replicability.
+We measured the latency at four [#EEGManyLabs](https://osf.io/yb3pq/) sites. The delays were
+larger than expected — and different at every site. Left uncorrected, that's enough to change
+your results and break replication across labs.
 
 ![Raw light traces from 314 epochs, showing the visual stimulus onset relative to the trigger](/assets/results_visual_trace.png)
 
