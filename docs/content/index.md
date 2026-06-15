@@ -3,7 +3,6 @@ title = "ElectroTime"
 description = "A universal, low-cost, open-source device for measuring stimulus presentation latency in M/EEG"
 +++
 
-#  ElectroTime
 ## Think your triggers are accurate? Think again
 
 ElectroTime measures the real delay between your trigger and the moment a stimulus actually

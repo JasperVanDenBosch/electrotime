@@ -1,3 +1,25 @@
+/* ElectroTime brand — teal accent (#0097b2) derived from the logo wordmark.
+   Framework-inspired: one accent used sparingly, neutrals everywhere else. */
+:root,
+.wa-theme-awesome {
+    --wa-color-brand-fill-loud: #0097b2;   /* buttons, active nav */
+    --wa-color-brand-fill-normal: #1bb3ce;
+    --wa-color-brand-fill-quiet: #e6f6f9;  /* subtle fills, callouts */
+    --wa-color-brand-on-loud: #ffffff;
+}
+
+body {
+    background: #ffffff;
+    color: #1a1d1f;
+}
+
+/* Tabular figures for latency/results numbers */
+table,
+.results,
+code {
+    font-variant-numeric: tabular-nums;
+}
+
 .site-logo {
     max-width: 200px;
     width: 100%;
@@ -18,4 +40,45 @@ main {
     max-width: 720px;
     margin-inline: auto;
     padding: var(--wa-space-l) var(--wa-space-m);
+}
+
+/* Team section — rendered as a leaf inside a <wa-card>, where each member
+   compiles to a <p> with a portrait. Content stays plain markdown; the member
+   paragraphs flow as cards while the intro/citation paragraphs stay full-width. */
+#team p:has(img) {
+    display: inline-block;
+    width: 150px;
+    vertical-align: top;
+    margin: var(--wa-space-s) var(--wa-space-s) var(--wa-space-s) 0;
+    padding: var(--wa-space-m) var(--wa-space-s);
+    text-align: center;
+    line-height: 1.4;
+    background: #ffffff;
+    border: 1px solid var(--wa-color-neutral-fill-quiet);
+    border-radius: var(--wa-border-radius-l);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#team p:has(img):hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+    transform: translateY(-2px);
+}
+
+/* Override the global figure styling (400px, gray border, faded) for portraits. */
+#team p:has(img) img {
+    width: 104px;
+    height: 104px;
+    margin: 0 auto var(--wa-space-xs);
+    border: 3px solid var(--wa-color-brand-fill-quiet);
+    border-radius: 50%;
+    box-shadow: none;
+    object-fit: cover;
+    opacity: 1;
+}
+
+#team p:has(img) strong {
+    display: block;
+    color: #1a1d1f;
+    font-size: var(--wa-font-size-m);
 }
