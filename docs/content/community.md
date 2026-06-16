@@ -1,5 +1,6 @@
 +++
 Title = "Community"
+Eyebrow = "Community"
 SequenceNumber = 60
 +++
 

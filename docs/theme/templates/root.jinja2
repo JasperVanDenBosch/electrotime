@@ -1,0 +1,78 @@
+{% extends 'master.jinja2' %}
+
+{# Home page. Syrinx auto-selects this template for the root node (name=''):
+   it tries root.jinja2 before page.jinja2. All copy comes from the frontmatter
+   of content/index.md; this file is structure + styling only. #}
+
+{% block main %}
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-copy">
+            {% if index.front.get('Eyebrow') %}<p class="eyebrow">{{ index.front['Eyebrow'] }}</p>{% endif %}
+            <h1 class="hero-title">{{ index.front['Headline'] }}{% if index.front.get('HeadlineAccent') %}<br><span class="hero-title-accent">{{ index.front['HeadlineAccent'] }}</span>{% endif %}</h1>
+            {% if index.front.get('Lede') %}<p class="hero-lede">{{ index.front['Lede'] }}</p>{% endif %}
+
+            {% if index.front.get('Cta') %}
+            <div class="hero-actions">
+                {% for cta in index.front['Cta'] %}
+                <a class="btn {{ 'btn-solid' if cta.get('primary') else 'btn-ghost' }}" href="{{ cta['href'] }}">{{ cta['label'] }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if index.front.get('Stat') %}
+            <ul class="hero-stats">
+                {% for stat in index.front['Stat'] %}
+                <li><span class="stat-num">{{ stat['num'] }}</span><span class="stat-label">{{ stat['label'] }}</span></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="hero-visual">
+            {% if index.front.get('HeroImage') %}
+            <figure class="device-shot">
+                <img src="{{ index.front['HeroImage'] }}" alt="{{ index.front.get('HeroImageAlt', '') }}">
+            </figure>
+            {% endif %}
+
+            <figure class="trace-card">
+                {% if index.front.get('TraceCaption') %}<figcaption class="trace-caption">{{ index.front['TraceCaption'] }}</figcaption>{% endif %}
+                <svg class="trace" viewBox="0 0 420 230" role="img" aria-label="Timing trace: the stimulus pulse rises after the trigger pulse, showing the measured delay.">
+                    <g class="trace-grid">
+                        <line x1="64" y1="70" x2="404" y2="70"></line>
+                        <line x1="64" y1="118" x2="404" y2="118"></line>
+                        <line x1="64" y1="166" x2="404" y2="166"></line>
+                    </g>
+
+                    <rect class="trace-band" x="170" y="40" width="76" height="158"></rect>
+
+                    <line class="edge edge-trigger" x1="170" y1="40" x2="170" y2="198"></line>
+                    <line class="edge edge-stim" x1="246" y1="40" x2="246" y2="198"></line>
+
+                    {% if index.front.get('TraceDelay') %}
+                    <g class="trace-delta">
+                        <line x1="170" y1="52" x2="246" y2="52"></line>
+                        <text x="208" y="34" text-anchor="middle">{{ index.front['TraceDelay'] }}</text>
+                    </g>
+                    {% endif %}
+
+                    <path class="trace-line line-trigger" d="M64,118 H170 V72 H404"></path>
+                    <path class="trace-line line-stim" d="M64,194 H246 V148 H404"></path>
+
+                    <text class="lane-label" x="64" y="210">Trigger sent</text>
+                    <text class="lane-label lane-label-stim" x="404" y="210" text-anchor="end">Stimulus on screen</text>
+                </svg>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<div class="home-sections">
+    {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
+        {% include 'section.jinja2' %}
+    {% endfor %}
+</div>
+
+{% endblock %}

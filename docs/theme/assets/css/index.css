@@ -1,84 +1,407 @@
-/* ElectroTime brand — teal accent (#0097b2) derived from the logo wordmark.
-   Framework-inspired: one accent used sparingly, neutrals everywhere else. */
+/* ============================================================================
+   ElectroTime — a scientific timing instrument.
+   Identity: precision over decoration. One teal (the logo) for the brand and
+   "what you intend"; one warm signal (#ff5d3b) reserved exclusively for the
+   measured delay — the gap between trigger and reality the device exists to show.
+   Type pairs Space Grotesk (engineered display) with IBM Plex Sans/Mono.
+   ========================================================================== */
+
 :root,
 .wa-theme-awesome {
-    --wa-color-brand-fill-loud: #0097b2;   /* buttons, active nav */
-    --wa-color-brand-fill-normal: #1bb3ce;
-    --wa-color-brand-fill-quiet: #e6f6f9;  /* subtle fills, callouts */
+    /* --- brand palette --- */
+    --ink:        #0d1418;   /* headings, strong text */
+    --ink-soft:   #55636b;   /* body copy, labels */
+    --ink-faint:  #8a969d;   /* captions, fine print */
+    --paper:      #ffffff;
+    --paper-2:    #f5f8f9;   /* alternating section band */
+    --line:       #e4eaec;   /* hairlines */
+    --brand:      #0097b2;   /* logo teal — intent / trigger */
+    --brand-deep: #007288;   /* hover / active */
+    --brand-wash: #e6f6f9;   /* faint teal fills */
+    --signal:     #ff5d3b;   /* the measured delay — used sparingly */
+
+    /* map our tokens onto the few Web Awesome surfaces we keep */
+    --wa-color-brand-fill-loud: var(--brand);
+    --wa-color-brand-fill-normal: var(--brand);
+    --wa-color-brand-fill-quiet: var(--brand-wash);
     --wa-color-brand-on-loud: #ffffff;
+
+    /* --- type --- */
+    --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --font-body:    "IBM Plex Sans", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+    /* --- rhythm --- */
+    --content: 1080px;
+    --measure: 720px;
+    --header-h: 64px;
 }
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* keep wide content (result plots, the trace SVG) from overflowing on mobile */
+img { max-width: 100%; height: auto; }
+svg { max-width: 100%; }
 
 body {
-    background: #ffffff;
-    color: #1a1d1f;
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
-/* Tabular figures for latency/results numbers */
-table,
-.results,
-code {
-    font-variant-numeric: tabular-nums;
+h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0;
 }
 
-.site-logo {
-    max-width: 200px;
-    width: 100%;
+a { color: var(--brand-deep); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--brand); }
+
+/* tabular figures for any latency / cost numbers */
+table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
+
+/* Eyebrow: the recurring mono label that signs every section */
+.eyebrow {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brand);
 }
 
-header[slot="header"] nav a {
+/* --- buttons -------------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.7em 1.25em;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
     text-decoration: none;
-    color: var(--wa-color-neutral-fill-loud);
-    font-size: var(--wa-font-size-s);
-    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+    transition: background .15s ease, color .15s ease, border-color .15s ease, transform .15s ease;
 }
+.btn-solid { background: var(--brand); color: #fff; }
+.btn-solid:hover { background: var(--brand-deep); color: #fff; transform: translateY(-1px); }
+.btn-ghost { color: var(--ink); border-color: var(--line); background: var(--paper); }
+.btn-ghost:hover { border-color: var(--brand); color: var(--brand-deep); }
 
-header[slot="header"] nav a:hover {
-    color: var(--wa-color-neutral-on-fill);
+/* ============================================================================
+   Header — slim, sticky, logo left / nav + CTA right
+   ========================================================================== */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--line);
 }
-
-main {
-    max-width: 720px;
+.site-header-inner {
+    max-width: var(--content);
     margin-inline: auto;
-    padding: var(--wa-space-l) var(--wa-space-m);
+    min-height: var(--header-h);
+    padding: 0 var(--wa-space-l, 1.5rem);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.brand { display: inline-flex; line-height: 0; }
+.site-logo { height: 26px; width: auto; display: block; }
+
+.site-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.site-nav a {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color .15s ease;
+}
+.site-nav a:hover { color: var(--ink); }
+
+.header-cta { padding: 0.5em 1em; font-size: 0.9rem; }
+
+/* ============================================================================
+   Hero — the thesis: trigger vs. reality
+   ========================================================================== */
+.hero {
+    border-bottom: 1px solid var(--line);
+    background:
+        radial-gradient(60% 80% at 85% 10%, var(--brand-wash) 0%, transparent 60%),
+        var(--paper);
+}
+.hero-inner {
+    max-width: var(--content);
+    margin-inline: auto;
+    padding: clamp(3rem, 7vw, 6rem) var(--wa-space-l, 1.5rem);
+    display: grid;
+    grid-template-columns: 1.02fr 0.98fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+}
+/* let grid columns shrink below the device image's intrinsic width */
+.hero-copy, .hero-visual { min-width: 0; }
+.hero-title {
+    font-size: clamp(2.4rem, 6vw, 4.1rem);
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+}
+.hero-title-accent { color: var(--brand); }
+.hero-lede {
+    max-width: 34ch;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    color: var(--ink-soft);
+    margin: 0 0 1.75rem;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2.25rem; }
+
+.hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 1.5rem 0 0;
+    border-top: 1px solid var(--line);
+}
+.hero-stats li { display: flex; flex-direction: column; }
+.stat-num {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+.stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
 }
 
-/* Team section — rendered as a leaf inside a <wa-card>, where each member
-   compiles to a <p> with a portrait. Content stays plain markdown; the member
-   paragraphs flow as cards while the intro/citation paragraphs stay full-width. */
-#team p:has(img) {
+/* --- hero visual: framed device with the trace card floating over it ------ */
+.hero-visual { position: relative; }
+.device-shot {
+    margin: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px -28px rgba(13, 20, 24, 0.45);
+}
+.device-shot img { display: block; width: 100%; height: auto; }
+
+.trace-card {
+    position: absolute;
+    left: -1.5rem;
+    bottom: -1.75rem;
+    width: min(78%, 340px);
+    margin: 0;
+    padding: 1rem 1.1rem 0.85rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 18px 40px -20px rgba(13, 20, 24, 0.35);
+}
+.trace-caption {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 0.5rem;
+}
+.trace { display: block; width: 100%; height: auto; }
+
+/* trace internals */
+.trace-grid line { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+.trace-band { fill: color-mix(in srgb, var(--signal) 9%, transparent); }
+.edge { stroke-width: 1.25; stroke-dasharray: 3 3; }
+.edge-trigger { stroke: var(--brand); }
+.edge-stim { stroke: var(--signal); }
+.trace-line { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.line-trigger { stroke: var(--brand); }
+.line-stim { stroke: var(--signal); }
+.trace-delta line { stroke: var(--signal); stroke-width: 1.5; }
+.trace-delta text {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    fill: var(--signal);
+}
+.lane-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    fill: var(--ink-faint);
+}
+.lane-label-stim { fill: color-mix(in srgb, var(--signal) 70%, var(--ink)); }
+
+/* draw-on-load animation */
+.trace-line {
+    stroke-dasharray: 520;
+    stroke-dashoffset: 520;
+    animation: trace-draw 1.1s cubic-bezier(.6,.05,.2,1) forwards;
+}
+.line-trigger { animation-delay: 0.25s; }
+.line-stim { animation-delay: 0.6s; }
+.trace-band, .trace-delta, .edge { opacity: 0; animation: trace-fade .6s ease forwards 1.5s; }
+@keyframes trace-draw { to { stroke-dashoffset: 0; } }
+@keyframes trace-fade { to { opacity: 1; } }
+
+/* ============================================================================
+   Sections — embedded leaves, alternating bands, no boxes
+   ========================================================================== */
+.section {
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+.home-sections .section:nth-child(even) { background: var(--paper-2); }
+.section-inner {
+    max-width: var(--content);
+    margin-inline: auto;
+    padding: clamp(3rem, 6vw, 5rem) var(--wa-space-l, 1.5rem);
+}
+.section-head { margin-bottom: 1.75rem; }
+.section-title { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 600; }
+.section-body { max-width: var(--measure); }
+.section-body > :first-child { margin-top: 0; }
+.section-body p { margin: 0 0 1.1rem; }
+.section-body ul { padding-left: 1.1rem; }
+.section-body li { margin-bottom: 0.4rem; }
+
+/* figures inside section/branch content */
+.section-body img,
+.prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+
+/* ============================================================================
+   Branch pages (/hardware/, /user-guide/, …) — readable prose column
+   ========================================================================== */
+.prose {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4rem) var(--wa-space-l, 1.5rem) 4rem;
+}
+.prose h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 1.25rem; }
+.prose h2 { font-size: 1.5rem; margin: 2.5rem 0 0.75rem; }
+.prose p { margin: 0 0 1.1rem; }
+
+/* ============================================================================
+   Team — portraits rendered from markdown <p><img> inside #team
+   ========================================================================== */
+#team .section-body p:has(img) {
     display: inline-block;
     width: 150px;
     vertical-align: top;
-    margin: var(--wa-space-s) var(--wa-space-s) var(--wa-space-s) 0;
-    padding: var(--wa-space-m) var(--wa-space-s);
+    margin: var(--wa-space-s, .5rem) var(--wa-space-s, .5rem) var(--wa-space-s, .5rem) 0;
+    padding: var(--wa-space-m, 1rem) var(--wa-space-s, .5rem);
     text-align: center;
     line-height: 1.4;
-    background: #ffffff;
-    border: 1px solid var(--wa-color-neutral-fill-quiet);
-    border-radius: var(--wa-border-radius-l);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(13, 20, 24, 0.06);
+    transition: box-shadow .2s ease, transform .2s ease;
 }
-
-#team p:has(img):hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+#team .section-body p:has(img):hover {
+    box-shadow: 0 10px 24px -12px rgba(13, 20, 24, 0.25);
     transform: translateY(-2px);
 }
-
-/* Override the global figure styling (400px, gray border, faded) for portraits. */
-#team p:has(img) img {
+#team .section-body p:has(img) img {
     width: 104px;
     height: 104px;
-    margin: 0 auto var(--wa-space-xs);
-    border: 3px solid var(--wa-color-brand-fill-quiet);
+    margin: 0 auto var(--wa-space-xs, .4rem);
+    border: 3px solid var(--brand-wash);
     border-radius: 50%;
     box-shadow: none;
     object-fit: cover;
-    opacity: 1;
+}
+#team .section-body p:has(img) strong {
+    display: block;
+    color: var(--ink);
+    font-size: 1rem;
 }
 
-#team p:has(img) strong {
-    display: block;
-    color: #1a1d1f;
-    font-size: var(--wa-font-size-m);
+/* ============================================================================
+   Footer — quiet, fine print
+   ========================================================================== */
+.site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+}
+.site-footer-inner {
+    max-width: var(--content);
+    margin-inline: auto;
+    padding: 2rem var(--wa-space-l, 1.5rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+}
+.footer-brand { color: var(--ink-soft); font-weight: 600; letter-spacing: 0.05em; }
+.site-footer-inner a { color: var(--ink-soft); }
+.site-footer-inner a:hover { color: var(--brand-deep); }
+.footer-meta:last-child { margin-left: auto; }
+
+/* ============================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-visual { margin-top: 1rem; }
+    .trace-card {
+        position: static;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    .device-shot { box-shadow: 0 16px 40px -24px rgba(13,20,24,.4); }
+}
+@media (max-width: 620px) {
+    .site-nav { display: none; }
+    .hero-stats { gap: 1.25rem; }
+    .footer-meta:last-child { margin-left: 0; }
+}
+
+/* ============================================================================
+   Accessibility floors
+   ========================================================================== */
+:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .trace-line { stroke-dashoffset: 0; animation: none; }
+    .trace-band, .trace-delta, .edge { opacity: 1; animation: none; }
+    .btn:hover, #team .section-body p:has(img):hover { transform: none; }
 }

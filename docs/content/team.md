@@ -1,5 +1,6 @@
 +++
 Title = "Team & citation"
+Eyebrow = "The team"
 SequenceNumber = 50
 +++
 

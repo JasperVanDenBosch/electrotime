@@ -3,29 +3,37 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta 
-        syrinx-environment="{{ index.meta.environment }}" 
-        syrinx-timestamp="{{ index.meta.timestamp.isoformat() }}" 
+    <meta
+        syrinx-environment="{{ index.meta.environment }}"
+        syrinx-timestamp="{{ index.meta.timestamp.isoformat() }}"
         syrinx-version="{{ index.meta.syrinx_version }}"/>
     <link rel="canonical" href="{{ index.address }}">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
     <title>{{ index.title }}</title>
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.5.0/styles/webawesome.css" />
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.5.0/webawesome.loader.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/index.css">
 
 </head>
 <body>
 <wa-page>
 
-    <header slot="header" class="wa-stack" style="align-items: center; padding: var(--wa-space-m) 0;">
-        <a href="/"><img src="/assets/electrotime.svg" alt="ElectroTime" class="site-logo"></a>
-        <nav class="wa-cluster">
-            <a href="/">Home</a>
-            {% for branch in root.branches %}
-            <a href="/{{ branch.name }}/">{{ branch.title }}</a>
-            {% endfor %}
-        </nav>
+    <header slot="header" class="site-header">
+        <div class="site-header-inner">
+            <a class="brand" href="/">
+                <img src="/assets/electrotime.svg" alt="ElectroTime" class="site-logo">
+            </a>
+            <nav class="site-nav">
+                <a href="/">Home</a>
+                {% for branch in root.branches %}
+                <a href="/{{ branch.name }}/">{{ branch.title }}</a>
+                {% endfor %}
+            </nav>
+            {% if root.front.get('HeaderCtaLabel') %}<a class="btn btn-solid header-cta" href="{{ root.front.get('HeaderCtaHref', '#') }}">{{ root.front['HeaderCtaLabel'] }}</a>{% endif %}
+        </div>
     </header>
 
     <main>
@@ -33,10 +41,11 @@
     {% endblock %}
     </main>
 
-    <footer slot="footer">
-        <div class="wa-cluster">
-            <span>&copy; 2026 ElectroTime team</span>
-            <span>Powered by <a href="https://syrinx.site">Syrinx</a></span>
+    <footer slot="footer" class="site-footer">
+        <div class="site-footer-inner">
+            {% if root.front.get('FooterBrand') %}<span class="footer-brand">{{ root.front['FooterBrand'] }}</span>{% endif %}
+            {% if root.front.get('FooterTagline') %}<span class="footer-meta">{{ root.front['FooterTagline'] }}</span>{% endif %}
+            {% if root.front.get('FooterColophonLink') %}<span class="footer-meta">{{ root.front.get('FooterColophon', '') }} <a href="{{ root.front['FooterColophonHref'] }}">{{ root.front['FooterColophonLink'] }}</a></span>{% endif %}
         </div>
     </footer>
 
@@ -45,3 +54,4 @@
 
 </body>
 
+</html>

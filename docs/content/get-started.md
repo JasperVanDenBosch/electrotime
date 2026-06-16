@@ -1,5 +1,6 @@
 +++
 Title = "Get a device"
+Eyebrow = "Next step"
 SequenceNumber = 30
 +++
 

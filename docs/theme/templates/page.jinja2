@@ -1,26 +1,17 @@
 {% extends 'master.jinja2' %}
 
+{# Generic branch page (e.g. /hardware/, /user-guide/). Used by Syrinx when a
+   node has no template matching its own name. Renders the page's own markdown,
+   then any embedded leaves (e.g. the user-guide step-*.md files) as sections. #}
+
 {% block main %}
 
-<article id="{{ index.name }}" class="wa-stack">
-
+<article id="{{ index.name }}" class="prose">
     {{ index.content_html|safe }}
-
-    {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
-        {% include 'section.jinja2' %}
-    {% endfor %}
-
 </article>
 
-<style>
-article img {
-    display: block;
-    box-shadow: 5px 5px lightgray;
-    border: 1px solid gray;
-    width: 400px;
-    margin: 1em auto;
-    opacity: 80%;
-}
-</style>
+{% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
+    {% include 'section.jinja2' %}
+{% endfor %}
 
 {% endblock %}
