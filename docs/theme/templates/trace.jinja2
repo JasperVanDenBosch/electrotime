@@ -1,0 +1,42 @@
+{# Hero timing-trace diagram — the animated waveform card in the home page hero.
+
+   Included from root.jinja2 (and inherits its context), so `index` here is the
+   home node: this reads `index.front['TraceCaption']` and `index.front['TraceDelay']`
+   from content/index.md frontmatter — never hardcode that copy here.
+
+   All styling and the fade-in animation live in theme/assets/css/index.css
+   (the `.trace*` selectors and `@keyframes trace-fade`); this file is markup only. #}
+
+<figure class="trace-card">
+    {% if index.front.get('TraceCaption') %}<figcaption class="trace-caption">{{ index.front['TraceCaption'] }}</figcaption>{% endif %}
+    <svg class="trace" viewBox="0 0 420 230" role="img" aria-label="Timing trace: the stimulus pulse rises after the trigger pulse, showing the measured delay.">
+        {# Horizontal reference gridlines #}
+        <g class="trace-grid">
+            <line x1="64" y1="70" x2="404" y2="70"></line>
+            <line x1="64" y1="118" x2="404" y2="118"></line>
+            <line x1="64" y1="166" x2="404" y2="166"></line>
+        </g>
+
+        {# Highlight band spanning the trigger→stimulus interval #}
+        <rect class="trace-band" x="170" y="40" width="76" height="158"></rect>
+
+        {# Vertical edges marking the trigger and stimulus instants #}
+        <line class="edge edge-trigger" x1="170" y1="40" x2="170" y2="198"></line>
+        <line class="edge edge-stim" x1="246" y1="40" x2="246" y2="198"></line>
+
+        {# Measured-delay annotation (caliper + label) #}
+        {% if index.front.get('TraceDelay') %}
+        <g class="trace-delta">
+            <line x1="170" y1="52" x2="246" y2="52"></line>
+            <text x="208" y="34" text-anchor="middle">{{ index.front['TraceDelay'] }}</text>
+        </g>
+        {% endif %}
+
+        {# Stepped waveforms: trigger sent, then stimulus on screen #}
+        <path class="trace-line line-trigger" d="M64,118 H170 V72 H404"></path>
+        <path class="trace-line line-stim" d="M64,194 H246 V148 H404"></path>
+
+        <text class="lane-label" x="64" y="210">Trigger sent</text>
+        <text class="lane-label lane-label-stim" x="404" y="210" text-anchor="end">Stimulus on screen</text>
+    </svg>
+</figure>

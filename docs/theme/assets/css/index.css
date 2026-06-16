@@ -218,9 +218,9 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 
 .trace-card {
     position: absolute;
-    left: -1.5rem;
-    bottom: -1.75rem;
-    width: min(78%, 340px);
+    right: -3rem;
+    top: -1.75rem;
+    width: min(55%, 260px);
     margin: 0;
     padding: 1rem 1.1rem 0.85rem;
     background: var(--paper);
