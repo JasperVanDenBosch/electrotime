@@ -322,11 +322,22 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 /* ============================================================================
    Team — portraits rendered from markdown <p><img> inside #team
    ========================================================================== */
+#team .section-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--wa-space-s, .5rem);
+}
+/* intro paragraph spans the full row above the portrait cards */
+#team .section-body > p:not(:has(img)) {
+    flex: 1 0 100%;
+    margin: 0 0 .6rem;
+}
 #team .section-body p:has(img) {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     width: 150px;
-    vertical-align: top;
-    margin: var(--wa-space-s, .5rem) var(--wa-space-s, .5rem) var(--wa-space-s, .5rem) 0;
+    margin: 0;
     padding: var(--wa-space-m, 1rem) var(--wa-space-s, .5rem);
     text-align: center;
     line-height: 1.4;
@@ -353,6 +364,50 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
     display: block;
     color: var(--ink);
     font-size: 1rem;
+}
+
+/* ============================================================================
+   Community — brand-logo cards (self-labeling wordmarks) rendered from
+   markdown <li><a><img>> inside #community
+   ========================================================================== */
+#community .section-body ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--wa-space-m, 1rem);
+}
+#community .section-body li {
+    margin: 0;
+}
+#community .section-body li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+    height: 92px;
+    padding: var(--wa-space-m, 1rem) var(--wa-space-l, 1.5rem);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(13, 20, 24, 0.06);
+    text-decoration: none;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+#community .section-body li a:hover {
+    box-shadow: 0 10px 24px -12px rgba(13, 20, 24, 0.25);
+    transform: translateY(-2px);
+}
+#community .section-body li a img {
+    height: 40px;
+    width: auto;
+    max-width: 200px;
+    margin: 0;
+    object-fit: contain;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
 }
 
 /* ============================================================================
@@ -410,5 +465,5 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
     html { scroll-behavior: auto; }
     .trace-line { stroke-dashoffset: 0; animation: none; }
     .trace-band, .trace-delta, .edge { opacity: 1; animation: none; }
-    .btn:hover, #team .section-body p:has(img):hover { transform: none; }
+    .btn:hover, #team .section-body p:has(img):hover, #community .section-body li a:hover { transform: none; }
 }

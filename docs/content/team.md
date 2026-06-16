@@ -1,5 +1,5 @@
 +++
-Title = "Team & citation"
+Title = "Team"
 Eyebrow = "The team"
 SequenceNumber = 50
 +++
@@ -23,7 +23,3 @@ University of Alabama
 ![Faisal Mushtaq](/assets/team/faisal.jpg)
 **Faisal Mushtaq**
 University of Leeds
-
-A manuscript is in preparation. In the meantime, see our
-[OHBM 2026 poster (PDF)](/assets/poster_ohbm_2026.pdf) for an overview of the device and our
-results.
