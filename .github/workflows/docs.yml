@@ -2,210 +2,77 @@ name: Build and Deploy Documentation
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'docs/**'
       - '.github/workflows/docs.yml'
-      - 'README.md'
+      - '.do/app.yml'
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'docs/**'
-      - 'README.md'
+      - '.github/workflows/docs.yml'
+      - '.do/app.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: docs/package-lock.json
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rust-docs
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          cd docs
-          npm ci
+        run: pip install -r docs/requirements.txt
 
-      - name: Copy README to content
-        run: |
-          cd docs
-          # Create repo.md with frontmatter
-          cat > content/repo.md << 'EOF'
-          +++
-          title = "Repository"
-          description = "Main repository README documentation"
-          SequenceNumber = 7
-          +++
-          
-          EOF
-          # Append README content
-          cat ../README.md >> content/repo.md
+      - name: Build site
+        working-directory: docs
+        run: syrinx build --clean
 
-      - name: Generate Rust documentation
-        run: |
-          echo "::group::Building Rust docs"
-          
-          # Temporarily rename .cargo/config.toml files to avoid AVR target issues
-          echo "Temporarily disabling AVR configurations..."
-          for config in firmware/.cargo/config.toml firmware/*/.cargo/config.toml; do
-            if [ -f "$config" ]; then
-              mv "$config" "$config.bak"
-              echo "Disabled: $config"
-            fi
-          done
-          
-          # Build docs for latreclib
-          echo "Building docs for latreclib..."
-          cd firmware/latreclib
-          cargo doc --no-deps --all-features
-          cd ../..
-          
-          # Restore .cargo/config.toml files
-          echo "Restoring AVR configurations..."
-          for config in firmware/.cargo/config.toml.bak firmware/*/.cargo/config.toml.bak; do
-            if [ -f "$config" ]; then
-              mv "$config" "${config%.bak}"
-              echo "Restored: ${config%.bak}"
-            fi
-          done
-          
-          echo "::endgroup::"
-          
-          # Copy to docs directory
-          mkdir -p docs/public/docs-api/firmware
-          if [ -d "firmware/latreclib/target/doc" ]; then
-            cp -r firmware/latreclib/target/doc/* docs/public/docs-api/firmware/
-            echo "✅ Rust docs copied successfully"
-          else
-            echo "⚠️ Warning: Rust docs not found"
-          fi
+      - name: List build output
+        run: ls -l docs/dist/
 
-      - name: Generate Flutter documentation
-        run: |
-          echo "::group::Building Flutter docs"
-          cd gui
-          flutter pub get
-          dart doc --output ../docs/public/docs-api/gui || echo "⚠️ Dart doc failed, checking for existing docs..."
-          cd ..
-          echo "::endgroup::"
-          
-          # Check if docs were generated
-          if [ ! -d "docs/public/docs-api/gui/index.html" ] && [ -d "gui/doc/api" ]; then
-            echo "Using existing Flutter docs from gui/doc/api"
-            cp -r gui/doc/api/* docs/public/docs-api/gui/
-          fi
-
-      - name: Build Next.js site
-        run: |
-          cd docs
-          npm run build
-          
-          # Copy API docs to out directory
-          if [ -d "public/docs-api" ]; then
-            cp -r public/docs-api out/
-            echo "✅ API docs copied to output"
-          fi
-          
-          # Verify ZIP files were created
-          if [ -f "out/flutter-dart-docs.zip" ]; then
-            echo "✅ Flutter docs ZIP created: $(du -h out/flutter-dart-docs.zip | cut -f1)"
-          else
-            echo "⚠️ Flutter docs ZIP not found"
-          fi
-          
-          if [ -f "out/rust-firmware-docs.zip" ]; then
-            echo "✅ Rust docs ZIP created: $(du -h out/rust-firmware-docs.zip | cut -f1)"
-          else
-            echo "⚠️ Rust docs ZIP not found"
-          fi
-          
-      - name: Create .nojekyll file
-        run: |
-          cd docs
-          touch out/.nojekyll
-          
-      - name: Verify build output
-        run: |
-          cd docs
-          echo "::group::Checking generated files"
-          echo "Contents of out directory:"
-          ls -la out/
-          echo ""
-          echo "Checking for key HTML files:"
-          # Check for main pages
-          for page in "index.html" "developers/index.html" "hackathon/index.html" "api-docs/index.html"; do
-            if [ -f "out/$page" ]; then
-              echo "✅ $page exists"
-            else
-              echo "⚠️  $page not found"
-            fi
-          done
-          echo ""
-          echo "Checking for API documentation:"
-          # Check for API docs
-          if [ -d "out/docs-api/firmware" ]; then
-            echo "✅ Firmware API docs directory exists"
-          else
-            echo "⚠️  Firmware API docs directory not found"
-          fi
-          if [ -d "out/docs-api/gui" ]; then
-            echo "✅ Flutter API docs directory exists"
-          else
-            echo "⚠️  Flutter API docs directory not found"
-          fi
-          echo ""
-          echo "Checking for ZIP files:"
-          if [ -f "out/flutter-dart-docs.zip" ]; then
-            echo "✅ Flutter docs ZIP exists ($(du -h out/flutter-dart-docs.zip | cut -f1))"
-          else
-            echo "⚠️  Flutter docs ZIP not found"
-          fi
-          if [ -f "out/rust-firmware-docs.zip" ]; then
-            echo "✅ Rust docs ZIP exists ($(du -h out/rust-firmware-docs.zip | cut -f1))"
-          else
-            echo "⚠️  Rust docs ZIP not found"
-          fi
-          echo "::endgroup::"
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
         with:
-          path: ./docs/out
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v7
+        with:
+          context: docs
+          file: docs/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          no-cache: true
+          tags: ghcr.io/jaspervandenbosch/electrotime-org:latest
 
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v6
+
+      - name: Deploy to DigitalOcean App Platform
+        uses: digitalocean/app_action/deploy@v2
+        env:
+          IMAGE_DIGEST: ${{ needs.build.outputs.digest }}
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          app_spec_location: .do/app.yml
+          print_build_logs: true
+          print_deploy_logs: true

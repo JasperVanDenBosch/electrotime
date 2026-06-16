@@ -1,48 +1,49 @@
 +++
-title = "Getting Started"
-description = "Open-source Arduino-based device for measuring stimulus presentation latency"
+Title = "ElectroTime"
+description = "A universal, low-cost, open-source device for measuring stimulus presentation latency in M/EEG"
+
+# --- Hero content (rendered by theme/templates/root.jinja2) ---
+Eyebrow = "Open-source timing instrument · M/EEG"
+Headline = "Think your triggers are accurate?"
+HeadlineAccent = "Think again."
+Lede = "ElectroTime measures the real delay between your trigger and the moment a stimulus actually reaches the participant — visual or auditory, on any M/EEG setup."
+
+HeroImage = "/assets/device.jpg"
+HeroImageAlt = "The ElectroTime device, seen from above: a compact 3D-printed enclosure with a window exposing the photodiode and circuit board inside"
+
+# Factual labels for the hero timing-trace illustration
+TraceCaption = "Visual onset, one trial"
+TraceDelay = "Δ 41.6 ms"
+
+# --- Header CTA (rendered site-wide by theme/templates/master.jinja2 via root.front) ---
+HeaderCtaLabel = "Get a device"
+HeaderCtaHref = "/#get-started"
+
+# --- Footer (rendered site-wide by theme/templates/master.jinja2 via root.front) ---
+FooterBrand = "ElectroTime"
+FooterTagline = "Open-source latency recorder for M/EEG · © 2026 ElectroTime team"
+FooterColophon = "Built with"
+FooterColophonLink = "Syrinx"
+FooterColophonHref = "https://syrinx.site"
+
+[[Cta]]
+label = "Get a device"
+href = "/#get-started"
+primary = true
+
+[[Cta]]
+label = "See what we found"
+href = "/#results"
+
+[[Stat]]
+num = "≤ $80"
+label = "total cost"
+
+[[Stat]]
+num = "100%"
+label = "open hardware"
+
+[[Stat]]
+num = "~5 min"
+label = "per measurement"
 +++
-
-# 🧠 Getting Started with ElectroTime
-
-Welcome to the official documentation for **ElectroTime** - an open-source Arduino-based latency recorder for measuring stimulus presentation timing in neuroscience experiments.
-
-## 🎯 What is ElectroTime?
-
-ElectroTime is a latency recorder that helps neuroscientists measure the precise timing between trigger signals and actual stimulus presentation (visual/auditory). This is crucial for time-sensitive analyses like ERPs (Event-Related Potentials) where millisecond precision matters.
-
-## 📚 Documentation Sections
-
-- [📋 Overview](overview/) - Hackathon information and project introduction
-- [🔧 Hardware](hardware/) - Circuit design, components, and assembly
-- [💻 Firmware](firmware/) - Arduino firmware development in Rust
-- [🖥️ User Interface](user-interface/) - Flutter GUI application
-- [📊 Data Analysis](data-analysis/) - Python analysis tools
-- [🌐 Website and Documentation](website-documentation/) - Documentation tools and site generation
-
-## 🚀 Quick Links
-
-- 💻 [GitHub Repository](https://github.com/JasperVanDenBosch/latency-recorder/)
-- 💬 [Discord Community](https://discord.gg/47mBnvJM)
-- 🔗 [EEGManyLabs](https://osf.io/yb3pq/)
-
-## 🤝 Contributing
-
-This is an open-source hardware project. We welcome contributions in:
-
-- Hardware improvements (microphone, SD card storage)
-- Firmware optimization
-- GUI enhancements
-- Documentation
-
-## 📅 Timing Matters Hackathon
-
-Join us for the hackathon:
-
-- **Date:** Friday 30th May 2025
-- **Time:** 09:00 – 17:30 BST
-- **Location:** HELIX, Level 7, EC Stoner Building, University of Leeds
-
----
-
-*Developed as part of the Timing Matters Hackathon at the University of Leeds*

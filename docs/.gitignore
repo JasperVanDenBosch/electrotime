@@ -1,3 +1,13 @@
+
+# llm
+.claude/
+.plan/
+CLAUDE.md
+
+## NPM environment purely for development tools (skills)
+package-lock.json
+package.json
+
 # Dependencies
 node_modules/
 .pnp
@@ -13,6 +23,9 @@ dist/
 
 # Production
 build/
+
+# Web Awesome LLM reference (fetched externally; refresh with: curl -o webawesome-llms.txt https://ka-f.webawesome.com/webawesome@3.5.0/llms.txt)
+webawesome-llms.txt
 
 # Misc
 .DS_Store

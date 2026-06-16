@@ -1,0 +1,52 @@
+{% extends 'master.jinja2' %}
+
+{# Home page. Syrinx auto-selects this template for the root node (name=''):
+   it tries root.jinja2 before page.jinja2. All copy comes from the frontmatter
+   of content/index.md; this file is structure + styling only. #}
+
+{% block main %}
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-copy">
+            {% if index.front.get('Eyebrow') %}<p class="eyebrow">{{ index.front['Eyebrow'] }}</p>{% endif %}
+            <h1 class="hero-title">{{ index.front['Headline'] }}{% if index.front.get('HeadlineAccent') %}<br><span class="hero-title-accent">{{ index.front['HeadlineAccent'] }}</span>{% endif %}</h1>
+            {% if index.front.get('Lede') %}<p class="hero-lede">{{ index.front['Lede'] }}</p>{% endif %}
+
+            {% if index.front.get('Cta') %}
+            <div class="hero-actions">
+                {% for cta in index.front['Cta'] %}
+                <a class="btn {{ 'btn-solid' if cta.get('primary') else 'btn-ghost' }}" href="{{ cta['href'] }}">{{ cta['label'] }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if index.front.get('Stat') %}
+            <ul class="hero-stats">
+                {% for stat in index.front['Stat'] %}
+                <li><span class="stat-num">{{ stat['num'] }}</span><span class="stat-label">{{ stat['label'] }}</span></li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="hero-visual">
+            {% if index.front.get('HeroImage') %}
+            <figure class="device-shot">
+                <img src="{{ index.front['HeroImage'] }}" alt="{{ index.front.get('HeroImageAlt', '') }}">
+            </figure>
+            {% endif %}
+
+            {# Animated hero timing-trace diagram (see trace.jinja2). #}
+            {% include 'trace.jinja2' %}
+        </div>
+    </div>
+</section>
+
+<div class="home-sections">
+    {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
+        {% include 'section.jinja2' %}
+    {% endfor %}
+</div>
+
+{% endblock %}

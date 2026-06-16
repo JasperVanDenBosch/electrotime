@@ -1,0 +1,13 @@
+{# Renders one embedded leaf as a section. Included by root.jinja2 and page.jinja2.
+   All copy (Title, Eyebrow, body) comes from the leaf's own content file. #}
+<section id="{{ leaf.name }}" class="section">
+    <div class="section-inner">
+        <header class="section-head">
+            {% if leaf.front.get('Eyebrow') %}<p class="eyebrow">{{ leaf.front['Eyebrow'] }}</p>{% endif %}
+            <h2 class="section-title">{{ leaf.front['Title'] }}</h2>
+        </header>
+        <div class="section-body">
+            {{ leaf.content_html|safe }}
+        </div>
+    </div>
+</section>
