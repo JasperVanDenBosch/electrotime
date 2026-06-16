@@ -45,6 +45,13 @@ html { scroll-behavior: smooth; }
 img { max-width: 100%; height: auto; }
 svg { max-width: 100%; }
 
+/* Web Awesome's base stylesheet pads the semantic landmarks (main: 48px,
+   header/footer too). Our layout is full-bleed with its own inner spacing,
+   so reset them. */
+main { padding: 0; }
+.site-header { padding: 0; }
+.site-footer { padding: 0; }
+
 body {
     margin: 0;
     background: var(--paper);
@@ -121,7 +128,7 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
     gap: 1.5rem;
 }
 .brand { display: inline-flex; line-height: 0; }
-.site-logo { height: 26px; width: auto; display: block; }
+.site-logo { height: 38px; width: auto; display: block; }
 
 .site-nav {
     margin-left: auto;
@@ -152,7 +159,7 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 .hero-inner {
     max-width: var(--content);
     margin-inline: auto;
-    padding: clamp(3rem, 7vw, 6rem) var(--wa-space-l, 1.5rem);
+    padding: clamp(1.75rem, 3vw, 3rem) var(--wa-space-l, 1.5rem) clamp(3rem, 6vw, 5rem);
     display: grid;
     grid-template-columns: 1.02fr 0.98fr;
     gap: clamp(2rem, 5vw, 4.5rem);
