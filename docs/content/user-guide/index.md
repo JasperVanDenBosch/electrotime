@@ -1,6 +1,6 @@
 +++
 Title = "Guide"
-Description = "Guide to measuring latency in your lab"
+Description = "Step-by-step guide to measuring stimulus presentation latency in your lab with ElectroTime."
 +++
 # Guide to measuring latency in your lab
 

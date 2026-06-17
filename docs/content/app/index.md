@@ -1,6 +1,6 @@
 +++
 Title = "App"
-Description = "Windows app to control your EelctroTime device"
+Description = "Windows app to control your ElectroTime device and record latency measurements."
 +++
 # ElectroTime control app
 

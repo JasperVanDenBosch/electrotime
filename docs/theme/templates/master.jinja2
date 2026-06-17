@@ -9,7 +9,16 @@
         syrinx-version="{{ index.meta.syrinx_version }}"/>
     <link rel="canonical" href="{{ index.address }}">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-    <title>{{ index.title }}</title>
+    <title>{% if index.name %}{{ index.title }} · {{ root.front['SiteName'] }}{% else %}{{ root.front['MetaTitle'] }}{% endif %}</title>
+    <meta name="description" content="{{ index.front.get('Description', root.front['Description']) }}">
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% if index.name %}{{ index.title }} · {{ root.front['SiteName'] }}{% else %}{{ root.front['MetaTitle'] }}{% endif %}">
+    <meta property="og:description" content="{{ index.front.get('Description', root.front['Description']) }}">
+    <meta property="og:url" content="{{ index.address }}">
+    <meta property="og:image" content="{{ root.front['SiteUrl'] }}{{ index.front.get('HeroImage', root.front['HeroImage']) }}">
+    <meta name="twitter:card" content="summary_large_image">
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.5.0/styles/webawesome.css" />
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.5.0/webawesome.loader.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

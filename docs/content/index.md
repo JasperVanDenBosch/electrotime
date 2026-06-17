@@ -1,6 +1,11 @@
 +++
 Title = "ElectroTime"
-description = "A universal, low-cost, open-source device for measuring stimulus presentation latency in M/EEG"
+Description = "Universal, low-cost, open-source device for measuring stimulus presentation latency in M/EEG — the real delay between your trigger and stimulus onset, visual or auditory."
+
+# --- Site-wide meta (read by theme/templates/master.jinja2 via root.front) ---
+SiteName = "ElectroTime"
+SiteUrl = "https://electrotime.org"
+MetaTitle = "ElectroTime — open-source latency recorder for M/EEG"
 
 # --- Hero content (rendered by theme/templates/root.jinja2) ---
 Eyebrow = "Open-source timing instrument · M/EEG"
