@@ -6,12 +6,14 @@
 
 {% block main %}
 
-<article id="{{ index.name }}" class="prose">
+<article id="{{ index.name }}" class="prose{% if index.leaves %} prose-intro{% endif %}">
     {{ index.content_html|safe }}
 </article>
 
+<div class="page-sections" id="{{ index.name }}-sections">
 {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
     {% include 'section.jinja2' %}
 {% endfor %}
+</div>
 
 {% endblock %}

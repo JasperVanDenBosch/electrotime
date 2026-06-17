@@ -1,5 +1,6 @@
 +++
-Title = "Step 3: Download the app on your host laptop"
+Eyebrow = "Step 3"
+Title = "Download the app on your host laptop"
 SequenceNumber = 30
 +++
 

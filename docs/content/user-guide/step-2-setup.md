@@ -1,5 +1,6 @@
 +++
-Title = "Step 2: Set up Device"
+Eyebrow = "Step 2"
+Title = "Set up Device"
 SequenceNumber = 20
 +++
 
