@@ -33,8 +33,37 @@
                 {% endfor %}
             </nav>
             {% if root.front.get('HeaderCtaLabel') %}<a class="btn btn-solid header-cta" href="{{ root.front.get('HeaderCtaHref', '#') }}">{{ root.front['HeaderCtaLabel'] }}</a>{% endif %}
+            <wa-button class="nav-toggle" appearance="plain" data-drawer="open mobile-nav">
+                <wa-icon name="bars" label="Menu"></wa-icon>
+            </wa-button>
         </div>
     </header>
+
+    <wa-drawer id="mobile-nav" label="Menu" placement="start" class="mobile-nav">
+        <nav class="mobile-nav-links">
+            <a href="/" data-drawer="close">Home</a>
+            {% for branch in root.branches %}
+            <a href="/{{ branch.name }}/" data-drawer="close">{{ branch.title }}</a>
+            {% endfor %}
+        </nav>
+
+        {# On-page sections: embedded leaves render as <section id="{leaf.name}"> on
+           the CURRENT page (index), so anchor-link them within this page. Loop
+           index.leaves (not root.leaves) so the list reflects whichever page we're on;
+           on a leaf-less page the {% if %} guard collapses the whole group. #}
+        {% if index.leaves %}
+        <p class="mobile-nav-heading">On this page</p>
+        <nav class="mobile-nav-links">
+            {% for leaf in index.leaves|sort(attribute='front.SequenceNumber') %}
+            <a href="#{{ leaf.name }}" data-drawer="close">{{ leaf.front['Title'] }}</a>
+            {% endfor %}
+        </nav>
+        {% endif %}
+
+        {% if root.front.get('HeaderCtaLabel') %}
+        <wa-button class="mobile-nav-cta" variant="brand" href="{{ root.front.get('HeaderCtaHref', '#') }}" data-drawer="close">{{ root.front['HeaderCtaLabel'] }}</wa-button>
+        {% endif %}
+    </wa-drawer>
 
     <main>
     {% block main %}

@@ -147,6 +147,39 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 
 .header-cta { padding: 0.5em 1em; font-size: 0.9rem; }
 
+/* Mobile nav: hamburger toggle (hidden until the ≤620px breakpoint) + slide-in drawer */
+.nav-toggle {
+    display: none;                 /* shown only in the ≤620px block below */
+    margin-left: auto;
+    font-size: 1.4rem;             /* wa-icon sizes to font-size */
+    color: var(--ink);
+}
+.mobile-nav {
+    --size: 78vw;                  /* panel width; capped so it doesn't fill the screen */
+    max-width: 320px;
+}
+.mobile-nav::part(dialog) { background: var(--paper); }
+.mobile-nav::part(title) { font-family: var(--font-display); color: var(--ink); }
+.mobile-nav-links { display: flex; flex-direction: column; gap: .25rem; }
+.mobile-nav-links a {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: .65rem .25rem;
+    border-bottom: 1px solid var(--line);
+}
+.mobile-nav-links a:hover { color: var(--brand-deep); }
+.mobile-nav-heading {              /* small label above the on-page section links */
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 1.25rem 0 .35rem;
+}
+.mobile-nav-cta { display: block; width: 100%; margin-top: 1.5rem; }   /* CTA: full-width, below the links */
+
 /* ============================================================================
    Hero — the thesis: trigger vs. reality
    ========================================================================== */
@@ -542,6 +575,8 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 }
 @media (max-width: 620px) {
     .site-nav { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .header-cta { display: none; }   /* CTA lives in the drawer footer on mobile */
     .hero-stats { gap: 1.25rem; }
     .footer-meta:last-child { margin-left: 0; }
 }
