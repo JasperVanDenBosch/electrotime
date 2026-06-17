@@ -4,10 +4,10 @@ Title = "Check that you have everything you need"
 SequenceNumber = 10
 +++
 
-### Shipped to you by ElectroTime team
-
 ![Audio cable](/assets/audio.jpg)
 ![USB cable & Adapter](/assets/usb.jpg)
+
+### Shipped to you by ElectroTime team
 
 - [ ] ElectroTime device
 - [ ] Sound cable (3.5mm jack)
