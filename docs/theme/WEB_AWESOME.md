@@ -7,30 +7,33 @@ llms.txt: https://webawesome.com/llms.txt
 
 ## What we actually use
 
-**Only `<wa-page>`** — the full-page scaffold, for its `header` and `footer` slots.
-Nothing else. The old `<wa-card>` sections, `<wa-format-date>`, and the
-`wa-split`/`wa-cluster`/`wa-stack` utility classes were all replaced by custom CSS.
+`<wa-page>` for the full-page scaffold (its `header`/`footer` slots), plus WA
+components where they earn their keep — currently `<wa-drawer>` + `<wa-button>` +
+`<wa-icon>` for the mobile navigation (`master.jinja2`). We **use WA components freely**,
+themed via our own tokens; we just don't accept their default look unstyled.
 
-## Design approach — keep WA, but don't lean on its visual components
+## Design approach — use WA components, themed to our identity
 
-The hero, header/nav, sections, and footer are all plain HTML/CSS. To keep a
-distinctive, non-templated look without locking into WA:
+The hero, header/nav, sections, and footer are plain HTML/CSS for a distinctive,
+non-templated look. Where a WA component gives real behavior for free (overlay,
+focus-trap, slide animation, icons), we use it and skin it to match:
 
-- Use `<wa-page>` for its `header`/`footer` slot scaffold — convenient and frictionless.
-- **Avoid WA's visual components** (e.g. `<wa-card appearance="outlined">`) where they
-  impose a generic boxy look; prefer plain semantic markup styled directly.
 - **Define our own design tokens** as regular CSS variables in
-  `theme/assets/css/index.css` (`--ink`, `--brand`, `--signal`, `--font-display`, …),
-  *not* `--wa-*`, so the identity is ours and portable. Fonts are Space Grotesk
-  (display) / IBM Plex Sans (body) / IBM Plex Mono (labels & data), from Google Fonts.
-- The visual identity now lives **entirely** in `index.css` — there is **no Web Awesome
-  styling fallback**. If a page renders bare, suspect the `index.css` request
-  (404 / stale `dist/` / browser cache), not individual rules. Always preview via the
-  built `dist/` (`syrinx serve`, or a static server rooted at `dist/`) — never from the
-  project root or `file://`, since `/assets/css/index.css` only exists after a build.
-- Drop WA entirely only if the sticky header/footer slot or shadow-DOM theming starts
-  dictating layout in ways that compromise the design. Replacement is straightforward:
-  plain `<body>` + `position: sticky` header, and direct `@font-face`/Google Fonts links.
+  `theme/assets/css/index.css` (`--ink`, `--brand`, `--signal`, `--font-display`, …).
+  Fonts are Space Grotesk (display) / IBM Plex Sans (body) / IBM Plex Mono (labels &
+  data), from Google Fonts.
+- **Theme WA surfaces by mapping our tokens onto `--wa-*`** (e.g. `index.css:24–27`
+  maps `--wa-color-brand-*` onto the teal) and by overriding component `::part()`s
+  (e.g. `.mobile-nav::part(panel)`). Reach for `::part()` / CSS custom props before
+  reaching for plain markup.
+- The non-WA visual identity lives in `index.css` — if a page renders bare, suspect the
+  `index.css` request (404 / stale `dist/` / browser cache), not individual rules.
+  Always preview via the built `dist/` (`syrinx serve`, or a static server rooted at
+  `dist/`) — never from the project root or `file://`, since `/assets/css/index.css`
+  only exists after a build.
+- Drop WA entirely only if its shadow-DOM theming starts dictating layout in ways that
+  compromise the design. Replacement is straightforward: plain `<body>` +
+  `position: sticky` header, and direct `@font-face`/Google Fonts links.
 
 ## Gotchas
 
@@ -44,5 +47,7 @@ distinctive, non-templated look without locking into WA:
 - **`wa-page` scrolls the window normally** — it does *not* use an internal scroll
   container. The sticky header is a plain `position: sticky; top: 0` rule on
   `.site-header` (verified pinned on scroll), not a WA feature.
-- **Icons** require a Font Awesome kit code — currently a scaffold placeholder
-  (`[[ scaffold.fa_kit_code ]]`) in the loader script `src`.
+- **Icons:** the 2,000+ bundled *free* icons (e.g. `<wa-icon name="bars">`) work out of
+  the box — the `webawesome.loader.js` auto-loads `<wa-icon>` and fetches glyphs from
+  the WA CDN, no setup. A Font Awesome **kit code is only needed for Pro icons**
+  (`<html data-fa-kit-code="…">`); we don't use any.

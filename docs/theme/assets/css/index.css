@@ -147,6 +147,39 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 
 .header-cta { padding: 0.5em 1em; font-size: 0.9rem; }
 
+/* Mobile nav: hamburger toggle (hidden until the ≤620px breakpoint) + slide-in drawer */
+.nav-toggle {
+    display: none;                 /* shown only in the ≤620px block below */
+    margin-left: auto;
+    font-size: 1.4rem;             /* wa-icon sizes to font-size */
+    color: var(--ink);
+}
+.mobile-nav {
+    --size: 78vw;                  /* panel width; capped so it doesn't fill the screen */
+    max-width: 320px;
+}
+.mobile-nav::part(dialog) { background: var(--paper); }
+.mobile-nav::part(title) { font-family: var(--font-display); color: var(--ink); }
+.mobile-nav-links { display: flex; flex-direction: column; gap: .25rem; }
+.mobile-nav-links a {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: .65rem .25rem;
+    border-bottom: 1px solid var(--line);
+}
+.mobile-nav-links a:hover { color: var(--brand-deep); }
+.mobile-nav-heading {              /* small label above the on-page section links */
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 1.25rem 0 .35rem;
+}
+.mobile-nav-cta { display: block; width: 100%; margin-top: 1.5rem; }   /* CTA: full-width, below the links */
+
 /* ============================================================================
    Hero — the thesis: trigger vs. reality
    ========================================================================== */
@@ -455,6 +488,53 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
     border-radius: 10px;
     background: var(--paper);
 }
+/* Guide images are click-to-zoom (guide.js opens a <wa-dialog> lightbox). */
+.guide-figure img.is-zoomable {
+    cursor: zoom-in;
+    transition: border-color 0.15s ease;
+}
+.guide-figure img.is-zoomable:hover {
+    border-color: var(--brand);
+}
+.guide-figure img.is-zoomable:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+/* The shared zoom lightbox: let the image dominate, strip the dialog's body padding. */
+.image-lightbox::part(dialog) {
+    width: auto;
+    max-width: min(92vw, 1100px);
+    background: var(--paper);
+}
+.image-lightbox::part(body) {
+    padding: var(--wa-space-m, 1rem);
+}
+.image-lightbox img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 10px;
+}
+.image-lightbox figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    text-align: center;
+}
+/* Sub-headings within guide steps need their own rhythm — the global
+   h1,h2,h3 rule zeroes margins, so restore breathing room here. */
+.page-sections .section-body h3,
+.prose h3 {
+    font-size: 1.2rem;
+    margin: 2.25rem 0 0.75rem;
+}
+
 .guide-figure figcaption {
     margin-top: 0.5rem;
     font-family: var(--font-mono);
@@ -542,6 +622,8 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
 }
 @media (max-width: 620px) {
     .site-nav { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .header-cta { display: none; }   /* CTA lives in the drawer footer on mobile */
     .hero-stats { gap: 1.25rem; }
     .footer-meta:last-child { margin-left: 0; }
 }
