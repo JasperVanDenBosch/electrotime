@@ -1,5 +1,6 @@
 +++
-Title = "Step 1: Check that you have everything you need"
+Eyebrow = "Step 1"
+Title = "Check that you have everything you need"
 SequenceNumber = 10
 +++
 

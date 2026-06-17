@@ -1,5 +1,6 @@
 +++
-Title = "Step 4: Record!"
+Eyebrow = "Step 4"
+Title = "Record!"
 SequenceNumber = 40
 +++
 
