@@ -56,6 +56,41 @@
     });
   }
 
+  // Lazily build a single shared <wa-dialog> that every guide image reuses as a
+  // click-to-zoom lightbox. light-dismiss = click-backdrop / Esc closes it.
+  var lightbox = null;
+  function getLightbox() {
+    if (lightbox) return lightbox;
+
+    var dialog = document.createElement("wa-dialog");
+    dialog.className = "image-lightbox";
+    dialog.setAttribute("light-dismiss", "");
+    dialog.setAttribute("without-header", "");
+    dialog.setAttribute("label", "Image viewer"); // accessible name (header hidden)
+
+    var img = document.createElement("img");
+    img.alt = "";
+    dialog.appendChild(img);
+
+    var cap = document.createElement("figcaption");
+    dialog.appendChild(cap);
+
+    document.body.appendChild(dialog);
+    lightbox = { dialog: dialog, img: img, cap: cap };
+    return lightbox;
+  }
+
+  function openLightbox(src, alt) {
+    var lb = getLightbox();
+    lb.img.src = src;
+    lb.img.alt = alt || "";
+    lb.cap.textContent = alt || "";
+    lb.cap.hidden = !alt;
+    try {
+      lb.dialog.open = true;
+    } catch (e) {}
+  }
+
   function enhanceFigures(root) {
     var imgs = root.querySelectorAll("p > img");
     imgs.forEach(function (img) {
@@ -73,6 +108,25 @@
         cap.textContent = alt.trim();
         figure.appendChild(cap);
       }
+
+      // Make the image a zoom trigger (mouse + keyboard).
+      img.classList.add("is-zoomable");
+      img.setAttribute("role", "button");
+      img.setAttribute("tabindex", "0");
+      img.setAttribute(
+        "aria-label",
+        alt && alt.trim() ? "Enlarge image: " + alt.trim() : "Enlarge image"
+      );
+
+      img.addEventListener("click", function () {
+        openLightbox(img.currentSrc || img.src, img.getAttribute("alt"));
+      });
+      img.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          openLightbox(img.currentSrc || img.src, img.getAttribute("alt"));
+        }
+      });
     });
   }
 

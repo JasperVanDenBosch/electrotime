@@ -488,6 +488,45 @@ table, code, .stat-num, .trace text { font-variant-numeric: tabular-nums; }
     border-radius: 10px;
     background: var(--paper);
 }
+/* Guide images are click-to-zoom (guide.js opens a <wa-dialog> lightbox). */
+.guide-figure img.is-zoomable {
+    cursor: zoom-in;
+    transition: border-color 0.15s ease;
+}
+.guide-figure img.is-zoomable:hover {
+    border-color: var(--brand);
+}
+.guide-figure img.is-zoomable:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+/* The shared zoom lightbox: let the image dominate, strip the dialog's body padding. */
+.image-lightbox::part(dialog) {
+    width: auto;
+    max-width: min(92vw, 1100px);
+    background: var(--paper);
+}
+.image-lightbox::part(body) {
+    padding: var(--wa-space-m, 1rem);
+}
+.image-lightbox img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 10px;
+}
+.image-lightbox figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+    text-align: center;
+}
 /* Sub-headings within guide steps need their own rhythm — the global
    h1,h2,h3 rule zeroes margins, so restore breathing room here. */
 .page-sections .section-body h3,
