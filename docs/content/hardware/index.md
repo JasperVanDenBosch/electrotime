@@ -2,6 +2,7 @@
 Title = "Hardware"
 Description = "Open-source hardware details for building your own ElectroTime device"
 SequenceNumber = 30
+IncludeInSitemap = false
 +++
 # Hardware — coming soon
 
