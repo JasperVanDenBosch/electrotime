@@ -8,16 +8,16 @@ SiteUrl = "https://electrotime.org"
 MetaTitle = "ElectroTime — open-source latency recorder for M/EEG"
 
 # --- Hero content (rendered by theme/templates/root.jinja2) ---
-Eyebrow = "Open-source timing instrument · M/EEG"
+Eyebrow = "Open-source stimulus-latency instrument · EEG / MEG"
 Headline = "Think your triggers are accurate?"
 HeadlineAccent = "Think again."
-Lede = "ElectroTime measures the real delay between your trigger and the moment a stimulus actually reaches the participant — visual or auditory, on any M/EEG setup."
+Lede = "ElectroTime measures the real latency — the delay between your trigger and the moment a stimulus actually reaches the participant — visual or auditory, on any EEG or MEG setup."
 
 HeroImage = "/assets/device.jpg"
 HeroImageAlt = "The ElectroTime device, seen from above: a compact 3D-printed enclosure with a window exposing the photodiode and circuit board inside"
 
 # Factual labels for the hero timing-trace illustration
-TraceCaption = "Visual onset, one trial"
+TraceCaption = "Visual stimulus onset, one trial"
 TraceDelay = "Δ 41.6 ms"
 
 # --- Header CTA (rendered site-wide by theme/templates/master.jinja2 via root.front) ---
