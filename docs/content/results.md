@@ -4,7 +4,8 @@ Eyebrow = "The data"
 SequenceNumber = 20
 +++
 
-We measured the latency at four [#EEGManyLabs](https://osf.io/yb3pq/) sites. The delays were
+We measured the trigger-to-stimulus latency at four EEG labs in the
+[#EEGManyLabs](https://osf.io/yb3pq/) consortium. The delays were
 larger than expected — and different at every site. Left uncorrected, that's enough to change
 your results and break replication across labs.
 

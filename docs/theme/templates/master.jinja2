@@ -19,6 +19,32 @@
     <meta property="og:url" content="{{ index.address }}">
     <meta property="og:image" content="{{ root.front['SiteUrl'] }}{{ index.front.get('HeroImage', root.front['HeroImage']) }}">
     <meta name="twitter:card" content="summary_large_image">
+
+    {# Structured data (Schema.org JSON-LD). All copy comes from content/index.md
+       frontmatter (root.front); the template only structures it. `tojson` produces
+       valid, escaped JSON strings so raw frontmatter punctuation is safe here. #}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": {{ root.front['SiteName']|tojson }},
+          "description": {{ index.front.get('Description', root.front['Description'])|tojson }},
+          "url": {{ root.front['SiteUrl']|tojson }},
+          "image": {{ (root.front['SiteUrl'] ~ index.front.get('HeroImage', root.front.get('HeroImage', '')))|tojson }},
+          "applicationCategory": "ScientificApplication",
+          "operatingSystem": "Cross-platform"
+        },
+        {
+          "@type": "Organization",
+          "name": {{ root.front['FooterBrand']|tojson }},
+          "url": {{ root.front['SiteUrl']|tojson }}
+        }
+      ]
+    }
+    </script>
+
     <link rel="stylesheet" href="https://ka-f.webawesome.com/webawesome@3.5.0/styles/webawesome.css" />
     <script type="module" src="https://ka-f.webawesome.com/webawesome@3.5.0/webawesome.loader.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
