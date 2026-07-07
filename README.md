@@ -1,6 +1,12 @@
 # ElectroTime - The Latency Recorder
 
-[![Documentation](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/latency-recorder/actions/workflows/docs.yml)
+[![Website](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml)
+
+
+- Project Website: [electrotime.org](https://electrotime.org)
+- [GitHub Repository](https://github.com/JasperVanDenBosch/electrotime/)
+- [Discord Server](https://discord.gg/nQ2GPxXEPy)
+
 
 An open-source Arduino-based device that measures stimulus presentation latency in neuroscience experiments, particularly EEG setups. This project provides hardware designs, firmware, and software tools to help researchers worldwide accurately measure and compensate for timing delays in their experimental paradigms using affordable, accessible hardware.
 
@@ -103,22 +109,7 @@ The documentation includes:
 - Data analysis workflows
 - API documentation (downloadable for offline use)
 
-## 🚀 Quick Start
 
-### Hardware Requirements
-
-- Arduino Uno Rev3
-- Photodiode circuit (see [hardware documentation](docs/Hardware.md))
-- USB cable for data connection
-- (Optional) DB37 parallel port for trigger input
-
-📊 Technical Specifications
-
-Sampling Rate: 15625Hz (64µs resolution)
-Maximum Recording Duration: 4.19 seconds per epoch
-Data Output: Light level, trigger state, timestamp (tval)
-Connectivity: USB serial communication
-Power: USB-powered, no external power required
 
 ### Software Setup
 
@@ -150,17 +141,7 @@ Power: USB-powered, no external power required
    - Select it in the GUI dropdown
    - Click "Start Recording"
 
-## 📊 Data Collection and Analysis
 
-### Basic Data Collection
-
-```python
-# Using the simple reader
-python simple_reader.py
-
-# Or the full reader with more features
-python reader.py
-```
 
 ### Data Analysis
 
@@ -169,53 +150,8 @@ python reader.py
 python analyse.py
 ```
 
-The data is saved in binary format with timestamps and sensor readings. See the analysis examples in `/analysis/` for visualization options.
 
-## 🛠️ Development
 
-### Contributing
-
-We welcome contributions! This is an open-source hardware project. Areas for improvement include:
-
-- **Hardware:** Add microphone for audio latency, SD card for standalone operation
-- **Firmware:** Optimize serial communication performance
-- **GUI:** Enhanced visualization and real-time plotting
-- **Documentation:** User guides and assembly instructions
-
-Visit our [documentation site](https://jaspervandenbosch.github.io/latency-recorder/) for detailed development guides.
-
-### Building from Source
-
-**Firmware (Rust):**
-
-```bash
-cd firmware/recorder
-cargo build --release
-```
-
-**GUI (Flutter):**
-
-```bash
-cd gui
-flutter build macos  # or windows/linux
-```
-
-**Python Tools:**
-
-```bash
-pip install -r requirements.txt
-```
-
-## 📝 License
-
-This is an open-source hardware and software project. [License details to be added]
-
-## 🔗 Links
-
-- **Documentation:** <https://jaspervandenbosch.github.io/latency-recorder/>
-- **GitHub Repository:** <https://github.com/JasperVanDenBosch/latency-recorder/>
-- **Discord Community:** <https://discord.gg/47mBnvJM>
-- **Related Projects:** [EEGManyLabs](https://osf.io/yb3pq/)
 
 ## 👥 Credits
 
