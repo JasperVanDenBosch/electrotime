@@ -1,17 +1,17 @@
-# ElectroTime - The Latency Recorder
 
-[![Website](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml)
+![ElectroTime logo](https://github.com/JasperVanDenBosch/electrotime/blob/main/docs/assets/electrotime-dark.svg??raw=true)
 
-
-- Project Website: [electrotime.org](https://electrotime.org)
-- [GitHub Repository](https://github.com/JasperVanDenBosch/electrotime/)
-- [Discord Server](https://discord.gg/nQ2GPxXEPy)
-
-![Photograph of an ElectroTime prototype.](https://github.com/JasperVanDenBosch/electrotime/blob/main/docs/assets/device.jpg?raw=true)
+# ElectroTime
 
 The ElectroTime is an Arduino-based device that measures the latency of auditory and visual stimuli
 in your EEG/MEG lab.
 
+- Project Website: [electrotime.org](https://electrotime.org)
+- [Discord Server](https://discord.gg/nQ2GPxXEPy)
+
+[![Website deployment status](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml/badge.svg)](https://github.com/JasperVanDenBosch/electrotime/actions/workflows/docs.yml)
+
+![Photograph of an ElectroTime prototype.](https://github.com/JasperVanDenBosch/electrotime/blob/main/docs/assets/device.jpg?raw=true)
 
 ## 🗂️ Repository Structure
 
