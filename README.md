@@ -53,6 +53,11 @@ Hardware schematics and PCB designs. See also the docs/assets/ folder for circui
 - **`fritzing_sketch_bb.png`** - Breadboard view
 - **`TLV2462.fzpz`** - Custom op-amp component
 
+
+### `/enclosure/`
+
+Model files for the 3D printed case. 
+
 ### `/docs/`
 
 Contains the Syrinx-based website documenting the project.
