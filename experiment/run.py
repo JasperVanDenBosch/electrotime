@@ -2,8 +2,6 @@
 
 Odd triggers present a visual stimulus, even triggers a white noise burst.
 """
-from psychopy import prefs
-prefs.hardware['audioLib'] = ['PTB'] # fail rather than fall back to a slow backend
 from psychopy.sound import Sound
 from psychopy.monitors import Monitor
 from psychopy.event import getKeys
@@ -17,7 +15,7 @@ import numpy
 ADDRESS = '0xE020'
 INTER_TRIAL_INTERVAL_SEC = 2
 STIM_DUR_SEC = 0.2
-SAMPLE_RATE = 48000
+SAMPLE_RATE = 44100
 port = PsychopyParallelPort(address=ADDRESS)
 
 def send_trigger(val: int):
@@ -68,7 +66,7 @@ def draw_visual():
 
 ## full scale white noise, no ramp; same spectrum as the 50ms startle probe
 noise = numpy.random.uniform(-1, 1, int(SAMPLE_RATE * STIM_DUR_SEC))
-sound = Sound(noise, sampleRate=SAMPLE_RATE, hamming=False)
+sound = Sound(noise, sampleRate=SAMPLE_RATE, stereo=False, hamming=False) # stereo flag needed, see psychopy issue #6765
 
 
 for i in range(100):
