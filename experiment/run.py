@@ -40,15 +40,31 @@ win = Window(
 )
 win.mouseVisible = False 
 
+## For electrotime
 stimulus = Rect(
     win=win,
     size=(250, 250),
     units='pix',
-    pos=(250, 250),
+    pos=(0, 0),
     lineColor=(1, 1, 1),
     fillColor=(1, 1, 1),
     name='stimulus'
 )
+
+## for BioSemi photo sensor, flush with the bottom right corner of the screen
+corner_stimulus = Rect(
+    win=win,
+    size=(250, 250),
+    units='pix',
+    pos=(835, -415),
+    lineColor=(1, 1, 1),
+    fillColor=(1, 1, 1),
+    name='corner_stimulus'
+)
+
+def draw_visual():
+    stimulus.draw()
+    corner_stimulus.draw()
 
 ## full scale white noise, no ramp; same spectrum as the 50ms startle probe
 noise = numpy.random.uniform(-1, 1, int(SAMPLE_RATE * STIM_DUR_SEC))
@@ -67,19 +83,19 @@ for i in range(100):
     time.sleep(INTER_TRIAL_INTERVAL_SEC)
 
     if visual:
-        stimulus.draw()
+        draw_visual()
     else:
         sound.play(when=win.getFutureFlipTime(clock='ptb'))
     win.callOnFlip(send_trigger, trigger)
     win.flip() # trigger on
     if visual:
-        stimulus.draw()
+        draw_visual()
     win.flip() # 16ms
     if visual:
-        stimulus.draw()
+        draw_visual()
     win.flip() # 33ms
     if visual:
-        stimulus.draw()
+        draw_visual()
     win.callOnFlip(send_trigger, 0)
     win.flip() # 50ms
     time.sleep(STIM_DUR_SEC-0.050)
