@@ -1,6 +1,6 @@
 # Audio latency via Biosemi: progress notes
 
-Last updated: 2026-10-06
+Last updated: 2026-10-09
 
 ## Goal
 
@@ -128,3 +128,27 @@ Then, with the terminal plug plugged in:
   - `check_shift.py`: run-shift matching test.
   - `check_threshold.py`: BioSemi onset threshold.
 - Run with: `env/bin/python <script> <folder with electro3.bdf and electrotime_datafiles/>`.
+
+## Interpretation of the absolute latencies (2026-10-09)
+
+Based on `vs_biosemi_round2/known_seed` (2026-10-06 afternoon, seed 0), same trials on both systems, analysed with `analysis/biosemi.py`. Interpretation only: the display's input lag and the audio output latency weren't measured directly.
+
+### Timing of the run
+- The data fits a display at about **120 Hz**: the trigger (flip 1 to flip 4, so 3 frames) lasts 27 ms on both systems, and the light is visible for 172–180 ms (3 frames + 150 ms sleep + waiting for the next frame). At 60 Hz these would be 50 ms and 200–217 ms.
+- So the light lasts ~175 ms rather than 200 ms, and the trigger pulse is ~27 ms. This doesn't affect the latencies.
+- Trials start 1.183 s apart: 1 s interval + 3 frames + 150 ms + waiting for the next frame. `run.py` now has the 1 s interval used in the lab.
+
+### Light: ~25 ms (ElectroTime), ~28 ms (BioSemi)
+- The trigger goes out as the flip completes, when the screen starts drawing the new frame from the top. Both squares are at y = −415 px (the bottom 250 of 1080 rows), which the screen reaches ~6–8 ms into a frame.
+- The remaining ~17 ms is about two frames of display delay plus the time the pixels take to switch. That's typical for a Windows desktop with an ordinary monitor.
+- About 4.5% of light trials (46) come exactly one frame earlier on both systems (~17 / ~20.5 ms). Their trigger pulses are normal, so the display occasionally showed the frame one frame sooner, rather than the trigger being late.
+- The two sensors were at about the same height this time, so the −3.6 ms between the systems isn't from the screen's drawing order. Candidates: the sensors themselves (rise time, and where 20% of the peak falls), and a possible lag of the BioSemi analog channels behind the Status channel from its anti-aliasing filter (check the manual). That lag would also make BioSemi look later for sound.
+
+### Sound: ~15 ms (ElectroTime), ~16.6 ms (BioSemi)
+- `sound.play(when=win.getFutureFlipTime(...))` schedules the sound for the same flip as the trigger. With sample-accurate scheduling, the delay would be the same on every trial to well under 1 ms.
+- Instead it is spread evenly over ~11 ms (ElectroTime 1st–99th percentile: 9.1–20.4 ms). This looks like the sound waiting for the next audio buffer of ~10 ms, probably because PsychoPy's audio backend isn't in Windows' exclusive low-latency mode. Not checked on the lab PC.
+- Useful for validating ElectroTime: a wide range of real latencies, hence the meaningful same-trial correlation (r = 0.92). For an EEG experiment it means about ±5 ms of sound timing jitter.
+
+### To confirm on the lab PC
+- `win.getActualFrameRate()` and the monitor's refresh setting.
+- The audio latency mode reported in PsychoPy's log.

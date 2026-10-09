@@ -13,7 +13,7 @@ import numpy
 
 
 ADDRESS = '0xE020'
-INTER_TRIAL_INTERVAL_SEC = 2
+INTER_TRIAL_INTERVAL_SEC = 1
 STIM_DUR_SEC = 0.2
 SAMPLE_RATE = 44100
 port = PsychopyParallelPort(address=ADDRESS)
@@ -90,14 +90,14 @@ for _ in range(10):
         win.flip() # trigger on
         if visual:
             draw_visual()
-        win.flip() # 16ms
+        win.flip() # ~8 ms (about 120 Hz)
         if visual:
             draw_visual()
-        win.flip() # 33ms
+        win.flip() # ~17 ms
         if visual:
             draw_visual()
         win.callOnFlip(send_trigger, 0)
-        win.flip() # 50ms
+        win.flip() # ~25 ms, trigger off
         time.sleep(STIM_DUR_SEC-0.050)
         win.flip() # stimulus off
 
