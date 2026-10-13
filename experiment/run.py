@@ -13,7 +13,7 @@ import numpy
 
 
 ADDRESS = '0xE020'
-INTER_TRIAL_INTERVAL_SEC = 2
+INTER_TRIAL_INTERVAL_SEC = 1
 STIM_DUR_SEC = 0.2
 SAMPLE_RATE = 44100
 port = PsychopyParallelPort(address=ADDRESS)
@@ -43,7 +43,7 @@ stimulus = Rect(
     win=win,
     size=(250, 250),
     units='pix',
-    pos=(0, 0),
+    pos=(0, -415),
     lineColor=(1, 1, 1),
     fillColor=(1, 1, 1),
     name='stimulus'
@@ -64,40 +64,42 @@ def draw_visual():
     stimulus.draw()
     corner_stimulus.draw()
 
+numpy.random.seed(0)
+
 ## full scale white noise, no ramp; same spectrum as the 50ms startle probe
 noise = numpy.random.uniform(-1, 1, int(SAMPLE_RATE * STIM_DUR_SEC))
 sound = Sound(noise, sampleRate=SAMPLE_RATE, stereo=False, hamming=False) # stereo flag needed, see psychopy issue #6765
 
+for _ in range(10):
+    for i in range(100):
+        trigger = 1+i
+        visual = trigger % 2 == 1
 
-for i in range(100):
-    trigger = 1+i
-    visual = trigger % 2 == 1
-
-    new_keys = getKeys(keyList=['q', 'esc'])
-    if 'q' in new_keys or 'esc' in new_keys:
-        break ## quit experiment
+        new_keys = getKeys(keyList=['q', 'esc'])
+        if 'q' in new_keys or 'esc' in new_keys:
+            break ## quit experiment
 
 
-    time.sleep(INTER_TRIAL_INTERVAL_SEC)
+        time.sleep(INTER_TRIAL_INTERVAL_SEC)
 
-    if visual:
-        draw_visual()
-    else:
-        sound.play(when=win.getFutureFlipTime(clock='ptb'))
-    win.callOnFlip(send_trigger, trigger)
-    win.flip() # trigger on
-    if visual:
-        draw_visual()
-    win.flip() # 16ms
-    if visual:
-        draw_visual()
-    win.flip() # 33ms
-    if visual:
-        draw_visual()
-    win.callOnFlip(send_trigger, 0)
-    win.flip() # 50ms
-    time.sleep(STIM_DUR_SEC-0.050)
-    win.flip() # stimulus off
+        if visual:
+            draw_visual()
+        else:
+            sound.play(when=win.getFutureFlipTime(clock='ptb'))
+        win.callOnFlip(send_trigger, trigger)
+        win.flip() # trigger on
+        if visual:
+            draw_visual()
+        win.flip() # ~8 ms (about 120 Hz)
+        if visual:
+            draw_visual()
+        win.flip() # ~17 ms
+        if visual:
+            draw_visual()
+        win.callOnFlip(send_trigger, 0)
+        win.flip() # ~25 ms, trigger off
+        time.sleep(STIM_DUR_SEC-0.050)
+        win.flip() # stimulus off
 
 
 win.close()

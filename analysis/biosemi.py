@@ -2,26 +2,23 @@
 Compare the latency of ElectroTime with
 a Biosemi "photosensor" and audio signal routed to EXG 1.
 
-data: ~/data/electrotime/vs_biosemi
+data: ~/data/electrotime/vs_biosemi_round2 (recorded 2026-10-06, mkII only)
 experiment: ./experiment/run.py
-raw log notes from lab:
+notes: ./experiment/audio-biosemi-notes.md
 
-1. 20:56 tones 1s mkIII
-2. 21:01 noise 0.2s mkIII (2x runs)
-3. disconnect, +2 runs
-4. 21:13 noise 0.2s mkII
-5. second run at 21:17
-6. (reconnect i think, few more runs)
+The data folder has one subfolder per sound stimulus (see STIMULI), each with
+the BioSemi recordings (*.bdf) and the ElectroTime files recorded alongside:
 
-In other words, I started with the mkIII device.
-The first run of 100 stimuli was using 1s tones.
-I then ran some runs (4?) with 0.2 white noise stimuli.
-After that I setup the mkII instead and recorded a number of runs on that.
-I disconnected about every other run, to reset the serial buffer.
-On the mkIII, in the GUI I observed some strange numbering for the triggers.
-So we should look at how the triggers arrived, some may have abberant values
-or there may be noise on the trigger channel (e.g. it was on for just one sample).
+- unknown_seed: electro3.bdf; the noise burst was generated without a seed
+- known_seed: electro4.bdf and electro5.bdf; noise burst from seed 0
 
+Each start of run.py plays 10 runs of 100 trials (one "block") with one noise burst.
+Cross-correlating the BioSemi sound epochs confirms that all known_seed blocks
+played the same burst, and that the unknown_seed burst differs from it.
+Only the known_seed results go into the manuscript; unknown_seed is used to see
+how the noise burst affects the measured sound latency.
+
+Only trials recorded by both systems are analysed.
 
 ## electrotime data analysis
 see analyse_goettingen.py for an example of how to analyse the electrotime data.
@@ -31,6 +28,13 @@ see analyse_goettingen.py for an example of how to analyse the electrotime data.
 - drop channels except: Status (trigger), EXG1 (audio) and Erg1 (photosensor)
 - after that the data has a similar shape so we follow the same approach
 
+## matching trials
+Trigger values 1-100 repeat every run (~118 s). An ElectroTime trial is matched to
+the BioSemi trigger with the same value that is nearest to its approximate BioSemi
+time: GUI session start + device time + PC_OFFSET_S. This needs to be right within
+half a run (59 s); it is within 2.5 s for this data. If the offset is wrong by a run
+or more, the matches are off by whole runs without any error, so check the matches
+with biosemi_clock_check.py when the PCs or their clocks change.
 """
 import re
 import sys
@@ -50,18 +54,9 @@ matplotlib.use('agg')
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 log = logging.getLogger('electrotime')
 
-## BioSemi runs in recording order: (device, stimulus); see lab notes above
-BIOSEMI_RUNS = [('mkIII', 'tone')] + [('mkIII', 'noise')] * 4 + [('mkII', 'noise')] * 5
-## Which ElectroTime device was recording in each GUI session
-SESSION_DEVICE = {
-    '2026-09-29T205435': 'mkIII',
-    '2026-09-29T210142': 'mkIII',
-    '2026-09-29T210622': 'mkIII',
-    '2026-09-29T211340': 'mkII',
-    '2026-09-29T212014': 'mkII',
-}
-## skip mkIII recordings and pure tone stimulus
-ANALYSED = [('mkII', 'noise')]
+## data subfolder: label of the sound stimulus
+STIMULI = {'unknown_seed': 'noise, unknown seed', 'known_seed': 'noise, seed 0'}
+MANUSCRIPT_STIMULUS = 'known_seed'
 BS_SOUND_CH, BS_LIGHT_CH, BS_TRIGGER_CH = 'EXG1', 'Erg1', 'Status'
 ET_LIGHT_COL, ET_SOUND_COL, ET_TRIGGER_COL, ET_TIME_COL = 0, 1, 2, 3
 VALID_TRIGGERS = set(range(1, 101))
@@ -71,11 +66,14 @@ ONSET_FRACTION = 0.2  ## onset = first sample beyond this fraction of the peak
 MIN_SNR = 10  ## peak deviation must exceed this many baseline SDs
 ET_NOISE_FLOOR = 1  ## ADC counts; light baseline is often perfectly flat
 MIN_TRIGGER_MS = 5  ## shorter non-zero trigger runs are glitches
-MATCH_TOL_S = 20  ## max deviation from the clock offset; same values recur every ~2 min
+BLOCK_GAP_S = 125  ## runs within a block start every ~118 s; a longer gap starts a new block
+## BioSemi PC clock - ElectroTime PC clock (s), including the delay from GUI start to
+## device boot; measured on 2026-10-06 with biosemi_clock_check.py (-561 to -563 s)
+PC_OFFSET_S = -562
+MATCH_TOL_S = 20  ## max time error of a match; same values recur every ~118 s
 ## Some samples are delayed due to SD issues
 MAX_EDGE_GAP_MS = 2
-COLORS = {'BioSemi': '#2a78d6', 'ElectroTime': '#eb6834', 'mkII': '#1baf7a', 'mkIII': '#4a3aa7'}
-MARKERS = {'mkII': 'o', 'mkIII': '^'}
+COLORS = {'BioSemi': '#2a78d6', 'ElectroTime': '#eb6834', 'unknown_seed': '#4a3aa7', 'known_seed': '#1baf7a'}
 ## how the two systems are named in the latency figures (neutral, for the manuscript)
 LABELS = {'BioSemi': 'Amplifier', 'ElectroTime': 'ElectroTime'}
 INK, INK_MUTED = '#0b0b0b', '#52514e'
@@ -85,7 +83,7 @@ seaborn.set_theme(style='ticks', rc={
     'axes.spines.top': False, 'axes.spines.right': False,
 })
 
-data_dir = expanduser(sys.argv[1] if len(sys.argv) > 1 else '~/data/electrotime/vs_biosemi')
+data_dir = expanduser(sys.argv[1] if len(sys.argv) > 1 else '~/data/electrotime/vs_biosemi_round2')
 out_dir = join(data_dir, 'derivatives')
 plot_dir = join(out_dir, 'plots')
 makedirs(plot_dir, exist_ok=True)
@@ -115,45 +113,68 @@ def run_lengths(values: numpy.ndarray):
     return starts, values[starts]
 
 
+def clock_str(wall_s: float) -> str:
+    return f'{int(wall_s // 3600):02d}:{int(wall_s % 3600 // 60):02d}'
+
+
 ################################################################################
 ## BioSemi
 ################################################################################
-bdf_path = glob(join(data_dir, '*.bdf'))[0]
-raw = mne.io.read_raw_bdf(bdf_path, preload=False, verbose='error')
-fs = raw.info['sfreq']
-## header time is local wall clock; mne labels it UTC
-bdf_start = raw.info['meas_date'].replace(tzinfo=None)
-bs_sound, bs_light, bs_status = raw.get_data(picks=[BS_SOUND_CH, BS_LIGHT_CH, BS_TRIGGER_CH])
-bs_trigger = bs_status.astype(numpy.int64) & 0xFF
-log.info(f'BioSemi: {basename(bdf_path)}, {fs:.0f} Hz, {bs_trigger.size/fs:.0f} s from {bdf_start}')
+bdfs = []
+for stimulus in STIMULI:
+    for bdf_path in glob(join(data_dir, stimulus, '*.bdf')):
+        raw = mne.io.read_raw_bdf(bdf_path, preload=False, verbose='error')
+        ## header time is local wall clock (1 s resolution); mne labels it UTC
+        bdfs.append(dict(stimulus=stimulus, path=bdf_path, raw=raw,
+                         start=raw.info['meas_date'].replace(tzinfo=None)))
+bdfs.sort(key=lambda b: b['start'])
+## all times below are in seconds since midnight, on each PC's own clock
+day = bdfs[0]['start'].replace(hour=0, minute=0, second=0, microsecond=0)
 
-starts, values = run_lengths(bs_trigger)
-ends = numpy.r_[starts[1:], bs_trigger.size]
 bs_rows = []
-run = -1
-for start, end, value in zip(starts, ends, values):
-    if value == 0:
-        continue
-    if value not in VALID_TRIGGERS:
-        log.warning(f'BioSemi: unexpected trigger {value} at {start/fs:.3f} s')
-        continue
-    if value == 1:
-        run += 1
-    device, stimulus = BIOSEMI_RUNS[run]
-    modality = modality_of(value)
-    i0, i1 = start + round(EPOCH_TMIN * fs / 1000), start + round(EPOCH_TMAX * fs / 1000)
-    signal = bs_light if modality == 'light' else bs_sound
-    rel_ms = numpy.arange(i0 - start, i1 - start) / fs * 1000
-    delay, trace = find_onset(rel_ms, signal[i0:i1], 0)
-    bs_rows.append(dict(
-        bs_index=len(bs_rows), run=run, device=device, stimulus=stimulus,
-        trigger=value, modality=modality, time_s=start / fs,
-        pulse_ms=(end - start) / fs * 1000, delay=delay, trace=(rel_ms, trace),
-    ))
+run, block, last_run_start = -1, -1, -numpy.inf
+for b in bdfs:
+    raw, stimulus, bdf = b['raw'], b['stimulus'], basename(b['path'])
+    fs = raw.info['sfreq']
+    bdf_s = (b['start'] - day).total_seconds()
+    bs_sound, bs_light, bs_status = raw.get_data(picks=[BS_SOUND_CH, BS_LIGHT_CH, BS_TRIGGER_CH])
+    bs_trigger = bs_status.astype(numpy.int64) & 0xFF
+    log.info(f'BioSemi: {bdf} ({stimulus}), {fs:.0f} Hz, {bs_trigger.size/fs:.0f} s from {b["start"]}')
+    starts, values = run_lengths(bs_trigger)
+    ends = numpy.r_[starts[1:], bs_trigger.size]
+    in_run = False
+    for start, end, value in zip(starts, ends, values):
+        if value == 0:
+            continue
+        if value not in VALID_TRIGGERS:
+            log.warning(f'BioSemi: unexpected trigger {value} at {start/fs:.3f} s in {bdf}')
+            continue
+        wall_s = bdf_s + start / fs
+        if value == 1:
+            run += 1
+            in_run = True
+            if not bs_rows or bs_rows[-1]['bdf'] != bdf or wall_s - last_run_start > BLOCK_GAP_S:
+                block += 1
+                block_start_s = wall_s
+            last_run_start = wall_s
+        if not in_run:
+            log.warning(f'BioSemi: trigger {value} before the first run in {bdf}')
+            continue
+        modality = modality_of(value)
+        i0, i1 = start + round(EPOCH_TMIN * fs / 1000), start + round(EPOCH_TMAX * fs / 1000)
+        signal = bs_light if modality == 'light' else bs_sound
+        rel_ms = numpy.arange(i0 - start, i1 - start) / fs * 1000
+        delay, trace = find_onset(rel_ms, signal[i0:i1], 0)
+        bs_rows.append(dict(
+            bs_index=len(bs_rows), stimulus=stimulus, bdf=bdf, block=block,
+            block_start_s=block_start_s, run=run, trigger=value, modality=modality,
+            wall_s=wall_s, pulse_ms=(end - start) / fs * 1000, delay=delay, trace=(rel_ms, trace),
+        ))
+    del bs_sound, bs_light, bs_status, bs_trigger
 bs = pandas.DataFrame(bs_rows)
-if run + 1 != len(BIOSEMI_RUNS):
-    log.warning(f'BioSemi: found {run+1} runs, expected {len(BIOSEMI_RUNS)}')
-log.info(f'BioSemi: {len(bs)} triggers in {run+1} runs, '
+run_starts = bs[bs.trigger == 1].wall_s.diff()
+run_period = run_starts[run_starts < BLOCK_GAP_S].median()
+log.info(f'BioSemi: {len(bs)} triggers in {run+1} runs and {block+1} blocks (run period {run_period:.2f} s), '
          f'{bs.delay.isna().sum()} without a detectable stimulus')
 
 
@@ -162,21 +183,30 @@ log.info(f'BioSemi: {len(bs)} triggers in {run+1} runs, '
 ################################################################################
 fname_pattern = re.compile(r'electrotime_(?P<session>[\d-]+T\d{6})_(?P<counter>\d{5})(?P<boot>\d{3})\.txt')
 et_files = []
-for fpath in glob(join(data_dir, 'electrotime_datafiles', 'electrotime_*.txt')):
-    parts = fname_pattern.match(basename(fpath)).groupdict()
-    with open(fpath) as fhandle:
-        lines = fhandle.read().splitlines()
-    rows = []
-    for line in lines[1:]:
-        cells = line.strip().strip(',').split(',')
-        if len(cells) == 4 and all(c.isdigit() for c in cells):
-            rows.append([int(c) for c in cells])
-    et_files.append(dict(
-        file=basename(fpath), session=parts['session'], boot=parts['boot'],
-        counter=int(parts['counter']), start_us=int(lines[0]), data=numpy.array(rows),
-        bad_lines=len(lines) - 1 - len(rows),
-    ))
-et_files.sort(key=lambda f: (f['session'], f['start_us'], f['counter']))
+for stimulus in STIMULI:
+    for fpath in glob(join(data_dir, stimulus, 'electrotime_*.txt')):
+        parts = fname_pattern.match(basename(fpath)).groupdict()
+        with open(fpath) as fhandle:
+            lines = fhandle.read().splitlines()
+        rows = []
+        for line in lines[1:]:
+            cells = line.strip().strip(',').split(',')
+            if len(cells) == 4 and all(c.isdigit() for c in cells):
+                rows.append([int(c) for c in cells])
+        et_files.append(dict(
+            file=basename(fpath), stimulus=stimulus, session=parts['session'], boot=parts['boot'],
+            counter=int(parts['counter']), start_us=int(lines[0]), data=numpy.array(rows),
+            bad_lines=len(lines) - 1 - len(rows),
+        ))
+et_files.sort(key=lambda f: (f['session'], f['boot'], f['counter']))
+## the device clock (micros) wraps every 2^32 us (71.6 min); unwrap per boot
+wraps = 0
+for prev, f in zip([None] + et_files[:-1], et_files):
+    if prev is None or (prev['session'], prev['boot']) != (f['session'], f['boot']):
+        wraps = 0
+    elif f['start_us'] + wraps * 2**32 < prev['start_us']:
+        wraps += 1
+    f['start_us'] += wraps * 2**32
 log.info(f'ElectroTime: {len(et_files)} files, {sum(f["bad_lines"] for f in et_files)} malformed lines')
 
 ## Trigger runs: how did the triggers arrive?
@@ -201,7 +231,7 @@ for f in et_files:
         else:
             kind = 'aberrant'
         trigger_runs.append(dict(
-            session=f['session'], file=f['file'], value=value, kind=kind,
+            stimulus=f['stimulus'], session=f['session'], file=f['file'], value=value, kind=kind,
             onset_ms=t_us[start] / 1000, duration_ms=duration, n_samples=n,
         ))
         if kind != 'valid':
@@ -222,14 +252,12 @@ for f in et_files:
             onset = numpy.searchsorted(t_us, t0 + round(delay * 1000))
             gap_onset_ms = (t_us[onset] - t_us[onset - 1]) / 1000
         et_rows.append(dict(
-            session=f['session'], boot=f['boot'], file=f['file'],
-            session_device=SESSION_DEVICE.get(f['session'], 'unknown'),
+            stimulus=f['stimulus'], session=f['session'], boot=f['boot'], file=f['file'],
             trigger=value, modality=modality, device_s=(f['start_us'] + t0) / 1e6,
             pulse_ms=duration, delay=delay, trace=(rel_ms, trace),
             gap_trigger_ms=gap_trigger_ms, gap_onset_ms=gap_onset_ms,
         ))
 runs_df = pandas.DataFrame(trigger_runs)
-runs_df['device'] = runs_df.session.map(SESSION_DEVICE).fillna('unknown')
 runs_df.to_csv(join(out_dir, 'electrotime_trigger_runs.csv'), float_format='%.3f', index=False)
 et = pandas.DataFrame(et_rows)
 log.info(f'ElectroTime: {len(et)} valid triggers with a full epoch')
@@ -244,57 +272,54 @@ log.info(f'ElectroTime: {(detected & ~et.edge_ok).sum()} of {detected.sum()} tri
 ################################################################################
 ## Match ElectroTime triggers to BioSemi triggers
 ################################################################################
-session_offset_s = numpy.array([
-    (datetime.strptime(s, '%Y-%m-%dT%H%M%S') - bdf_start).total_seconds() for s in et.session
-])
-## approximate: assumes the device booted when the GUI session started
-et['approx_s'] = session_offset_s + et.device_s
-diffs = numpy.concatenate([
-    bs.time_s[bs.trigger == row.trigger].values - row.approx_s for row in et.itertuples()
-])
-counts, edges = numpy.histogram(diffs, bins=numpy.arange(diffs.min(), diffs.max() + 2, 1))
-mode = edges[counts.argmax()] + 0.5
-clock_offset = numpy.median(diffs[numpy.abs(diffs - mode) < MATCH_TOL_S])
-log.info(f'clock offset BioSemi PC - ElectroTime PC: {clock_offset:.1f} s')
+## BioSemi trigger times per (stimulus, trigger value)
+bs_lookup = {key: (g.wall_s.values, g.bs_index.values) for key, g in bs.groupby(['stimulus', 'trigger'])}
 
+
+def nearest_bs(stimulus: str, triggers: numpy.ndarray, times: numpy.ndarray):
+    """bs_index of the BioSemi trigger with the same value nearest in time
+    (-1 if none within MATCH_TOL_S), and its time minus the given time (s)"""
+    index = numpy.full(len(times), -1)
+    err = numpy.full(len(times), numpy.nan)
+    for i, (trigger, t) in enumerate(zip(triggers, times)):
+        wall, idx = bs_lookup.get((stimulus, trigger), ([], []))
+        if len(wall):
+            j = numpy.abs(wall - t).argmin()
+            err[i] = wall[j] - t
+            if abs(err[i]) < MATCH_TOL_S:
+                index[i] = idx[j]
+    return index, err
+
+
+## approximate: device time counts from boot, so this assumes a constant delay between
+## GUI session start and device boot; biosemi_clock_check.py checks the resulting matches
+session_s = et.session.map(lambda session: (datetime.strptime(session, '%Y-%m-%dT%H%M%S') - day).total_seconds())
 et['bs_index'] = -1
-for i, row in et.iterrows():
-    candidates = bs[bs.trigger == row.trigger]
-    err = numpy.abs(candidates.time_s - row.approx_s - clock_offset)
-    if err.min() < MATCH_TOL_S:
-        et.loc[i, 'bs_index'] = candidates.bs_index.iloc[err.argmin()]
-duplicates = et[(et.bs_index >= 0) & et.bs_index.duplicated(keep=False)]
+et['match_error_s'] = numpy.nan
+for stimulus, group in et.groupby('stimulus'):
+    index, err = nearest_bs(stimulus, group.trigger.values, session_s[group.index] + group.device_s + PC_OFFSET_S)
+    et.loc[group.index, 'bs_index'] = index
+    et.loc[group.index, 'match_error_s'] = err
+log.info(f'time error of the match per session (s):\n'
+         f'{et.groupby("session").match_error_s.agg(["min", "max"]).round(2)}')
+
+matched = et.bs_index >= 0
+duplicates = et[matched & et.bs_index.duplicated(keep=False)]
 if len(duplicates):
     log.warning(f'{len(duplicates)} ElectroTime triggers matched the same BioSemi trigger')
-matched = et.bs_index >= 0
 log.info(f'matched {matched.sum()} / {len(et)} ElectroTime triggers')
-
-## per boot: linear clock fit, gives Arduino drift and trigger timing agreement
-et['clock_residual_ms'] = numpy.nan
-clock_rows = []
-for (session, boot), group in et[matched].groupby(['session', 'boot']):
-    bs_time = bs.time_s.values[group.bs_index.values]
-    ## fit only on triggers seen without a gap before them; a trigger recorded late
-    ## would bias the fit (residuals are still stored for every matched trigger)
-    fit = (group.gap_trigger_ms <= MAX_EDGE_GAP_MS).values
-    row = dict(session=session, boot=boot, n=len(group), n_fit=fit.sum(),
-               device=SESSION_DEVICE.get(session, 'unknown'))
-    if fit.sum() >= 3:
-        slope, intercept = numpy.polyfit(group.device_s[fit], bs_time[fit], 1)
-        residual_ms = (bs_time - (slope * group.device_s + intercept)) * 1000
-        et.loc[group.index, 'clock_residual_ms'] = residual_ms
-        row.update(drift_ppm=(slope - 1) * 1e6, residual_sd_ms=residual_ms[fit].std(),
-                   residual_max_ms=numpy.abs(residual_ms[fit]).max())
-    clock_rows.append(row)
-clock_df = pandas.DataFrame(clock_rows)
-clock_df.to_csv(join(out_dir, 'clock_fits.csv'), float_format='%.3f', index=False)
-
-for col in ('run', 'device', 'stimulus', 'time_s', 'delay', 'pulse_ms'):
+for col in ('bdf', 'block', 'block_start_s', 'run', 'wall_s', 'delay', 'pulse_ms'):
     et[f'bs_{col}'] = numpy.where(matched, bs[col].values[et.bs_index.clip(0)], numpy.nan)
-mismatch = et[matched & (et.bs_device != et.session_device)]
-if len(mismatch):
-    log.warning(f'{len(mismatch)} matches disagree with SESSION_DEVICE')
 et['difference'] = et.delay - et.bs_delay
+bs['matched'] = bs.bs_index.isin(et.bs_index[matched])
+
+## only trials recorded by both systems, with a detected stimulus on both;
+## clean: without a sampling gap before an ElectroTime edge. The plots use clean.
+pairs = et[matched & et.delay.notna() & et.bs_delay.notna()]
+clean = pairs[pairs.edge_ok]
+n_missing = (matched & (et.delay.isna() | et.bs_delay.isna())).sum()
+log.info(f'{len(pairs)} matched trials with a detected stimulus on both systems '
+         f'({n_missing} without), {len(clean)} without edge gaps')
 
 
 ################################################################################
@@ -304,46 +329,93 @@ def describe(df: pandas.DataFrame, value: str, by: list) -> pandas.DataFrame:
     return df.groupby(by)[value].agg(['count', 'mean', 'std', 'min', 'median', 'max']).reset_index()
 
 
-def in_analysis(df: pandas.DataFrame, device: str, stimulus: str) -> pandas.Series:
-    """True for rows whose (device, stimulus) is one of ANALYSED"""
-    return pandas.Series(list(zip(df[device], df[stimulus])), index=df.index).isin(ANALYSED)
+def correlation(df: pandas.DataFrame, by: list) -> pandas.DataFrame:
+    """Pearson r between the same-trial delays of both systems"""
+    return df.groupby(by).apply(lambda g: g.delay.corr(g.bs_delay), include_groups=False).rename('r').reset_index()
 
 
-## latency comparison: only the ANALYSED groups
-bs_an = bs[in_analysis(bs, 'device', 'stimulus')]
-## ElectroTime results are reported twice: for all matched trials, and for the
-## trials left after dropping those with a sampling gap before an edge (et_clean).
-## The plots use et_clean.
-et_matched = et[matched & in_analysis(et, 'bs_device', 'bs_stimulus')]
-et_clean = et_matched[et_matched.edge_ok]
-bs_an.drop(columns='trace').to_csv(join(out_dir, 'biosemi_trials.csv'), float_format='%.3f', index=False)
-et_matched.drop(columns='trace').to_csv(join(out_dir, 'electrotime_trials.csv'), float_format='%.3f', index=False)
-clean_label = f'edge gaps <= {MAX_EDGE_GAP_MS} ms'
-et_selections = (('all matched', et_matched), (clean_label, et_clean))
-by = ['system', 'selection', 'device', 'stimulus', 'modality']
-summary = pandas.concat(
-    [describe(bs_an.assign(system='BioSemi', selection='all'), 'delay', by)]
-    + [describe(df.assign(system='ElectroTime', selection=label, device=df.bs_device, stimulus=df.bs_stimulus),
-                'delay', by) for label, df in et_selections]
-)
+bs.drop(columns='trace').to_csv(join(out_dir, 'biosemi_trials.csv'), float_format='%.3f', index=False)
+## µs precision: biosemi_clock_check.py fits the trigger times
+et.drop(columns='trace').to_csv(join(out_dir, 'electrotime_trials.csv'), float_format='%.6f', index=False)
+selections = (('all matched', pairs), (f'edge gaps <= {MAX_EDGE_GAP_MS} ms', clean))
+
+## both systems summarised on the same trials
+by = ['selection', 'stimulus', 'modality', 'system']
+summary = pandas.concat([
+    describe(pandas.concat([
+        df.assign(system='BioSemi', delay=df.bs_delay),
+        df.assign(system='ElectroTime'),
+    ]).assign(selection=label), 'delay', by)
+    for label, df in selections
+])
 summary.to_csv(join(out_dir, 'delay_summary.csv'), float_format='%.3f', index=False)
+by = ['selection', 'stimulus', 'modality']
 paired = pandas.concat([
-    describe(df.dropna(subset=['difference']).assign(selection=label), 'difference',
-             ['selection', 'bs_device', 'bs_stimulus', 'modality'])
-    for label, df in et_selections
+    describe(df.assign(selection=label), 'difference', by).merge(correlation(df.assign(selection=label), by))
+    for label, df in selections
 ])
 paired.to_csv(join(out_dir, 'paired_difference.csv'), float_format='%.3f', index=False)
 
+## for the manuscript: the trials shown in latency_<MANUSCRIPT_STIMULUS>.png
+ms = clean[clean.stimulus == MANUSCRIPT_STIMULUS]
+manuscript = ms.groupby('modality').agg(
+    n=('delay', 'size'),
+    amplifier_mean=('bs_delay', 'mean'), amplifier_sd=('bs_delay', 'std'), amplifier_median=('bs_delay', 'median'),
+    electrotime_mean=('delay', 'mean'), electrotime_sd=('delay', 'std'), electrotime_median=('delay', 'median'),
+    difference_mean=('difference', 'mean'), difference_sd=('difference', 'std'),
+    difference_median=('difference', 'median'),
+).reset_index().merge(correlation(ms, ['modality']))
+manuscript.to_csv(join(out_dir, 'manuscript_table.csv'), float_format='%.2f', index=False)
+
+
+def num(x: float, decimals: int = 1) -> str:
+    return f'{x:.{decimals}f}'.replace('-', '\u2212')  ## typographic minus
+
+
+## same table as HTML: open in a browser, copy and paste into Google Docs or Word
+## to get a native table
+html_rows = ''.join(
+    f'<tr><td>{row.modality.capitalize()}</td><td>{row.n}</td>'
+    + ''.join(f'<td>{num(getattr(row, f"{col}_mean"))} \u00b1 {num(getattr(row, f"{col}_sd"))}</td>'
+              f'<td>{num(getattr(row, f"{col}_median"))}</td>'
+              for col in ('amplifier', 'electrotime', 'difference'))
+    + f'<td>{num(row.r, 2)}</td></tr>'
+    for row in manuscript.itertuples()
+)
+with open(join(out_dir, 'manuscript_table.html'), 'w') as fhandle:
+    fhandle.write(f"""<!doctype html><meta charset="utf-8"><title>Manuscript table</title>
+<table border="1" cellpadding="4" style="border-collapse: collapse; text-align: center">
+<tr><th rowspan="2"></th><th rowspan="2">n</th><th colspan="2">{LABELS['BioSemi']} delay (ms)</th>
+<th colspan="2">{LABELS['ElectroTime']} delay (ms)</th>
+<th colspan="2">{LABELS['ElectroTime']} \u2212 {LABELS['BioSemi']} (ms)</th><th rowspan="2">r</th></tr>
+<tr><th>mean \u00b1 SD</th><th>median</th><th>mean \u00b1 SD</th><th>median</th><th>mean \u00b1 SD</th><th>median</th></tr>
+{html_rows}
+</table>
+""")
+
+## per block: does the noise burst change the measured latency?
+by = ['bs_block', 'stimulus', 'modality']
+blocks = (clean.groupby(by)
+          .agg(start=('bs_block_start_s', 'first'), n=('delay', 'size'), biosemi_median=('bs_delay', 'median'),
+               electrotime_median=('delay', 'median'), difference_mean=('difference', 'mean'),
+               difference_std=('difference', 'std'))
+          .reset_index().merge(correlation(clean, by)))
+blocks['start'] = blocks.start.map(clock_str)
+blocks.to_csv(join(out_dir, 'block_summary.csv'), float_format='%.3f', index=False)
+
 ## per session overview of the trigger channel
 sessions = []
-for session, group in runs_df.groupby('session'):
-    seconds = group.groupby('file').onset_ms.max().sum() / 1000
+for (stimulus, session), group in runs_df.groupby(['stimulus', 'session']):
+    files = [f for f in et_files if f['session'] == session and f['data'].size]
+    recorded_s = sum(f['data'][-1, ET_TIME_COL] - f['data'][0, ET_TIME_COL] for f in files) / 1e6
+    span_s = (max(f['start_us'] + f['data'][-1, ET_TIME_COL] for f in files)
+              - min(f['start_us'] + f['data'][0, ET_TIME_COL] for f in files)) / 1e6
     n = group.kind.value_counts()
     sessions.append(dict(
-        session=session, device=SESSION_DEVICE.get(session, 'unknown'), recorded_s=seconds,
-        valid=n.get('valid', 0), glitch=n.get('glitch', 0), aberrant=n.get('aberrant', 0),
+        session=session, stimulus=stimulus, files=len(files), recorded_s=recorded_s,
+        coverage=recorded_s / span_s, valid=n.get('valid', 0), glitch=n.get('glitch', 0),
+        aberrant=n.get('aberrant', 0),
         aberrant_values=' '.join(str(v) for v in sorted(group[group.kind == 'aberrant'].value.unique())),
-        aberrant_per_s=n.get('aberrant', 0) / seconds,
         matched=int(((et.session == session) & matched).sum()),
         valid_pulse_ms_median=group[group.kind == 'valid'].duration_ms.median(),
     ))
@@ -352,98 +424,125 @@ sessions_df.to_csv(join(out_dir, 'electrotime_sessions.csv'), float_format='%.3f
 
 with pandas.option_context('display.width', 200, 'display.max_columns', 20, 'display.precision', 2):
     log.info(f'\nElectroTime trigger channel per session:\n{sessions_df}')
-    log.info(f'\nclock fits:\n{clock_df}')
-    log.info(f'\ndelay summary (ms):\n{summary}')
-    log.info(f'\nElectroTime - BioSemi delay (ms), matched trials:\n{paired}')
-    pulse = et_matched.assign(pulse_diff=et_matched.pulse_ms - et_matched.bs_pulse_ms)
-    log.info(f'\ntrigger pulse duration ElectroTime - BioSemi (ms):\n'
-             f'{describe(pulse, "pulse_diff", ["session_device"])}')
+    log.info(f'\ndelay summary (ms), both systems on the same trials:\n{summary}')
+    log.info(f'\nElectroTime - BioSemi delay (ms), same trials:\n{paired}')
+    log.info(f'\nper block, {selections[1][0]}:\n{blocks}')
+    log.info(f'\nmanuscript table ({MANUSCRIPT_STIMULUS}, {selections[1][0]}), ms:\n{manuscript}')
+    pulse = pairs.assign(pulse_diff=pairs.pulse_ms - pairs.bs_pulse_ms)
+    log.info(f'\ntrigger pulse duration ElectroTime - BioSemi (ms):\n{describe(pulse, "pulse_diff", ["stimulus"])}')
 
 
 ################################################################################
 ## Plots
 ################################################################################
-## plots 1 and 3 show the latency comparison (ANALYSED groups); plots 4-6 are
-## trigger and sound-input diagnostics for both devices (see the hardware doc)
-devices = sorted({device for device, _ in ANALYSED})
+## plot 1 is for the manuscript (one file per stimulus; only known_seed is used),
+## 2 compares the noise bursts, 3-5 are trigger and sound-input diagnostics.
+## All latency plots use `clean`: the same trials on both systems.
+def system_view(df: pandas.DataFrame, system: str) -> pandas.DataFrame:
+    """modality, delay and trace of the given system for the trials in df"""
+    if system == 'ElectroTime':
+        return df[['modality', 'delay', 'trace']]
+    return pandas.DataFrame(dict(modality=df.modality.values, delay=df.bs_delay.values,
+                                 trace=bs.trace.values[df.bs_index.values]))
 
-## 1. latency figure (for the manuscript): per modality, the normalised traces of
-## both systems aligned to the trigger (A, B, D, E) and the delay of every trial
-## (C, F). One file per ANALYSED group, without a title; the caption describes the data.
+
+## 1. latency figure (page size): one column per modality. Rows: the normalised traces
+## of both systems aligned to the trigger, the delay of every trial, and the same-trial
+## delays of both systems against each other. Without a title; the caption describes the data.
 rng = numpy.random.default_rng(9)
 systems = ('BioSemi', 'ElectroTime')
-for device, stimulus in ANALYSED:
-    data = {
-        'BioSemi': bs_an[(bs_an.device == device) & (bs_an.stimulus == stimulus)],
-        'ElectroTime': et_clean[(et_clean.bs_device == device) & (et_clean.bs_stimulus == stimulus)],
-    }
-    fig, axes = plt.subplots(2, 3, figsize=(12, 5.5))
-    letters = iter('ABCDEF')
-    for r, modality in enumerate(('light', 'sound')):
-        for c, system in enumerate(systems):
-            ax = axes[r, c]
-            sel = data[system][(data[system].modality == modality) & data[system].delay.notna()]
+for stimulus in STIMULI:
+    data = {system: system_view(clean[clean.stimulus == stimulus], system) for system in systems}
+    ## one delay range for both modalities and systems (panels E-H)
+    delays = clean[clean.stimulus == stimulus][['delay', 'bs_delay']]
+    lo, hi = delays.min().min() - 2, delays.max().max() + 2
+    plt.rcParams.update(seaborn.plotting_context('paper', font_scale=1.1))  ## page-width font sizes
+    fig = plt.figure(figsize=(7.1, 9.6), layout='constrained')
+    for c, (subfig, modality) in enumerate(zip(fig.subfigures(1, 2, wspace=0.04), ('light', 'sound'))):
+        subfig.suptitle(modality.capitalize(), fontsize=12, fontweight='bold')
+        axes = subfig.subplots(4, 1, height_ratios=(1, 1, 0.8, 1.9))
+        letters = ['ABCDEFGH'[2 * r + c] for r in range(4)]  ## read across, then down
+        ## traces, same time axis for both systems
+        for r, system in enumerate(systems):
+            ax = axes[r]
+            sel = data[system][data[system].modality == modality]
             lines = [numpy.column_stack(t) for t in sel.trace]
             ax.add_collection(LineCollection(lines, colors=COLORS[system], alpha=0.15, linewidths=0.8))
             ax.axvline(0, color=INK_MUTED, linewidth=0.8)
             if len(sel):
                 ax.axvline(sel.delay.median(), color=INK, linewidth=1, linestyle='--')
-                ax.text(sel.delay.median() + 5, 1.12, f'median {sel.delay.median():.1f} ms',
+                ax.text(sel.delay.median() + 5, 1.35, f'median {sel.delay.median():.1f} ms',
                         color=INK, fontsize=8, va='top')
             ax.set_xlim(EPOCH_TMIN, EPOCH_TMAX)
-            ax.set_ylim(-1.1, 1.15)
-            ax.set_title(rf'$\bf{{{next(letters)}}}$   {LABELS[system]} (n={len(sel)})', fontsize=10, loc='left')
-            ax.set_ylabel(f'{modality.capitalize()}\nnormalised signal' if c == 0 else '')
-            if c:
-                ax.set_yticklabels([])
-            ax.set_xlabel('time from trigger (ms)' if r == 1 else '')
+            ax.set_ylim(-1.1, 1.4)
+            ax.set_yticks([-1, 0, 1])
+            ax.set_title(rf'$\bf{{{letters[r]}}}$   {LABELS[system]} (n={len(sel)})', fontsize=10, loc='left')
+            ax.set_ylabel('normalised signal' if c == 0 else '')
+        axes[0].tick_params(labelbottom=False)
+        axes[1].set_xlabel('time from trigger (ms)')
         ## delay of every trial, both systems; black tick = median
-        ax = axes[r, 2]
+        ax = axes[2]
         for y, system in enumerate(systems):
-            d = data[system][data[system].modality == modality].delay.dropna()
-            ax.scatter(d, y + rng.uniform(-0.25, 0.25, d.size), s=8, color=COLORS[system], alpha=0.6, linewidth=0)
+            d = data[system][data[system].modality == modality].delay
+            ax.scatter(d, y + rng.uniform(-0.25, 0.25, d.size), s=6, color=COLORS[system], alpha=0.6, linewidth=0)
             if d.size:
-                ax.plot(d.median(), y, '|', color=INK, markersize=18, mew=2)
+                ax.plot(d.median(), y, '|', color=INK, markersize=16, mew=2)
         ax.set_yticks([0, 1], [LABELS[system] for system in systems])
+        ax.set_xlim(lo, hi)
         ax.set_ylim(1.5, -0.5)
-        ax.set_title(rf'$\bf{{{next(letters)}}}$   delay per trial', fontsize=10, loc='left')
-        ax.set_xlabel('delay from trigger (ms)' if r == 1 else '')
-    fig.tight_layout()
-    fig.savefig(join(plot_dir, f'latency_{device}_{stimulus}.png'), dpi=300)
+        ax.set_title(rf'$\bf{{{letters[2]}}}$   delay per trial', fontsize=10, loc='left')
+        ax.set_xlabel('delay from trigger (ms)')
+        ## same-trial delays; dashed line = equal delay
+        ax = axes[3]
+        sel = clean[(clean.stimulus == stimulus) & (clean.modality == modality)]
+        ax.scatter(sel.bs_delay, sel.delay, s=8, color=INK, alpha=0.3, linewidth=0)
+        ax.plot([lo, hi], [lo, hi], color=INK_MUTED, linewidth=0.8, linestyle='--')
+        ax.set_xlim(lo, hi)
+        ax.set_ylim(lo, hi)
+        if len(sel):
+            ax.text(0.04, 0.96, f'r = {sel.delay.corr(sel.bs_delay):.2f}\n'
+                    f'{LABELS["ElectroTime"]} - {LABELS["BioSemi"]}\n'
+                    f'{sel.difference.mean():.1f} ± {sel.difference.std():.1f} ms',
+                    transform=ax.transAxes, fontsize=8, va='top', color=INK)
+        ax.set_aspect('equal')
+        ax.set_title(rf'$\bf{{{letters[3]}}}$   same trials', fontsize=10, loc='left')
+        ax.set_xlabel(f'{LABELS["BioSemi"]} delay (ms)')
+        ax.set_ylabel(f'{LABELS["ElectroTime"]} delay (ms)')
+    fig.savefig(join(plot_dir, f'latency_{stimulus}.png'), dpi=300)
     plt.close(fig)
+    seaborn.set_context('notebook')
 
-## 3. paired comparison of matched trials (et_clean)
-fig, axes = plt.subplots(2, 2, figsize=(10, 8))
-for c, modality in enumerate(('light', 'sound')):
-    sel = et_clean[(et_clean.modality == modality)].dropna(subset=['difference'])
-    ax = axes[0, c]
-    for device in devices:
-        d = sel[sel.bs_device == device]
-        ax.scatter(d.bs_delay, d.delay, s=28, marker=MARKERS[device], color=COLORS[device],
-                   edgecolor='white', linewidth=0.8, label=f'{device} (n={len(d)})')
-    if len(sel):
-        lim = [min(sel.bs_delay.min(), sel.delay.min()) - 2, max(sel.bs_delay.max(), sel.delay.max()) + 2]
-        ax.plot(lim, lim, color=INK_MUTED, linewidth=0.8, linestyle='--')
-    ax.set_xlabel(f'{LABELS["BioSemi"]} delay (ms)')
-    ax.set_ylabel('ElectroTime delay (ms)')
-    ax.set_title(f'{modality}: same trials', fontsize=10, loc='left')
-    ax.legend(frameon=False, fontsize=8)
-    ax = axes[1, c]
-    for device in devices:
-        d = sel[sel.bs_device == device]
-        if len(d):
-            ax.hist(d.difference, bins=numpy.arange(-30, 30.5, 1), histtype='step', linewidth=2,
-                    color=COLORS[device], label=f'{device} median {d.difference.median():.1f} ms')
-    ax.axvline(0, color=INK_MUTED, linewidth=0.8)
-    ax.set_xlabel(f'ElectroTime - {LABELS["BioSemi"]} (ms)')
-    ax.set_ylabel('trials')
-    ax.legend(frameon=False, fontsize=8)
-fig.tight_layout()
-fig.savefig(join(plot_dir, 'paired.png'), dpi=200)
+## 2. delays per block (one noise burst per block): BioSemi, ElectroTime, difference
+block_list = sorted(clean.bs_block.unique())
+fig, axes = plt.subplots(2, 3, figsize=(13, 6.5), sharex=True)
+for r, modality in enumerate(('light', 'sound')):
+    for c, (title, col) in enumerate(((f'{LABELS["BioSemi"]} delay', 'bs_delay'),
+                                      ('ElectroTime delay', 'delay'),
+                                      (f'ElectroTime - {LABELS["BioSemi"]}', 'difference'))):
+        ax = axes[r, c]
+        for x, blk in enumerate(block_list):
+            d = clean[(clean.bs_block == blk) & (clean.modality == modality)]
+            if not len(d):
+                continue
+            stimulus = d.stimulus.iloc[0]
+            ax.scatter(x + rng.uniform(-0.25, 0.25, len(d)), d[col], s=6, color=COLORS[stimulus],
+                       alpha=0.5, linewidth=0, label=STIMULI[stimulus])
+            ax.plot(x, d[col].median(), '_', color=INK, markersize=18, mew=2)
+        ax.set_title(f'{modality}: {title}', fontsize=10, loc='left')
+        ax.set_ylabel('ms' if c == 0 else '')
+        if r == 1:
+            ax.set_xticks(range(len(block_list)),
+                          [clock_str(clean[clean.bs_block == b].bs_block_start_s.iloc[0]) for b in block_list])
+            ax.set_xlabel('block (start time)')
+handles, labels = axes[1, 0].get_legend_handles_labels()
+unique = dict(zip(labels, handles))
+fig.legend(unique.values(), unique.keys(), frameon=False, fontsize=9, loc='upper right', markerscale=2)
+fig.tight_layout(rect=(0, 0, 1, 0.95))
+fig.savefig(join(plot_dir, 'stimulus_blocks.png'), dpi=200)
 plt.close(fig)
 
-## 4. trigger channel per session: a 1.2 s excerpt around the first valid trigger
-session_list = [s for s in SESSION_DEVICE if s in set(runs_df.session)]
+## 3. trigger channel per session: a 1.2 s excerpt around the first valid trigger
+session_list = sorted(set(runs_df.session))
 fig, axes = plt.subplots(len(session_list), 1, figsize=(10, 1.6 * len(session_list)), sharex=True)
 for ax, session in zip(axes, session_list):
     valid = runs_df[(runs_df.session == session) & (runs_df.kind == 'valid')]
@@ -457,25 +556,23 @@ for ax, session in zip(axes, session_list):
     t_ms = f['data'][:, ET_TIME_COL] / 1000
     mask = (t_ms > t_center - 400) & (t_ms < t_center + 800)
     ax.step(t_ms[mask] - t_center, f['data'][mask, ET_TRIGGER_COL], where='post',
-            color=COLORS[SESSION_DEVICE[session]], linewidth=1)
+            color=COLORS['ElectroTime'], linewidth=1)
     ax.set_ylim(-10, 265)
     ax.set_yticks([0, 100, 255])
-    ax.set_title(f'{session} ({SESSION_DEVICE[session]}) {f["file"]}', fontsize=9, loc='left')
+    ax.set_title(f'{session} ({f["stimulus"]}) {f["file"]}', fontsize=9, loc='left')
 axes[-1].set_xlabel('time from first valid trigger in session (ms)')
 fig.supylabel('trigger value')
 fig.tight_layout()
 fig.savefig(join(plot_dir, 'trigger_channel.png'), dpi=200)
 plt.close(fig)
 
-## 5. durations of non-idle trigger runs, per device
+## 4. durations of non-idle trigger runs
 fig, ax = plt.subplots(figsize=(8, 3.5))
-nonidle = runs_df[(runs_df.kind != 'idle') & runs_df.device.isin(['mkII', 'mkIII'])]
-for device in ('mkIII', 'mkII'):
-    for kind, linestyle in (('valid', '-'), ('aberrant', ':'), ('glitch', '--')):
-        d = nonidle[(nonidle.device == device) & (nonidle.kind == kind)]
-        if len(d):
-            ax.hist(d.duration_ms, bins=numpy.arange(0, 60, 1), histtype='step', linewidth=1.8,
-                    linestyle=linestyle, color=COLORS[device], label=f'{device} {kind} (n={len(d)})')
+for kind, linestyle in (('valid', '-'), ('aberrant', ':'), ('glitch', '--')):
+    d = runs_df[runs_df.kind == kind]
+    if len(d):
+        ax.hist(d.duration_ms, bins=numpy.arange(0, 60, 1), histtype='step', linewidth=1.8,
+                linestyle=linestyle, color=COLORS['ElectroTime'], label=f'{kind} (n={len(d)})')
 ax.set_yscale('log')
 ax.set_xlabel('duration of non-zero trigger value (ms)')
 ax.set_ylabel('count')
@@ -484,16 +581,16 @@ fig.tight_layout()
 fig.savefig(join(plot_dir, 'trigger_durations.png'), dpi=200)
 plt.close(fig)
 
-## 6. raw sound channel around the first sound trigger of each device
-fig, axes = plt.subplots(2, 1, figsize=(10, 4.5), sharex=True, sharey=True)
-for ax, device in zip(axes, ('mkIII', 'mkII')):
-    row = et[(et.session_device == device) & (et.modality == 'sound')].iloc[0]
+## 5. raw ElectroTime sound channel around the first sound trigger of each stimulus
+fig, axes = plt.subplots(len(STIMULI), 1, figsize=(10, 4.5), sharex=True, sharey=True)
+for ax, stimulus in zip(axes, STIMULI):
+    row = et[(et.stimulus == stimulus) & (et.modality == 'sound')].iloc[0]
     f = next(f for f in et_files if f['file'] == row.file)
     t_ms = (f['data'][:, ET_TIME_COL] - (row.device_s * 1e6 - f['start_us'])) / 1000
     mask = (t_ms > -400) & (t_ms < 800)
-    ax.plot(t_ms[mask], f['data'][mask, ET_SOUND_COL], color=COLORS[device], linewidth=0.6)
+    ax.plot(t_ms[mask], f['data'][mask, ET_SOUND_COL], color=COLORS[stimulus], linewidth=0.6)
     ax.axvline(0, color=INK_MUTED, linewidth=0.8)
-    ax.set_title(f'{device} sound input (A0), trigger {row.trigger}, {row.file}', fontsize=9, loc='left')
+    ax.set_title(f'{STIMULI[stimulus]}: sound input, trigger {row.trigger}, {row.file}', fontsize=9, loc='left')
     ax.set_ylabel('ADC value')
     ax.set_ylim(-20, 1043)
 axes[-1].set_xlabel('time from sound trigger (ms)')
